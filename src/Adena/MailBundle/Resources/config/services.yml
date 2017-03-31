@@ -1,0 +1,4 @@
+services:
+#    adena_mail.example:
+#        class: Adena\MailBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
