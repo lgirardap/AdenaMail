@@ -4,10 +4,10 @@ namespace Adena\MailBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class DefaultController extends Controller
+class HomeController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('AdenaMailBundle:Default:index.html.twig');
+        return $this->render('AdenaMailBundle:Home:index.html.twig');
     }
 }
