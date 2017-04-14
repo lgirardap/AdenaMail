@@ -25,9 +25,18 @@
             <h3>Mailing Tools</h3>
             <ul class="nav nav-pills nav-stacked">
                 <li><a href="{{ path('adena_mail_senders') }}">Senders</a></li>
+                <li><a href="{{ path('adena_mail_email_list') }}">Email</a></li>
             </ul>
         </div>
         <div id="content" class="col-md-9">
+            {% for type, messages in app.session.flashbag.all %}
+                {%  for message in messages %}
+                    <div class="alert alert-{{ type }}">
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
             {% block body %}
             {% endblock %}
         </div>

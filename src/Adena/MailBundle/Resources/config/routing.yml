@@ -5,3 +5,18 @@ adena_mail_homepage:
 adena_mail_senders:
     path:     /senders
     defaults: { _controller: AdenaMailBundle:Senders:index }
+
+adena_mail_email_add:
+  path: /email/add
+  defaults:
+    _controller: AdenaMailBundle:Email:add
+
+adena_mail_email_view:
+  path: /email/view
+  defaults:
+    _controller: AdenaMailBundle:Email:view
+
+adena_mail_email_list:
+  path: /email
+  defaults:
+    _controller: AdenaMailBundle:Email:list
