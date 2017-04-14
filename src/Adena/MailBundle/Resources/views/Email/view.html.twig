@@ -1,0 +1,9 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block adenamail_body %}
+    <h4>Subject</h4>
+    <p>{{ email.subject }}</p>
+    <h4>Template</h4>
+    <p>{{ email.template|raw }}</p>
+{% endblock %}
+
