@@ -1,0 +1,25 @@
+{% extends "AdenaMailBundle::layout.html.twig" %}
+
+
+{% block title %}
+    Delete a Sender - {{ parent() }}
+{% endblock %}
+
+{% block adenamail_body %}
+    <h2>Delete a Sender</h2>
+
+    <p>
+        Are you sure you want to delete the sender "{{ sender.email }}" ?
+    </p>
+
+    {# Keep the ID in the action #}
+    <form action="{{ path('adena_mail_sender_delete', {'id': sender.id}) }}" method="post">
+        <a href="{{ path('adena_mail_sender_list', {'id': sender.id}) }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Back to the Senders list
+        </a>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        {# Generates our form (only CSFR) #}
+        {{ form_rest(form) }}
+    </form>
+{% endblock %}

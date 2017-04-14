@@ -3,12 +3,15 @@
 namespace Adena\MailBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Sender
  *
  * @ORM\Table(name="sender")
  * @ORM\Entity(repositoryClass="Adena\MailBundle\Repository\SenderRepository")
+ * @UniqueEntity("email")
  */
 class Sender
 {
@@ -25,6 +28,8 @@ class Sender
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @Assert\Length(min=2)
+     * @Assert\NotBlank()
      */
     private $name;
 
@@ -32,6 +37,8 @@ class Sender
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\Email()
+     * @Assert\NotBlank()
      */
     private $email;
 
@@ -39,6 +46,8 @@ class Sender
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
+     * @Assert\Length(min=5)
+     * @Assert\NotBlank()
      */
     private $password;
 

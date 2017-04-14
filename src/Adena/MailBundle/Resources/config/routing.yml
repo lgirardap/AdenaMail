@@ -2,13 +2,25 @@ adena_mail_homepage:
     path:     /
     defaults: { _controller: AdenaMailBundle:Home:index }
 
-adena_mail_sender:
+adena_mail_sender_list:
     path:     /sender
-    defaults: { _controller: AdenaMailBundle:Sender:index }
+    defaults: { _controller: AdenaMailBundle:Sender:list }
 
 adena_mail_sender_add:
     path:     /sender/add
     defaults: { _controller: AdenaMailBundle:Sender:add }
+
+adena_mail_sender_edit:
+    path:     /sender/edit/{id}
+    defaults: { _controller: AdenaMailBundle:Sender:edit }
+    requirements:
+        id: \d+
+
+adena_mail_sender_delete:
+    path:     /sender/delete/{id}
+    defaults: { _controller: AdenaMailBundle:Sender:delete }
+    requirements:
+        id: \d+
 
 adena_mail_email_add:
   path: /email/add
