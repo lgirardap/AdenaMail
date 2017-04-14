@@ -3,13 +3,13 @@
 {% extends "::layout.html.twig" %}
 
 {% block title %}
-    HomePage - {{ parent() }}
+    {{ app.request.attributes.get('_route')|trans }} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
 
     {# On définit un sous-titre commun à toutes les pages du bundle, par exemple #}
-    <h1>Mon titre</h1>
+    <h1> {{ app.request.attributes.get('_route')|trans }}</h1>
 
     <hr>
 
