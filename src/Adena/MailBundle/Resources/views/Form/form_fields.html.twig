@@ -1,0 +1,26 @@
+{% use "bootstrap_3_layout.html.twig" %}
+
+{%- block icon -%}
+    {%- if(icon is defined and icon is not empty) -%}
+        <i class="{{ icon }}"></i>
+    {%- endif -%}
+{%- endblock icon -%}
+
+{%- block button_widget -%}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+            '%name%': name,
+            '%id%': id,
+            }) %}
+        {%- else -%}
+            {% set label = name|humanize %}
+        {%- endif -%}
+    {%- endif -%}
+    {% set attr = attr|merge({class: (attr.class|default('btn-default') ~ ' btn')|trim }) %}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
+        {{ block('icon') }}
+        {{ translation_domain is same as(false) ? label : label|trans({}, translation_domain) }}
+    </button>
+{%- endblock button_widget -%}
+

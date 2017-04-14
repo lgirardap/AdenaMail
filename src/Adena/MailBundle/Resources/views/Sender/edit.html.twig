@@ -1,7 +1,25 @@
 {% extends 'AdenaMailBundle::layout.html.twig' %}
 
+{% use "AdenaMailBundle:Form:form_fields.html.twig" %}
+
 {% block adenamail_body %}
-    {{ app.request.attributes.get('_route') }}
-    {{ form(form) }}
+    {%  include('AdenaMailBundle:Common/Button:back_button.html.twig') with {'label': 'Back to list', 'path': path('adena_mail_sender_list')} %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <button type="submit" value="save" class="btn btn-primary">
+                <i class="glyphicon glyphicon-plus"></i>
+                save
+            </button>
+            <button type="reset"  value="cancel" class="btn btn-default">
+                <i class="glyphicon glyphicon-trash"></i>
+                cancel
+            </button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
 {% endblock %}
 
