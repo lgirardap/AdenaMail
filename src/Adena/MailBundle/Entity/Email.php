@@ -3,12 +3,15 @@
 namespace Adena\MailBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Email
  *
  * @ORM\Table(name="email")
  * @ORM\Entity(repositoryClass="Adena\MailBundle\Repository\EmailRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Email
 {
@@ -25,6 +28,7 @@ class Email
      * @var string
      *
      * @ORM\Column(name="template", type="text")
+     * @Assert\NotBlank()
      */
     private $template;
 
@@ -32,9 +36,31 @@ class Email
      * @var string
      *
      * @ORM\Column(name="subject", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $subject;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     * @Assert\DateTime()
+     */
+    private $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     * @Assert\DateTime()
+     */
+    private $updatedAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
 
     /**
      * Get id
@@ -93,5 +119,59 @@ class Email
     {
         return $this->subject;
     }
-}
 
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Email
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Email
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function updatedAtNow(){
+        $this->setUpdatedAt(new \Datetime());
+    }
+}

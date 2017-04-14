@@ -12,9 +12,25 @@ adena_mail_email_add:
     _controller: AdenaMailBundle:Email:add
 
 adena_mail_email_view:
-  path: /email/view
+  path: /email/{id}
   defaults:
     _controller: AdenaMailBundle:Email:view
+  requirements:
+    id: \d+
+
+adena_mail_email_edit:
+  path: /email/edit/{id}
+  defaults:
+    _controller: AdenaMailBundle:Email:edit
+  requirements:
+    id: \d+
+
+adena_mail_email_delete:
+  path: /email/delete/{id}
+  defaults:
+    _controller: AdenaMailBundle:Email:delete
+  requirements:
+    id: \d+
 
 adena_mail_email_list:
   path: /email

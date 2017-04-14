@@ -1,0 +1,39 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block adenamail_body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <a href="{{ path('adena_mail_email_add') }}" class="btn btn-default">Add a new email</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Subject</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for email in emailList %}
+                    <tr>
+                        <td>{{ email.id }}</td>
+                        <td><a href="{{ path('adena_mail_email_view', {'id': email.id}) }}">{{ email.subject }}</a></td>
+                        <td>
+                            <a href="{{ path('adena_mail_email_edit', {'id': email.id}) }}">
+                                Edit
+                            </a> |
+                            <a href="{{ path('adena_mail_email_delete', {'id': email.id}) }}">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+

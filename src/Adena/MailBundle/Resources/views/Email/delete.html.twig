@@ -1,0 +1,25 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block title %}
+    Delete an email - {{ parent() }}
+{% endblock %}
+
+{% block adenamail_body %}
+    <h2>Delete an Email</h2>
+
+    <p>
+        Are you sure you want to delte the email "{{ email.subject }}" ?
+    </p>
+
+    {# Keep the ID in the action #}
+    <form action="{{ path('adena_mail_email_delete', {'id': email.id}) }}" method="post">
+        <a href="{{ path('adena_mail_email_view', {'id': email.id}) }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Back to the Email
+        </a>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        {# Generates our form (only CSFR) #}
+        {{ form_rest(form) }}
+    </form>
+{% endblock %}
+

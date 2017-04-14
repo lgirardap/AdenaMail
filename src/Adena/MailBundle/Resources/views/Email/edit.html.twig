@@ -1,0 +1,19 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block title %}
+    Delete email {{ email.subject }} - {{ parent() }}
+{% endblock %}
+
+{% block adenamail_body %}
+    <h3>Editing an email. You can (and should) past HTML in the template field.</h3>
+
+    {{ form(form) }}
+
+    <p>
+        <a href="{{ path('adena_mail_email_view', {'id': email.id}) }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Return to the Email
+        </a>
+    </p>
+{% endblock %}
+
