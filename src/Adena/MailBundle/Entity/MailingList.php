@@ -42,6 +42,13 @@ class MailingList
      */
     private $type;
 
+    /**
+     * @var Datasource
+     * 
+     * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Datasource")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $datasource;
 
     /**
      * Get id
@@ -124,5 +131,28 @@ class MailingList
     {
         return $this->type;
     }
-}
 
+    /**
+     * Set datasource
+     *
+     * @param \Adena\MailBundle\Entity\Datasource $datasource
+     *
+     * @return MailingList
+     */
+    public function setDatasource(\Adena\MailBundle\Entity\Datasource $datasource)
+    {
+        $this->datasource = $datasource;
+
+        return $this;
+    }
+
+    /**
+     * Get datasource
+     *
+     * @return \Adena\MailBundle\Entity\Datasource
+     */
+    public function getDatasource()
+    {
+        return $this->datasource;
+    }
+}

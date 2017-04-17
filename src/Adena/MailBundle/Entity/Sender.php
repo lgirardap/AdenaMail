@@ -165,4 +165,3 @@ class Sender
         return $this->active;
     }
 }
-
