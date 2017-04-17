@@ -22,10 +22,10 @@ class EmailController extends Controller
     }
 
     public function listAction(){
-        $emailList = $this->getDoctrine()->getRepository('AdenaMailBundle:Email')->findAll();
+        $emails = $this->getDoctrine()->getRepository('AdenaMailBundle:Email')->findAll();
 
         return $this->render('AdenaMailBundle:Email:list.html.twig', [
-            'emailList' => $emailList
+            'emails' => $emails
         ]);
     }
 

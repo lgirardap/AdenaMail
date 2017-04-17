@@ -30,7 +30,7 @@ class SenderController extends Controller
             $em->persist( $sender );
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('notice', 'New sender created.');
+            $this->addFlash('success', 'Sender successfully added');
 
             return $this->redirectToRoute('adena_mail_sender_add');
 
@@ -49,10 +49,10 @@ class SenderController extends Controller
         $em = $this->getDoctrine()->getManager();
         $senderRepository = $em->getRepository('AdenaMailBundle:Sender');
 
-        $result = $senderRepository->findAll();
+        $senders = $senderRepository->findAll();
 
         return $this->render('AdenaMailBundle:Sender:list.html.twig', array(
-            'senders' => $result
+            'senders' => $senders
         ));
     }
 

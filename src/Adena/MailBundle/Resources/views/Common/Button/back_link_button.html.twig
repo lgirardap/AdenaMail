@@ -1,5 +1,4 @@
     <a href="{{ path }}" class="btn btn-default">
         <i class="glyphicon glyphicon-chevron-left"></i>
-        {{ label|trans }}
-
+        {{ (label|default('back'))|trans }}
     </a>

@@ -4,7 +4,7 @@
 {% block adenamail_body %}
     <div class="row">
         <div class="col-xs-12">
-            {% include('AdenaMailBundle:Common/Button:create_button.html.twig') with {'label' : 'ADD ME', 'path' : path('adena_mail_email_add') } %}
+            {% include('AdenaMailBundle:Common/Button:create_link_button.html.twig') with {'label' : 'Add new Email', 'path' : path('adena_mail_email_add') } %}
         </div>
     </div>
 
@@ -19,7 +19,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for email in emailList %}
+                {% for email in emails %}
                     <tr>
                         <td>{{ email.id }}</td>
                         <td><a href="{{ path('adena_mail_email_view', {'id': email.id}) }}">{{ email.subject }}</a></td>

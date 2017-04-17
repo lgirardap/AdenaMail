@@ -1,16 +1,17 @@
 {% extends 'AdenaMailBundle::layout.html.twig' %}
 
 {% block adenamail_body %}
+    {%  include('AdenaMailBundle:Common/Button:back_link_button.html.twig') with {'label': 'Back to list', 'path': path('adena_mail_email_list')} %}
+
     <h2>Delete an Email</h2>
 
     <p>
-        Are you sure you want to delte the email "{{ email.subject }}" ?
+        Are you sure you want to delete the email "{{ email.subject }}" ?
     </p>
 
     {# Keep the ID in the action #}
     <form action="{{ path('adena_mail_email_delete', {'id': email.id}) }}" method="post">
-        {% include('@AdenaMail/Common/Button/back_button.html.twig') with {'label' : 'Back to Email ', 'path' :  path('adena_mail_email_view', {'id': email.id})} %}
-        <input type="submit" value="Delete" class="btn btn-danger" />
+        {%  include('AdenaMailBundle:Form/Button:delete_button.html.twig') %}
         {# Generates our form (only CSFR) #}
         {{ form_rest(form) }}
     </form>

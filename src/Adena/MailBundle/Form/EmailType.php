@@ -18,8 +18,7 @@ class EmailType extends AbstractType
     {
         $builder
             ->add('template', TextareaType::class)
-            ->add('subject', TextType::class)
-            ->add('save',      SubmitType::class);
+            ->add('subject', TextType::class);
     }
     
     /**
