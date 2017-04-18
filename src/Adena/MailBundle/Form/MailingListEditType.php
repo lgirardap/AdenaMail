@@ -21,7 +21,7 @@ class MailingListEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->remove('type')
+//            ->remove('type')
             ->remove('datasource');
     }
 }

@@ -2,6 +2,7 @@ adena_mail_homepage:
     path:     /
     defaults: { _controller: AdenaMailBundle:Home:index }
 
+#=== SENDER ===
 adena_mail_sender_list:
     path:     /sender
     defaults: { _controller: AdenaMailBundle:Sender:list }
@@ -22,6 +23,7 @@ adena_mail_sender_delete:
     requirements:
         id: \d+
 
+#=== EMAIL ===
 adena_mail_email_add:
   path: /email/add
   defaults:
@@ -53,10 +55,15 @@ adena_mail_email_list:
   defaults:
     _controller: AdenaMailBundle:Email:list
 
+
+#=== MAILING LIST ===
 adena_mail_mailing_list_add:
-  path: /mailing-list/add
+  path: /mailing-list/add/{type}
   defaults:
     _controller: AdenaMailBundle:MailingList:add
+    type: query
+  requirements:
+    type: query|list
 
 adena_mail_mailing_list_view:
   path: /mailing-list/{id}
@@ -83,6 +90,11 @@ adena_mail_mailing_list_list:
   path: /mailing-list
   defaults:
     _controller: AdenaMailBundle:MailingList:list
+
+adena_mail_mailing_list_choose_add:
+  path: /mailing-list/choose-add
+  defaults:
+    _controller: AdenaMailBundle:MailingList:chooseAdd
 
 #=== DATASOURCE ===
 adena_mail_datasource_list:

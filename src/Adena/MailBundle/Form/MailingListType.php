@@ -21,9 +21,9 @@ class MailingListType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('content', TextareaType::class)
-            ->add('type', ChoiceType::class, [
-                'choices' => MailingList::TYPES,
-            ])
+//            ->add('type', ChoiceType::class, [
+//                'choices' => MailingList::TYPES,
+//            ])
             ->add('datasource', EntityType::class, [
                 'class' => 'Adena\MailBundle\Entity\Datasource',
                 'choice_label' => 'name'
