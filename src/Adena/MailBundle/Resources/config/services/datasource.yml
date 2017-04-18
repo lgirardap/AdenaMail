@@ -1,0 +1,21 @@
+services:
+  adena_mail.doctrine_listener.datasource_update:
+      class: Adena\MailBundle\DoctrineListener\DatasourceListener
+      arguments:
+          - "@tool.encrypt"
+      tags:
+          - { name: doctrine.event_listener, event: preUpdate }
+
+  adena_mail.doctrine_listener.datasource_creation:
+      class: Adena\MailBundle\DoctrineListener\DatasourceListener
+      arguments:
+          - "@tool.encrypt"
+      tags:
+          - { name: doctrine.event_listener, event: prePersist }
+
+  adena_mail.doctrine_listener.datasource_load:
+      class: Adena\MailBundle\DoctrineListener\DatasourceListener
+      arguments:
+          - "@tool.encrypt"
+      tags:
+          - { name: doctrine.event_listener, event: postLoad }

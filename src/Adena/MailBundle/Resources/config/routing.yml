@@ -52,7 +52,7 @@ adena_mail_email_list:
   path: /email
   defaults:
     _controller: AdenaMailBundle:Email:list
-    
+
 adena_mail_mailing_list_add:
   path: /mailing-list/add
   defaults:
@@ -83,3 +83,24 @@ adena_mail_mailing_list_list:
   path: /mailing-list
   defaults:
     _controller: AdenaMailBundle:MailingList:list
+
+#=== DATASOURCE ===
+adena_mail_datasource_list:
+    path:     /datasource
+    defaults: { _controller: AdenaMailBundle:Datasource:list }
+
+adena_mail_datasource_add:
+    path:     /datasource/add
+    defaults: { _controller: AdenaMailBundle:Datasource:add }
+
+adena_mail_datasource_edit:
+    path:     /datasource/edit/{id}
+    defaults: { _controller: AdenaMailBundle:Datasource:edit }
+    requirements:
+        id: \d+
+
+adena_mail_datasource_delete:
+    path:     /datasource/delete/{id}
+    defaults: { _controller: AdenaMailBundle:Datasource:delete }
+    requirements:
+        id: \d+

@@ -1,5 +1,13 @@
+imports:
+    - { resource: services/sender.yml }
+    - { resource: services/datasource.yml }
+
 services:
   foobar.form_extention.icon:
-    class: Adena\MailBundle\Form\Extension\ButtonTypeIconExtension
-    tags:
-      - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\ButtonType }
+      class: Adena\MailBundle\Form\Extension\ButtonTypeIconExtension
+      tags:
+          - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\ButtonType }
+
+  tool.encrypt:
+      class: Adena\MailBundle\Tools\EncryptTool
+      arguments: ['%secret%']

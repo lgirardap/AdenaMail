@@ -3,12 +3,14 @@
 namespace Adena\MailBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Datasource
  *
  * @ORM\Table(name="datasource")
  * @ORM\Entity(repositoryClass="Adena\MailBundle\Repository\DatasourceRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Datasource
 {
@@ -25,6 +27,7 @@ class Datasource
      * @var string
      *
      * @ORM\Column(name="host", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $host;
 
@@ -32,6 +35,7 @@ class Datasource
      * @var integer
      *
      * @ORM\Column(name="port", type="integer", length=5)
+     * @Assert\NotBlank()
      */
     private $port;
 
@@ -39,6 +43,7 @@ class Datasource
      * @var string
      *
      * @ORM\Column(name="username", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $username;
 
@@ -46,6 +51,7 @@ class Datasource
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $password;
 
@@ -53,6 +59,7 @@ class Datasource
      * @var string
      *
      * @ORM\Column(name="database_name", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $databaseName;
 
@@ -60,6 +67,7 @@ class Datasource
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
      */
     private $name;
 
