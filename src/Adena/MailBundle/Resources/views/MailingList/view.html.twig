@@ -1,0 +1,14 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block adenamail_body %}
+    {%  include('AdenaMailBundle:Common/Button:back_link_button.html.twig') with {'label': 'Back to list', 'path': path('adena_mail_mailing_list_list')} %}
+    <h4>Name</h4>
+    <p>{{ mailingList.name }}</p>
+    <h4>Type</h4>
+    <p>{{ mailingList.type }}</p>
+    <h4>Content</h4>
+    <p>{{ mailingList.content }}</p>
+    {%  include('AdenaMailBundle:Common/Button:edit_link_button.html.twig') with {'path': path('adena_mail_mailing_list_edit', {id: mailingList.id})} %}
+    {%  include('AdenaMailBundle:Common/Button:delete_link_button.html.twig') with {'path': path('adena_mail_mailing_list_delete', {id: mailingList.id})} %}
+{% endblock %}
+

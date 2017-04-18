@@ -52,3 +52,34 @@ adena_mail_email_list:
   path: /email
   defaults:
     _controller: AdenaMailBundle:Email:list
+    
+adena_mail_mailing_list_add:
+  path: /mailing-list/add
+  defaults:
+    _controller: AdenaMailBundle:MailingList:add
+
+adena_mail_mailing_list_view:
+  path: /mailing-list/{id}
+  defaults:
+    _controller: AdenaMailBundle:MailingList:view
+  requirements:
+    id: \d+
+
+adena_mail_mailing_list_edit:
+  path: /mailing-list/edit/{id}
+  defaults:
+    _controller: AdenaMailBundle:MailingList:edit
+  requirements:
+    id: \d+
+
+adena_mail_mailing_list_delete:
+  path: /mailing-list/delete/{id}
+  defaults:
+    _controller: AdenaMailBundle:MailingList:delete
+  requirements:
+    id: \d+
+
+adena_mail_mailing_list_list:
+  path: /mailing-list
+  defaults:
+    _controller: AdenaMailBundle:MailingList:list

@@ -12,6 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class MailingList
 {
+    const TYPE_QUERY = 'query';
+    const TYPE_LIST = 'list';
+    const TYPES = [
+        self::TYPE_QUERY => self::TYPE_QUERY,
+        self::TYPE_LIST => self::TYPE_LIST
+    ];
+
     /**
      * @var int
      *
@@ -46,7 +53,7 @@ class MailingList
      * @var Datasource
      * 
      * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Datasource")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $datasource;
 
@@ -117,6 +124,9 @@ class MailingList
      */
     public function setType($type)
     {
+        if (!in_array($type, self::TYPES)) {
+            throw new \InvalidArgumentException("Invalid status");
+        }
         $this->type = $type;
 
         return $this;

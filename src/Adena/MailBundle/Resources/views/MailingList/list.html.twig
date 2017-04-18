@@ -1,0 +1,41 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+
+{% block adenamail_body %}
+    <div class="row">
+        <div class="col-xs-12">
+            {% include('AdenaMailBundle:Common/Button:create_link_button.html.twig') with {'label' : 'Add new MailingList', 'path' : path('adena_mail_mailing_list_add') } %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for mailingList in mailingLists %}
+                    <tr>
+                        <td>{{ mailingList.id }}</td>
+                        <td><a href="{{ path('adena_mail_mailing_list_view', {'id': mailingList.id}) }}">{{ mailingList.name }}</a></td>
+                        <td>
+                            <a href="{{ path('adena_mail_mailing_list_edit', {'id': mailingList.id}) }}">
+                                Edit
+                            </a> |
+                            <a href="{{ path('adena_mail_mailing_list_delete', {'id': mailingList.id}) }}">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+

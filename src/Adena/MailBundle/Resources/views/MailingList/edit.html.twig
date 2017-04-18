@@ -1,0 +1,19 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block adenamail_body %}
+    {%  include('AdenaMailBundle:Common/Button:back_link_button.html.twig') with {'label': 'Back to list', 'path': path('adena_mail_mailing_list_list')} %}
+
+    <h3>Editing a Mailing List.</h3>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            {% include('AdenaMailBundle:Form/Button:submit_button.html.twig') %}
+            {% include('AdenaMailBundle:Form/Button:reset_button.html.twig') %}
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
