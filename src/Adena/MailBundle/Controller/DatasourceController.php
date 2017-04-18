@@ -4,7 +4,6 @@ namespace Adena\MailBundle\Controller;
 
 use Adena\MailBundle\Entity\Datasource;
 use Adena\MailBundle\Form\DatasourceType;
-use Adena\MailBundle\Form\SenderType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -46,13 +45,6 @@ class DatasourceController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listAction(){
-
-        // Encrypt tool !!! === Todo
-        $encryptTool = $this->get('tool.encrypt');
-        $encryptedData = $encryptTool->encrypt('Lionel');
-        echo($encryptedData);
-        echo($encryptTool->decrypt($encryptedData));
-        // ====
 
         $em = $this->getDoctrine()->getManager();
         $datasourceRepository = $em->getRepository('AdenaMailBundle:Datasource');

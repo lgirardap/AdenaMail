@@ -1,3 +1,7 @@
+imports:
+    - { resource: services/sender.yml }
+    - { resource: services/datasource.yml }
+
 services:
   foobar.form_extention.icon:
       class: Adena\MailBundle\Form\Extension\ButtonTypeIconExtension
@@ -7,24 +11,3 @@ services:
   tool.encrypt:
       class: Adena\MailBundle\Tools\EncryptTool
       arguments: ['%secret%']
-
-  adena_mail.doctrine_listener.sender_update:
-      class: Adena\MailBundle\DoctrineListener\SenderListener
-      arguments:
-          - "@tool.encrypt"
-      tags:
-          - { name: doctrine.event_listener, event: preUpdate }
-
-  adena_mail.doctrine_listener.sender_creation:
-      class: Adena\MailBundle\DoctrineListener\SenderListener
-      arguments:
-          - "@tool.encrypt"
-      tags:
-          - { name: doctrine.event_listener, event: prePersist }
-
-  adena_mail.doctrine_listener.sender_load:
-      class: Adena\MailBundle\DoctrineListener\SenderListener
-      arguments:
-          - "@tool.encrypt"
-      tags:
-          - { name: doctrine.event_listener, event: postLoad }

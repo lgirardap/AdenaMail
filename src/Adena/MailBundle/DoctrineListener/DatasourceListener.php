@@ -1,19 +1,17 @@
 <?php
 namespace Adena\MailBundle\DoctrineListener;
 
-use Adena\MailBundle\Entity\Sender;
+use Adena\MailBundle\Entity\Datasource;
 use Adena\MailBundle\Tools\EncryptTool;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 
-class SenderListener
+class DatasourceListener
 {
 
     /**
      * @var EncryptTool
      */
     private $encryptTool;
-
-
 
     public function __construct( EncryptTool $encryptTool )
     {
@@ -24,7 +22,7 @@ class SenderListener
     {
         $entity = $args->getObject();
 
-        if (!$entity instanceof Sender ) {
+        if (!$entity instanceof Datasource ) {
             return;
         }
 
@@ -35,7 +33,7 @@ class SenderListener
     {
         $entity = $args->getObject();
 
-        if (!$entity instanceof Sender ) {
+        if (!$entity instanceof Datasource ) {
             return;
         }
 
@@ -46,7 +44,7 @@ class SenderListener
     {
         $entity = $args->getObject();
 
-        if (!$entity instanceof Sender ) {
+        if (!$entity instanceof Datasource ) {
             return;
         }
 
