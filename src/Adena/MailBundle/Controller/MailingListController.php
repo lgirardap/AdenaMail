@@ -7,6 +7,7 @@ use Adena\MailBundle\Form\MailingListType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Adena\MailBundle\Entity\MailingList;
+use Symfony\Component\Routing\Exception\InvalidParameterException;
 
 class MailingListController extends Controller
 {
@@ -51,6 +52,11 @@ class MailingListController extends Controller
     }
     
     public function addAction(Request $request, $type ){
+        // Only allow types that are in the type array
+        if(!in_array($type, MailingList::TYPES)){
+            throw new InvalidParameterException('Invalid type');
+        }
+
         $mailingList = new MailingList();
         $mailingList->setType($type);
 

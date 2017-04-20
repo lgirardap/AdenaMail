@@ -62,8 +62,6 @@ adena_mail_mailing_list_add:
   defaults:
     _controller: AdenaMailBundle:MailingList:add
     type: query
-  requirements:
-    type: query|list
 
 adena_mail_mailing_list_view:
   path: /mailing-list/{id}
