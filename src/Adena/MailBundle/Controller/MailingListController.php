@@ -51,12 +51,10 @@ class MailingListController extends Controller
     }
     
     public function addAction(Request $request, $type ){
-
         $mailingList = new MailingList();
         $mailingList->setType($type);
 
         $form = $this->createForm(MailingListType::class, $mailingList);
-
 
         // Check if the form is valid
         if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){

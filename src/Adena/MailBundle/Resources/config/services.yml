@@ -3,10 +3,15 @@ imports:
     - { resource: services/datasource.yml }
 
 services:
-  foobar.form_extention.icon:
+  adena_mail.form_extention.icon:
       class: Adena\MailBundle\Form\Extension\ButtonTypeIconExtension
       tags:
           - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\ButtonType }
+
+  adena_mail.form_extention.help_block:
+        class: Adena\MailBundle\Form\Extension\HelpBlockExtension
+        tags:
+            - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
 
   tool.encrypt:
       class: Adena\MailBundle\Tools\EncryptTool

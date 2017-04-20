@@ -3,7 +3,7 @@
 {% block adenamail_body %}
     {%  include('AdenaMailBundle:Common/Button:back_link_button.html.twig') with {'label': 'Back to list', 'path': path('adena_mail_mailing_list_list')} %}
 
-    <h3>Add a new Mailing List. You can either add an SQL query or a static list (list of emails separated by comas (,).</h3>
+    <h3>Add a new Mailing List.</h3>
 
     {{ form_start(form) }}
     {{ form_widget(form) }}

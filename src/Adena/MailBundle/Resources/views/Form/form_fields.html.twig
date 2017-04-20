@@ -24,3 +24,18 @@
     </button>
 {%- endblock button_widget -%}
 
+{%- block form_help -%}
+    {% if help_block|default %}
+        <span class="help-block">{{ help_block }}</span>
+    {% endif %}
+{%- endblock form_help  -%}
+
+{%- block form_row -%}
+    <div class="form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+        {{- block('form_help') -}}
+    </div>
+{%- endblock form_row -%}
+
