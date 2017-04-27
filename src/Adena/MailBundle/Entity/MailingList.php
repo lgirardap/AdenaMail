@@ -3,6 +3,9 @@
 namespace Adena\MailBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * MailingList
@@ -32,6 +35,7 @@ class MailingList
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
      */
     private $name;
 
@@ -39,6 +43,7 @@ class MailingList
      * @var string
      *
      * @ORM\Column(name="content", type="text")
+     * @Assert\NotBlank()
      */
     private $content;
 
@@ -46,6 +51,8 @@ class MailingList
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Choice(callback="getTypes")
      */
     private $type;
 
@@ -56,6 +63,30 @@ class MailingList
      * @ORM\JoinColumn(nullable=true)
      */
     private $datasource;
+
+    /**
+     * Datasource is only checked when the type is "query", so we need a custom validator to handle it.
+     *
+     * @Assert\Callback()
+     */
+    public function validateDatasource(ExecutionContextInterface $context, $payload)
+    {
+        if(self::TYPE_QUERY === $this->getType()){
+            // Mandatory
+            $context
+                ->getValidator()
+                ->inContext($context)
+                ->atPath('datasource')
+                ->validate($this->datasource, new  Assert\NotBlank(), [Constraint::DEFAULT_GROUP]);
+
+            // And valid
+            $context
+                ->getValidator()
+                ->inContext($context)
+                ->atPath('datasource')
+                ->validate($this->datasource, new  Assert\Valid(), [Constraint::DEFAULT_GROUP]);
+        }
+    }
 
     /**
      * Get id
@@ -124,8 +155,8 @@ class MailingList
      */
     public function setType($type)
     {
-        if (!in_array($type, self::TYPES)) {
-            throw new \InvalidArgumentException("Invalid status");
+        if (!in_array($type, $this->getTypes())) {
+            throw new \InvalidArgumentException("Invalid type");
         }
         $this->type = $type;
 
@@ -140,6 +171,10 @@ class MailingList
     public function getType()
     {
         return $this->type;
+    }
+
+    public function getTypes(){
+        return self::TYPES;
     }
 
     /**

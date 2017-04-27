@@ -55,6 +55,33 @@
     {# Ajoutez ces lignes JavaScript si vous comptez vous servir des fonctionnalités du bootstrap Twitter #}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//underscorejs.org/underscore-min.js"></script>
+    <script type="text/javascript">
+        $('form').submit(function(e){
+            if(e) e.preventDefault();
+
+            var $form = $(e.currentTarget);
+
+            var data = $form.serialize();
+            data += '&form_name='+$form.attr('name');
+
+            $.ajax('{{ path('adena_mail_xhr_validation') }}', {
+                method: 'POST',
+                data: data,
+                success: function(data){
+                    console.log('SUCCESS');
+                    console.log(data);
+                },
+                error: function(data){
+                    console.log('ERROR');
+                    console.log(data);
+                    _.each(data.responseJSON, function(item, key){
+                        $('#'+$form.attr('name')+'_'+key).closest('.form-group').replaceWith(item);
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 </body>

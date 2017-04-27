@@ -5,8 +5,12 @@ namespace Adena\MailBundle\Controller;
 use Adena\MailBundle\Form\MailingListEditType;
 use Adena\MailBundle\Form\MailingListType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Adena\MailBundle\Entity\MailingList;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 
 class MailingListController extends Controller
@@ -52,11 +56,7 @@ class MailingListController extends Controller
     }
     
     public function addAction(Request $request, $type ){
-        // Only allow types that are in the type array
-        if(!in_array($type, MailingList::TYPES)){
-            throw new InvalidParameterException('Invalid type');
-        }
-
+        // We rely on setType to check if the type provided in the route is valid
         $mailingList = new MailingList();
         $mailingList->setType($type);
 
@@ -76,9 +76,29 @@ class MailingListController extends Controller
             ]);
         }
 
+        dump($this->getErrorsFromForm($form));
         return $this->render('AdenaMailBundle:MailingList:add.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    public function xhrValidationAction(Request $request){
+        if(!$request->isXmlHttpRequest() || !$request->isMethod('POST')){
+            throw new NotFoundHttpException('Only accessible via XmlHttp POST');
+        }
+
+        $formData = $request->request->get($request->request->get('form_name'));
+
+        $dataClass = $formData['data_class'];
+
+        $entity = new $dataClass();
+        $form = $this->createForm($formData['formtype_class'], $entity);
+
+        if($form->handleRequest($request)->isValid()){
+            return new JsonResponse([]);
+        }
+
+        return new JsonResponse($this->getErrorsFromForm($form), 400);
     }
 
     public function editAction(Request $request, MailingList $mailingList){
@@ -101,5 +121,26 @@ class MailingListController extends Controller
             'form' => $form->createView(),
             'mailingList' => $mailingList
         ]);
+    }
+
+    private function getErrorsFromForm(FormInterface $form)
+    {
+        $errors = array();
+        foreach ($form->getErrors() as $error) {
+            $errors[] = $error->getMessage();
+        }
+        foreach ($form->all() as $childForm) {
+            if ($childForm instanceof FormInterface) {
+                if ($childErrors = $this->getErrorsFromForm($childForm)) {
+                    $errors[$childForm->getName()] = $this->renderView('@AdenaMail/form.error.html.twig', [
+                        'form'=>$form->createView(),
+                        'element'=>$childForm->getName()
+                    ]);
+                }
+            }else{
+                //dump($childForm);
+            }
+        }
+        return $errors;
     }
 }
