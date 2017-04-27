@@ -37,6 +37,12 @@ class MailingListType extends AbstractType
                     'attr' => ['value' => "\\".self::class],
                     'mapped' => false
                 ]
+            )
+            ->add('form_template', HiddenType::class,
+                [
+                    'attr' => ['value' => $options['form_template']],
+                    'mapped' => false
+                ]
             );
 
         // Our callback to decide whether or not to add the datasource field.

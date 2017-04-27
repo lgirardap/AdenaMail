@@ -114,5 +114,5 @@ adena_mail_datasource_delete:
 
 adena_mail_xhr_validation:
   path: /xhr/validation
-  defaults: { _controller: AdenaMailBundle:MailingList:xhrValidation }
+  defaults: { _controller: AdenaMailBundle:Xhr:validation }
   methods: [POST]

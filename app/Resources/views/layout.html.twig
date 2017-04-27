@@ -57,7 +57,7 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="//underscorejs.org/underscore-min.js"></script>
     <script type="text/javascript">
-        $('form').submit(function(e){
+        var submitCallback = function(e){
             if(e) e.preventDefault();
 
             var $form = $(e.currentTarget);
@@ -71,16 +71,26 @@
                 success: function(data){
                     console.log('SUCCESS');
                     console.log(data);
+
+                    $form.off();
+                    $form.submit();
                 },
                 error: function(data){
                     console.log('ERROR');
                     console.log(data);
-                    _.each(data.responseJSON, function(item, key){
-                        $('#'+$form.attr('name')+'_'+key).closest('.form-group').replaceWith(item);
-                    });
+
+                    var formName = $form.attr('name');
+
+                    $('form[name='+formName+']').replaceWith(data.responseJSON.template);
+                    $('form[name='+formName+']').on('submit', submitCallback);
+//                    _.each(data.responseJSON, function(item, key){
+//                        $('#'+$form.attr('name')+'_'+key).closest('.form-group').replaceWith(item);
+//                    });
                 }
             });
-        });
+        };
+
+        $('form:not(.nojsvalidate)').on('submit', submitCallback);
     </script>
 {% endblock %}
 
