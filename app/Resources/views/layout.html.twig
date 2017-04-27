@@ -79,6 +79,7 @@
                     console.log('ERROR');
                     console.log(data);
 
+                    // Save the name since $form will be replaced.
                     var formName = $form.attr('name');
 
                     $('form[name='+formName+']').replaceWith(data.responseJSON.template);

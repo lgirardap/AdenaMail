@@ -5,14 +5,5 @@
 
     <h3>Add a new email. You can (and should) past HTML in the template field.</h3>
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-
-    <div class="row">
-        <div class="col-sm-12 text-center">
-            {% include('AdenaMailBundle:Form/Button:submit_button.html.twig') %}
-            {% include('AdenaMailBundle:Form/Button:reset_button.html.twig') %}
-        </div>
-    </div>
-    {{ form_end(form) }}
+    {% include('AdenaMailBundle:MailingList:add_form.html.twig') %}
 {% endblock %}
