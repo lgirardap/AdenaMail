@@ -1,3 +1,0 @@
-adena_core_homepage:
-    path:     /
-    defaults: { _controller: AdenaCoreBundle:Default:index }

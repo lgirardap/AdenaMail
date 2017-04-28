@@ -2,19 +2,13 @@
 
 namespace Adena\MailBundle\Controller;
 
+use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Entity\Email;
 use Adena\MailBundle\Form\EmailType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class EmailController extends Controller
+class EmailController extends CoreController
 {
-    public function indexAction()
-    {
-        return $this->render('AdenaMailBundle:Home:index.html.twig');
-    }
-
     public function viewAction(Email $email){
         return $this->render('AdenaMailBundle:Email:view.html.twig', [
             'email' => $email
@@ -52,6 +46,7 @@ class EmailController extends Controller
 
     public function addAction(Request $request){
         $email = new Email();
+
         $form = $this->createForm(EmailType::class, $email);
 
         // Check if the form is valid
@@ -63,9 +58,21 @@ class EmailController extends Controller
 
             $this->addFlash('success', 'Email successfully added');
 
-            return $this->redirectToRoute('adena_mail_email_view', [
+            $redirectUrl = $this->generateUrl('adena_mail_email_view', [
                 'id' => $email->getId()
             ]);
+
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+
+            return $this->redirect($redirectUrl);
+        }
+
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:Email:add_form.html.twig', [
+                'form' => $form->createView(),
+            ], 400);
         }
 
         return $this->render('AdenaMailBundle:Email:add.html.twig', [
@@ -84,14 +91,25 @@ class EmailController extends Controller
 
             $this->addFlash('success', 'Email successfully modified');
 
-            return $this->redirectToRoute('adena_mail_email_view', [
+            $redirectUrl = $this->generateUrl('adena_mail_email_view', [
                 'id' => $email->getId()
             ]);
+
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+
+            return $this->redirect($redirectUrl);
+        }
+
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:Email:edit_form.html.twig', [
+                'form' => $form->createView(),
+            ], 400);
         }
 
         return $this->render('AdenaMailBundle:Email:edit.html.twig', [
-            'form' => $form->createView(),
-            'email' => $email
+            'form' => $form->createView()
         ]);
     }
 }
