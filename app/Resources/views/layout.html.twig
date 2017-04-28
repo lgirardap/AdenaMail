@@ -63,30 +63,19 @@
             var $form = $(e.currentTarget);
 
             var data = $form.serialize();
-            data += '&form_name='+$form.attr('name');
+//            data += '&form_name='+$form.attr('name');
 
-            $.ajax('{{ path('adena_mail_xhr_validation') }}', {
+            $.ajax($form.attr('action'), {
                 method: 'POST',
                 data: data,
                 success: function(data){
-                    console.log('SUCCESS');
-                    console.log(data);
-
-                    $form.off();
-                    $form.submit();
+                    window.location = data.url;
                 },
                 error: function(data){
-                    console.log('ERROR');
-                    console.log(data);
-
                     // Save the name since $form will be replaced.
                     var formName = $form.attr('name');
-
-                    $('form[name='+formName+']').replaceWith(data.responseJSON.template);
+                    $('form[name='+formName+']').replaceWith(data.responseJSON.view);
                     $('form[name='+formName+']').on('submit', submitCallback);
-//                    _.each(data.responseJSON, function(item, key){
-//                        $('#'+$form.attr('name')+'_'+key).closest('.form-group').replaceWith(item);
-//                    });
                 }
             });
         };

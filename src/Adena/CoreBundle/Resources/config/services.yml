@@ -1,0 +1,4 @@
+services:
+#    adena_core.example:
+#        class: Adena\CoreBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

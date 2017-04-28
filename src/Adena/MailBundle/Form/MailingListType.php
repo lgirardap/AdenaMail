@@ -5,15 +5,13 @@ namespace Adena\MailBundle\Form;
 use Adena\MailBundle\Entity\MailingList;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MailingListType extends AbstractType
@@ -24,34 +22,17 @@ class MailingListType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class)
-            ->add('type', HiddenType::class)
-            ->add('data_class', HiddenType::class,
-                [
-                    'attr' => ['value' => "\\".$options['data_class']],
-                    'mapped' => false
-                ]
-            )
-            ->add('formtype_class', HiddenType::class,
-                [
-                    'attr' => ['value' => "\\".self::class],
-                    'mapped' => false
-                ]
-            )
-            ->add('form_template', HiddenType::class,
-                [
-                    'attr' => ['value' => $options['form_template']],
-                    'mapped' => false
-                ]
-            );
+            ->add('name', TextType::class);
 
         // Our callback to decide whether or not to add the datasource field.
         $datasourceModifier = function(FormInterface $form, $type){
             if(MailingList::TYPE_QUERY === $type) {
-                $form->add('datasource', EntityType::class, [
-                    'class' => 'Adena\MailBundle\Entity\Datasource',
-                    'choice_label' => 'name'
-                ]);
+//                $form->add('datasource', EntityType::class, [
+//                    'class' => 'Adena\MailBundle\Entity\Datasource',
+//                    'choice_label' => 'name'
+//                ]);
+
+                $form->add('datasource', DatasourceType::class);
             }
         };
 
@@ -83,15 +64,15 @@ class MailingListType extends AbstractType
             $contentModifier($event->getForm(), $mailingList->getType());
         });
 
-        // When the "type" sub-form is submitted, we have to check its value and if needed add the datasource field
-        // When using AJAX validation, the only way we can know the type is by checking the data in the Hidden field, so we
-        // can't rely on the PRE_SET_DATA event earlier.
-        $builder->get('type')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($datasourceModifier, $contentModifier) {
-            // We want to modify the PARENT form, so we have to use $event->getForm()->getParent();
-            // $event->getForm()->getData() is the value of the field, in this case a string.
-            $datasourceModifier($event->getForm()->getParent(), $event->getForm()->getData());
-            $contentModifier($event->getForm()->getParent(), $event->getForm()->getData());
-        });
+//        // When the "type" sub-form is submitted, we have to check its value and if needed add the datasource field
+//        // When using AJAX validation, the only way we can know the type is by checking the data in the Hidden field, so we
+//        // can't rely on the PRE_SET_DATA event earlier.
+//        $builder->get('type')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($datasourceModifier, $contentModifier) {
+//            // We want to modify the PARENT form, so we have to use $event->getForm()->getParent();
+//            // $event->getForm()->getData() is the value of the field, in this case a string.
+//            $datasourceModifier($event->getForm()->getParent(), $event->getForm()->getData());
+//            $contentModifier($event->getForm()->getParent(), $event->getForm()->getData());
+//        });
     }
 
     /**

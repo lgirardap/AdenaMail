@@ -59,7 +59,7 @@ class MailingList
     /**
      * @var Datasource
      * 
-     * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Datasource")
+     * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Datasource", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true)
      */
     private $datasource;

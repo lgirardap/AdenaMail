@@ -1,3 +1,7 @@
+adena_core:
+    resource: "@AdenaCoreBundle/Resources/config/routing.yml"
+    prefix:   /
+
 adena_mail:
     resource: "@AdenaMailBundle/Resources/config/routing.yml"
     prefix:   /

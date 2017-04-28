@@ -2,18 +2,13 @@
 
 namespace Adena\MailBundle\Controller;
 
+use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Form\MailingListEditType;
 use Adena\MailBundle\Form\MailingListType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Adena\MailBundle\Entity\MailingList;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Exception\InvalidParameterException;
 
-class MailingListController extends Controller
+class MailingListController extends CoreController
 {
     public function viewAction(MailingList $mailingList){
         return $this->render('AdenaMailBundle:MailingList:view.html.twig', [
@@ -71,9 +66,21 @@ class MailingListController extends Controller
 
             $this->addFlash('success', 'MailingList successfully added');
 
-            return $this->redirectToRoute('adena_mail_mailing_list_view', [
+            $redirectUrl = $this->generateUrl('adena_mail_mailing_list_view', [
                 'id' => $mailingList->getId()
             ]);
+
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+
+            return $this->redirect($redirectUrl);
+        }
+
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:MailingList:add_form.html.twig', [
+                'form' => $form->createView(),
+            ], 400);
         }
 
         return $this->render('AdenaMailBundle:MailingList:add.html.twig', [
@@ -94,14 +101,25 @@ class MailingListController extends Controller
 
             $this->addFlash('success', 'MailingList successfully modified');
 
-            return $this->redirectToRoute('adena_mail_mailing_list_view', [
+            $redirectUrl = $this->generateUrl('adena_mail_mailing_list_view', [
                 'id' => $mailingList->getId()
             ]);
+
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+
+            return $this->redirect($redirectUrl);
         }
 
-        return $this->render('AdenaMailBundle:MailingList:edit.html.twig', [
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:MailingList:edit_form.html.twig', [
+                    'form' => $form->createView(),
+            ], 400);
+        }
+
+        return $this->render('AdenaMailBundle:MailingList:add.html.twig', [
             'form' => $form->createView(),
-            'mailingList' => $mailingList
         ]);
     }
 }

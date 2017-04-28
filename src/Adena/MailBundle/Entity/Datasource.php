@@ -36,6 +36,7 @@ class Datasource
      *
      * @ORM\Column(name="port", type="integer", length=5)
      * @Assert\NotBlank()
+     * @Assert\Type("integer")
      */
     private $port;
 
