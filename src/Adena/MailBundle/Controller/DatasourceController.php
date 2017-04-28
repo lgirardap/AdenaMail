@@ -2,12 +2,12 @@
 
 namespace Adena\MailBundle\Controller;
 
+use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Entity\Datasource;
 use Adena\MailBundle\Form\DatasourceType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class DatasourceController extends Controller
+class DatasourceController extends CoreController
 {
     public function indexAction()
     {
@@ -32,8 +32,19 @@ class DatasourceController extends Controller
 
             $this->addFlash('success', 'Datasource successfully added');
 
-            return $this->redirectToRoute('adena_mail_datasource_add');
+            $redirectUrl = $this->generateUrl('adena_mail_datasource_add');
 
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+            return $this->redirectToRoute($redirectUrl);
+
+        }
+
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:Datasource:add_form.html.twig', [
+                'form' => $form->createView(),
+            ], 400);
         }
 
         return $this->render('AdenaMailBundle:Datasource:add.html.twig', array(
@@ -105,8 +116,21 @@ class DatasourceController extends Controller
 
             $request->getSession()->getFlashBag()->add('notice', 'Datasource updated.');
 
-            return $this->redirectToRoute('adena_mail_datasource_list');
+            $redirectUrl = $this->generateUrl('adena_mail_datasource_edit', [
+                'id' => $datasource->getId()
+            ]);
 
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+
+            return $this->redirectToRoute($redirectUrl);
+        }
+
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:Datasource:edit_form.html.twig', [
+                'form' => $form->createView(),
+            ], 400);
         }
 
         return $this->render('AdenaMailBundle:Datasource:edit.html.twig', array(

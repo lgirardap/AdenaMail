@@ -10,7 +10,7 @@
     </p>
 
     {# Keep the ID in the action #}
-    <form action="{{ path('adena_mail_datasource_delete', {'id': datasource.id}) }}" method="post">
+    <form action="{{ path('adena_mail_datasource_delete', {'id': datasource.id}) }}" method="post" class="nojsvalidate">
         {%  include('AdenaMailBundle:Form/Button:delete_button.html.twig') %}
         {# Generates our form (only CSFR) #}
         {{ form_rest(form) }}

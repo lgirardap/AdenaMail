@@ -3,7 +3,7 @@
 namespace Adena\MailBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,7 +17,7 @@ class DatasourceType extends AbstractType
     {
         $builder
             ->add('host',           TextType::class)
-            ->add('port',           NumberType::class)
+            ->add('port',           IntegerType::class)
             ->add('username',       TextType::class)
             ->add('password',       TextType::class)
             ->add('databaseName',   TextType::class)
