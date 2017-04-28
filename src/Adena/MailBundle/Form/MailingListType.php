@@ -27,10 +27,10 @@ class MailingListType extends AbstractType
         // Our callback to decide whether or not to add the datasource field.
         $datasourceModifier = function(FormInterface $form, $type){
             if(MailingList::TYPE_QUERY === $type) {
-//                $form->add('datasource', EntityType::class, [
-//                    'class' => 'Adena\MailBundle\Entity\Datasource',
-//                    'choice_label' => 'name'
-//                ]);
+                $form->add('datasource', EntityType::class, [
+                    'class' => 'Adena\MailBundle\Entity\Datasource',
+                    'choice_label' => 'name'
+                ]);
 
                 $form->add('datasource', DatasourceType::class);
             }
