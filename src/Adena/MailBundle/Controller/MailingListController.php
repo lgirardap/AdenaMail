@@ -118,7 +118,7 @@ class MailingListController extends CoreController
             ], 400);
         }
 
-        return $this->render('AdenaMailBundle:MailingList:add.html.twig', [
+        return $this->render('AdenaMailBundle:MailingList:edit.html.twig', [
             'form' => $form->createView(),
         ]);
     }

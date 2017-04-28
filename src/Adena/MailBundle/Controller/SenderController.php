@@ -2,12 +2,12 @@
 
 namespace Adena\MailBundle\Controller;
 
+use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Entity\Sender;
 use Adena\MailBundle\Form\SenderType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class SenderController extends Controller
+class SenderController extends CoreController
 {
     public function indexAction()
     {
@@ -25,20 +25,31 @@ class SenderController extends Controller
         $form = $this->get('form.factory')->create(SenderType::class, $sender);
 
         if( $request->isMethod('POST') && $form->handleRequest($request)->isValid()){
-
+            // Save it
             $em = $this->getDoctrine()->getManager();
             $em->persist( $sender );
             $em->flush();
 
             $this->addFlash('success', 'Sender successfully added');
 
-            return $this->redirectToRoute('adena_mail_sender_add');
+            $redirectUrl = $this->generateUrl('adena_mail_sender_add');
 
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+
+            return $this->redirect($redirectUrl);
         }
 
-        return $this->render('AdenaMailBundle:Sender:add.html.twig', array(
-            'form' => $form->createView()
-        ));
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:Sender:add_form.html.twig', [
+                'form' => $form->createView(),
+            ], 400);
+        }
+
+        return $this->render('AdenaMailBundle:Sender:add.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -64,7 +75,6 @@ class SenderController extends Controller
      */
     public function deleteAction(Request $request, Sender $sender)
     {
-
         $form = $this->get('form.factory')->create();
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
@@ -99,15 +109,27 @@ class SenderController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('notice', 'Sender updated.');
+            $request->getSession()->getFlashBag()->add('success', 'Sender updated.');
 
-            return $this->redirectToRoute('adena_mail_sender_list');
+            $redirectUrl = $this->generateUrl('adena_mail_sender_list');
+
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+
+            return $this->redirect($redirectUrl);
 
         }
 
-        return $this->render('AdenaMailBundle:Sender:edit.html.twig', array(
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:Sender:edit_form.html.twig', [
+                'form' => $form->createView(),
+            ], 400);
+        }
+
+        return $this->render('AdenaMailBundle:Sender:edit.html.twig', [
             'form' => $form->createView()
-        ));
+        ]);
     }
 
 }
