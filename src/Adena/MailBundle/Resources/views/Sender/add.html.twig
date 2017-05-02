@@ -3,5 +3,5 @@
 {% block adenamail_body %}
     {%  include('AdenaMailBundle:Common/Button:back_link_button.html.twig') with {'label': 'Back to list', 'path': path('adena_mail_sender_list')} %}
 
-    {% include('AdenaMailBundle:MailingList:add_form.html.twig') %}
+    {% include('AdenaMailBundle:Sender:add_form.html.twig') %}
 {% endblock %}

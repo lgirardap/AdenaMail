@@ -112,6 +112,26 @@ adena_mail_datasource_delete:
     requirements:
         id: \d+
 
+adena_mail_campaign_list:
+    path:     /campaign
+    defaults: { _controller: AdenaMailBundle:Campaign:list }
+
+adena_mail_campaign_add:
+    path:     /campaign/add
+    defaults: { _controller: AdenaMailBundle:Campaign:add }
+
+adena_mail_campaign_edit:
+    path:     /campaign/edit/{id}
+    defaults: { _controller: AdenaMailBundle:Campaign:edit }
+    requirements:
+        id: \d+
+
+adena_mail_campaign_delete:
+    path:     /campaign/delete/{id}
+    defaults: { _controller: AdenaMailBundle:Campaign:delete }
+    requirements:
+        id: \d+
+
 adena_mail_xhr_validation:
   path: /xhr/validation
   defaults: { _controller: AdenaMailBundle:Xhr:validation }

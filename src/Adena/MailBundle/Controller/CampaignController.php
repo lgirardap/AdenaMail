@@ -3,15 +3,15 @@
 namespace Adena\MailBundle\Controller;
 
 use Adena\CoreBundle\Controller\CoreController;
-use Adena\MailBundle\Entity\Datasource;
-use Adena\MailBundle\Form\DatasourceType;
+use Adena\MailBundle\Entity\Campaign;
+use Adena\MailBundle\Form\CampaignType;
 use Symfony\Component\HttpFoundation\Request;
 
-class DatasourceController extends CoreController
+class CampaignController extends CoreController
 {
     public function indexAction()
     {
-        return $this->render('AdenaMailBundle:Datasource:index.html.twig');
+        return $this->render('AdenaMailBundle:Campaign:index.html.twig');
     }
 
     /**
@@ -21,18 +21,18 @@ class DatasourceController extends CoreController
      */
     public function addAction(Request $request )
     {
-        $datasource = new Datasource();
-        $form = $this->get('form.factory')->create(DatasourceType::class, $datasource);
+        $campaign = new Campaign();
+        $form = $this->get('form.factory')->create(CampaignType::class, $campaign);
 
         if( $request->isMethod('POST') && $form->handleRequest($request)->isValid()){
 
             $em = $this->getDoctrine()->getManager();
-            $em->persist( $datasource );
+            $em->persist( $campaign );
             $em->flush();
 
-            $this->addFlash('success', 'Datasource successfully added');
+            $this->addFlash('success', 'Campaign successfully added');
 
-            $redirectUrl = $this->generateUrl('adena_mail_datasource_add');
+            $redirectUrl = $this->generateUrl('adena_mail_campaign_add');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);
@@ -42,12 +42,12 @@ class DatasourceController extends CoreController
         }
 
         if($request->isXmlHttpRequest()){
-            return $this->jsonRender('AdenaMailBundle:Datasource:add_form.html.twig', [
+            return $this->jsonRender('AdenaMailBundle:Campaign:add_form.html.twig', [
                 'form' => $form->createView(),
             ], 400);
         }
 
-        return $this->render('AdenaMailBundle:Datasource:add.html.twig', array(
+        return $this->render('AdenaMailBundle:Campaign:add.html.twig', array(
             'form' => $form->createView()
         ));
     }
@@ -58,24 +58,24 @@ class DatasourceController extends CoreController
     public function listAction(){
 
         $em = $this->getDoctrine()->getManager();
-        $datasourceRepository = $em->getRepository('AdenaMailBundle:Datasource');
+        $campaignRepository = $em->getRepository('AdenaMailBundle:Campaign');
 
-        $datasources = $datasourceRepository->findAll();
+        $campaigns = $campaignRepository->findAll();
 
-        return $this->render('AdenaMailBundle:Datasource:list.html.twig', array(
-            'datasources' => $datasources
+        return $this->render('AdenaMailBundle:Campaign:list.html.twig', array(
+            'campaigns' => $campaigns
         ));
     }
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param \Adena\MailBundle\Entity\Datasource       $datasource
+     * @param \Adena\MailBundle\Entity\Campaign       $campaign
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @internal param \Adena\MailBundle\Entity\Sender $sender
      *
      */
-    public function deleteAction(Request $request, Datasource $datasource)
+    public function deleteAction(Request $request, Campaign $campaign)
     {
 
         $form = $this->get('form.factory')->create();
@@ -83,16 +83,16 @@ class DatasourceController extends CoreController
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-            $em->remove($datasource);
+            $em->remove($campaign);
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('success', "This datasource has been deleted");
+            $request->getSession()->getFlashBag()->add('success', "This campaign has been deleted");
 
-            return $this->redirectToRoute('adena_mail_datasource_list');
+            return $this->redirectToRoute('adena_mail_campaign_list');
         }
 
-        return $this->render('@AdenaMail/Datasource/delete.html.twig', array(
-            'datasource'    => $datasource,
+        return $this->render('@AdenaMail/Campaign/delete.html.twig', array(
+            'campaign'    => $campaign,
             'form'          => $form->createView(),
         ));
     }
@@ -100,24 +100,24 @@ class DatasourceController extends CoreController
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param \Adena\MailBundle\Entity\Datasource       $datasource
+     * @param \Adena\MailBundle\Entity\Campaign       $campaign
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @internal param \Adena\MailBundle\Entity\Sender $sender
      *
      */
-    public function editAction( Request $request, Datasource $datasource )
+    public function editAction( Request $request, Campaign $campaign )
     {
-        $form = $this->get('form.factory')->create(DatasourceType::class, $datasource);
+        $form = $this->get('form.factory')->create(CampaignType::class, $campaign);
         if( $request->isMethod('POST') && $form->handleRequest($request)->isValid()){
 
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('success', 'Datasource updated.');
+            $request->getSession()->getFlashBag()->add('success', 'Campaign updated.');
 
-            $redirectUrl = $this->generateUrl('adena_mail_datasource_edit', [
-                'id' => $datasource->getId()
+            $redirectUrl = $this->generateUrl('adena_mail_campaign_edit', [
+                'id' => $campaign->getId()
             ]);
 
             if($request->isXmlHttpRequest()) {
@@ -128,12 +128,12 @@ class DatasourceController extends CoreController
         }
 
         if($request->isXmlHttpRequest()){
-            return $this->jsonRender('AdenaMailBundle:Datasource:edit_form.html.twig', [
+            return $this->jsonRender('AdenaMailBundle:Campaign:edit_form.html.twig', [
                 'form' => $form->createView(),
             ], 400);
         }
 
-        return $this->render('AdenaMailBundle:Datasource:edit.html.twig', array(
+        return $this->render('AdenaMailBundle:Campaign:edit.html.twig', array(
             'form' => $form->createView()
         ));
     }

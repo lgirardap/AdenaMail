@@ -45,3 +45,69 @@
     {{ parent() }}
 {%- endblock form_start -%}
 
+{% block custom_collection_widget %}
+    {% spaceless %}
+        <div class="collection">
+            {% if prototype is defined %}
+                {% set attr = attr|merge({'data-prototype': block('custom_collection_item_widget') }) %}
+            {% endif %}
+            <div {{ block('widget_container_attributes') }}>
+                {{ form_errors(form) }}
+                <ul>
+                    {% for prototype in form %}
+                        {{ block('custom_collection_item_widget') }}
+                    {% endfor %}
+                </ul>
+                {{ form_rest(form) }}
+            </div>
+            <div class="clear"></div>
+            <a class="add" title="Add">
+                <div style="display: none;"></div>
+                <span>Add</span>
+            </a>
+        </div>
+        <div class="clear"></div>
+    {% endspaceless %}
+    <script type="text/javascript">
+        var $container = $('#{{ form.vars.id }}');
+        var index = $container.find('ul li').length;
+
+        $('.add').click(function(e){
+            var template = $container.attr('data-prototype')
+                .replace(/__index__/g, (index))
+                .replace(/__name__/g,        index);
+
+            // On crée un objet jquery qui contient ce template
+            var $prototype = $(template);
+
+            // On ajoute le prototype modifié à la fin de la balise <div>
+            $container.find('ul').append($prototype);
+
+            // Enfin, on incrémente le compteur pour que le prochain ajout se fasse avec un autre numéro
+            index++;
+        });
+    </script>
+{% endblock custom_collection_widget %}
+
+{% block custom_collection_item_widget %}
+    {% spaceless %}
+        <li id="{{ form.vars.id }}___index__">
+            {% set fieldNum = 1 %}
+            {% for row in prototype %}
+                <div class="field{{ fieldNum }}">
+                    {{ form_row(row) }}
+                </div>
+                {% set fieldNum = fieldNum + 1 %}
+            {% endfor %}
+            <a class="remove" title="Remove">
+                <span>Delete</span>
+            </a>
+            <div class="clear"></div>
+        </li>
+        <script type="text/javascript">
+            $("#{{ form.vars.id }}___index__ .remove").click(function(e){
+                $("#{{ form.vars.id }}___index__").remove();
+            });
+        </script>
+    {% endspaceless %}
+{% endblock custom_collection_item_widget %}

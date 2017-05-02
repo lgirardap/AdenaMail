@@ -200,4 +200,9 @@ class MailingList
     {
         return $this->datasource;
     }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
 }
