@@ -31,7 +31,7 @@ class MailingListType extends AbstractType
                     'choice_label' => 'name'
                 ]);
 
-                $form->add('datasource', DatasourceType::class);
+//                $form->add('datasource', DatasourceType::class);
             }
         };
 

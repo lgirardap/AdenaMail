@@ -14,6 +14,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Campaign
 {
+    const STATUS_NEW = 'new';
+    const STATUS_IN_PROGRESS = 'in_progress';
+    const STATUS_ENDED = 'ended';
+    const STATUSES = [
+        self::STATUS_NEW => self::STATUS_NEW,
+        self::STATUS_IN_PROGRESS => self::STATUS_IN_PROGRESS,
+        self::STATUS_ENDED => self::STATUS_ENDED,
+    ];
+
     /**
      * @var int
      *
@@ -47,10 +56,19 @@ class Campaign
      */
     private $mailingLists;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status", length=255, type="string")
+     * @Assert\NotBlank()
+     */
+    private $status;
+
     public function __construct()
     {
         $this->mailingLists = new ArrayCollection();
         $this->createdAt = new \DateTime();
+        $this->status = self::STATUS_NEW;
     }
 
     /**
@@ -143,5 +161,42 @@ class Campaign
     public function getMailingLists()
     {
         return $this->mailingLists;
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     *
+     * @return Campaign
+     */
+    public function setStatus($status)
+    {
+        if (!in_array($status, $this->getStatuses())) {
+            throw new \InvalidArgumentException("Invalid status");
+        }
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Get statuses
+     *
+     * @return array
+     */
+    public function getStatuses()
+    {
+        return self::STATUSES;
     }
 }

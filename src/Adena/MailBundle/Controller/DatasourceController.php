@@ -21,6 +21,14 @@ class DatasourceController extends CoreController
      */
     public function addAction(Request $request )
     {
+        $externalMysql = $this->get('external_connection.mysql');
+        $externalMysql->connect([
+            'username' => 'root',
+            'servername' => 'localhost',
+            'password' => '',
+            'database' => 'adena_mail'
+        ]);
+
         $datasource = new Datasource();
         $form = $this->get('form.factory')->create(DatasourceType::class, $datasource);
 

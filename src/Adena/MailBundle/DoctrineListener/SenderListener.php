@@ -2,7 +2,7 @@
 namespace Adena\MailBundle\DoctrineListener;
 
 use Adena\MailBundle\Entity\Sender;
-use Adena\MailBundle\Tools\EncryptTool;
+use Adena\CoreBundle\Tools\EncryptTool;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 
 class SenderListener

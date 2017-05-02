@@ -12,7 +12,3 @@ services:
         class: Adena\MailBundle\Form\Extension\HelpBlockExtension
         tags:
             - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
-
-  tool.encrypt:
-      class: Adena\MailBundle\Tools\EncryptTool
-      arguments: ['%secret%']

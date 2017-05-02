@@ -9,6 +9,16 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CampaignController extends CoreController
 {
+    public function viewAction(Campaign $campaign){
+        return $this->render('AdenaMailBundle:Campaign:view.html.twig', [
+            'campaign' => $campaign
+        ]);
+    }
+
+    public function sendAction(Campaign $campaign){
+        dump('we are sending'); exit;
+    }
+
     public function indexAction()
     {
         return $this->render('AdenaMailBundle:Campaign:index.html.twig');

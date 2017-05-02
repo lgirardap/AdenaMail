@@ -16,19 +16,10 @@
                         Name
                     </th>
                     <th>
-                        Database Name
+                        Created At
                     </th>
                     <th>
-                        Host
-                    </th>
-                    <th>
-                        Port
-                    </th>
-                    <th>
-                        Username
-                    </th>
-                    <th>
-                        Action
+                        Actions
                     </th>
                 </tr>
                 </thead>
@@ -36,19 +27,10 @@
                 {% for campaign in campaigns %}
                     <tr>
                         <td>
-                            {{ campaign.name }}
+                            <a href="{{ path('adena_mail_campaign_view', {id: campaign.id}) }}">{{ campaign.name }}</a>
                         </td>
                         <td>
-                            {{ campaign.databaseName }}
-                        </td>
-                        <td>
-                            {{ campaign.host }}
-                        </td>
-                        <td>
-                            {{ campaign.port }}
-                        </td>
-                        <td>
-                            {{ campaign.username }}
+                            {{ campaign.createdAt|date('Y-m-d H:m:s')}}
                         </td>
                         <td>
                             <a href="{{ path('adena_mail_campaign_edit', {'id': campaign.id}) }}">

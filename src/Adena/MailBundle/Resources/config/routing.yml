@@ -132,6 +132,18 @@ adena_mail_campaign_delete:
     requirements:
         id: \d+
 
+adena_mail_campaign_view:
+  path: /campaign/view/{id}
+  defaults: { _controller: AdenaMailBundle:Campaign:view }
+  requirements:
+      id: \d+
+
+adena_mail_campaign_send:
+  path: /campaign/send/{id}
+  defaults: { _controller: AdenaMailBundle:Campaign:send }
+  requirements:
+      id: \d+
+
 adena_mail_xhr_validation:
   path: /xhr/validation
   defaults: { _controller: AdenaMailBundle:Xhr:validation }

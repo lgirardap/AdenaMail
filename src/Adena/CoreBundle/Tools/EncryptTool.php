@@ -8,7 +8,7 @@
  * This tool is used as a service to encrypt and decrypt strings
  */
 
-namespace Adena\MailBundle\Tools;
+namespace Adena\CoreBundle\Tools;
 
 
 class EncryptTool

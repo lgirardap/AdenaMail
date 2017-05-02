@@ -1,4 +1,7 @@
 services:
-#    adena_core.example:
-#        class: Adena\CoreBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+  tool.encrypt:
+      class: Adena\CoreBundle\Tools\EncryptTool
+      arguments: ['%secret%']
+  external_connection.mysql:
+      class: Adena\CoreBundle\ExternalConnection\MysqlExternalConnection
+      shared: false
