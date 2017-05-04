@@ -15,6 +15,7 @@ class MysqlExternalConnection
     /** @var  \mysqli */
     private $conn;
     private $isConnected = false;
+    private $connectErrors = '';
 
     public function connect(array $params){
         if($this->isConnected){
@@ -31,6 +32,7 @@ class MysqlExternalConnection
         );
 
         if( $this->conn->connect_error ){
+            $this->connectErrors = $this->conn->connect_error;
             throw new \Exception( $this->conn->connect_error );
         }
 
@@ -47,6 +49,7 @@ class MysqlExternalConnection
         try {
             $this->connect($params);
         }catch(\Exception $e){
+            $this->connectErrors = $e->getMessage();
             return false;
         }
 
@@ -74,10 +77,7 @@ class MysqlExternalConnection
     }
 
     public function getConnectErrors(){
-        if($this->isConnected) {
-            return $this->conn->connect_error;
-        }
-        return '';
+        return $this->connectErrors;
     }
 
     private function _resultToArray(\mysqli_result $result){

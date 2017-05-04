@@ -2,6 +2,7 @@
 
 namespace Adena\MailBundle\Entity;
 
+use Adena\MailBundle\Validator\Constraints\DatasourceCanConnect;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -11,6 +12,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="datasource")
  * @ORM\Entity(repositoryClass="Adena\MailBundle\Repository\DatasourceRepository")
  * @ORM\HasLifecycleCallbacks()
+ *
+ * The following is a custom validator to check that the provided parameters are actually correct by pinging the
+ * associated MySQL server.
+ * @DatasourceCanConnect()
  */
 class Datasource
 {
@@ -51,8 +56,7 @@ class Datasource
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="string", length=255)
-     * @Assert\NotBlank()
+     * @ORM\Column(name="password", type="string", length=255, nullable=true)
      */
     private $password;
 
@@ -71,7 +75,6 @@ class Datasource
      * @Assert\NotBlank()
      */
     private $name;
-
 
     /**
      * Get id

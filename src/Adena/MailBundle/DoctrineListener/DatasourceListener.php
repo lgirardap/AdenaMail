@@ -26,7 +26,9 @@ class DatasourceListener
             return;
         }
 
-        $entity->setPassword($this->encryptTool->encrypt($entity->getPassword()));
+        if($entity->getPassword()) {
+            $entity->setPassword($this->encryptTool->encrypt($entity->getPassword()));
+        }
     }
 
     public function preUpdate(LifecycleEventArgs $args)
@@ -37,7 +39,9 @@ class DatasourceListener
             return;
         }
 
-        $entity->setPassword($this->encryptTool->encrypt($entity->getPassword()));
+        if($entity->getPassword()) {
+            $entity->setPassword($this->encryptTool->encrypt($entity->getPassword()));
+        }
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -48,6 +52,8 @@ class DatasourceListener
             return;
         }
 
-        $entity->setPassword($this->encryptTool->decrypt($entity->getPassword()));
+        if($entity->getPassword()) {
+            $entity->setPassword($this->encryptTool->decrypt($entity->getPassword()));
+        }
     }
 }
