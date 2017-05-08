@@ -19,3 +19,14 @@ services:
       - { name: validator.constraint_validator }
     arguments:
       - "@external_connection.mysql"
+
+  adena_mail.entity_helper.campaign_to_queue:
+    class: Adena\MailBundle\EntityHelper\CampaignToQueue
+    arguments:
+      - "@doctrine.orm.default_entity_manager"
+      - "@adena_mail.entity_helper.mailing_list_emails_fetcher"
+
+  adena_mail.entity_helper.mailing_list_emails_fetcher:
+    class: Adena\MailBundle\EntityHelper\MailingListEmailsFetcher
+    arguments:
+      - "@external_connection.mysql"

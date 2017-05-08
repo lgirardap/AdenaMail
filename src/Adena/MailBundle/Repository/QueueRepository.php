@@ -2,6 +2,8 @@
 
 namespace Adena\MailBundle\Repository;
 
+use Adena\MailBundle\Entity\Campaign;
+
 /**
  * QueueRepository
  *
@@ -10,4 +12,39 @@ namespace Adena\MailBundle\Repository;
  */
 class QueueRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * Handles batch inserting by doing a raw PDO query instead of using the Doctrine to prevent memory limit errors.
+     * Note: This will work only for MySQL because we use "INSERT INTO table (columns) VALUES (),(),()"
+     *
+     * @param                                   $emails
+     * @param \Adena\MailBundle\Entity\Campaign $campaign
+     *
+     * @see http://stackoverflow.com/a/9088630
+     */
+    public function nativeBulkInsertForCampaign($emails, Campaign $campaign){
+        $conn = $this->getEntityManager()->getConnection();
+
+        // The SQL query
+        $sql = 'INSERT INTO queue (email, campaign_id) VALUES ';
+
+        // Create the placeholders that will be used to "prepare" the query and make it SQL-Injection safe
+        $placeholders = [];
+        // Create the values as a flat array of all the values: ['email1', 'campaign_id', 'email2', campaign_id]...
+        $values = [];
+        foreach($emails as $email){
+            // We insert two colums so we need two placeholders per row inserted.
+            $placeholders[] = "(?,?)";
+
+            // Add the values to the flat array
+            $values[] = $email;
+            $values[] = $campaign->getId();
+        }
+        // Add the placeholders to the SQL query
+        $sql .= implode(',', $placeholders);
+
+        // Prepare the statement
+        $statement = $conn->prepare($sql);
+        // Execute it with our flat array of values.
+        $statement->execute($values);
+    }
 }

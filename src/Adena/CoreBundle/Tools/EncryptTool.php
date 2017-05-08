@@ -25,8 +25,13 @@ class EncryptTool
      * @param $data
      *
      * @return string
+     * @throws \Exception
      */
     function encrypt($data) {
+
+        if(empty($data)){
+            throw new \Exception( "You cannot Encrypt null data." );
+        }
 
         // Remove the base64 encoding from our key
         $encryption_key = base64_decode($this->key);

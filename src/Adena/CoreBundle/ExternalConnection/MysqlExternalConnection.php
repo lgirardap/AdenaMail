@@ -67,7 +67,7 @@ class MysqlExternalConnection
             throw new \Exception( $this->conn->error );
         }
 
-        $this->_resultToArray($result);
+        return $this->_resultToArray($result);
     }
 
     public function close(){

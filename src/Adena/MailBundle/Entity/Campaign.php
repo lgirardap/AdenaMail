@@ -199,4 +199,9 @@ class Campaign
     {
         return self::STATUSES;
     }
+
+    public function __toString()
+    {
+        return (string)$this->getId();
+    }
 }

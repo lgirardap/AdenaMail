@@ -5,6 +5,7 @@ namespace Adena\MailBundle\Controller;
 use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Entity\Campaign;
 use Adena\MailBundle\Form\CampaignType;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class CampaignController extends CoreController
@@ -16,7 +17,25 @@ class CampaignController extends CoreController
     }
 
     public function sendAction(Campaign $campaign){
-        dump('we are sending'); exit;
+        if($campaign->getStatus() != Campaign::STATUS_NEW){
+            $this->addFlash('warning', 'Campaign already started.');
+            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
+        }
+
+        $campaignToQueue = $this->get("adena_mail.entity_helper.campaign_to_queue");
+        $campaignToQueue->createQueue($campaign);
+
+        // if ok
+            // change status
+        // if not
+            // errors
+
+        // flash message
+
+        // TODO create console command
+        // exec console command
+
+        return new Response('<body></body>');
     }
 
     public function indexAction()
