@@ -23,6 +23,11 @@ class CampaignToQueue
         $this->em            = $em;
     }
 
+    /**
+     * @param \Adena\MailBundle\Entity\Campaign $campaign
+     *
+     * @return array - We return the Emails Queue array
+     */
     public function createQueue(Campaign $campaign)
     {
         // Get the associated mailinglists
@@ -30,7 +35,7 @@ class CampaignToQueue
 
         $emails = array();
         foreach ($mailingLists as $mailingList) {
-            // Fetch the emails associated to the mailing list
+            // Fetch the emails associated to the mailing list using the mailing list email fetcher Library
             $newEmails = $this->emailsFetcher->fetch($mailingList);
             $emails = array_merge($emails, $newEmails);
         }

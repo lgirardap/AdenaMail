@@ -64,6 +64,15 @@ class Campaign
      */
     private $status;
 
+    /**
+     * @var \Adena\MailBundle\Entity\Email
+     *
+     * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Email")
+     * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid()
+     */
+    private $email;
+
     public function __construct()
     {
         $this->mailingLists = new ArrayCollection();
@@ -203,5 +212,29 @@ class Campaign
     public function __toString()
     {
         return (string)$this->getId();
+    }
+
+    /**
+     * Set email
+     *
+     * @param \Adena\MailBundle\Entity\Email $email
+     *
+     * @return Campaign
+     */
+    public function setEmail(\Adena\MailBundle\Entity\Email $email = null)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return \Adena\MailBundle\Entity\Email
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 }

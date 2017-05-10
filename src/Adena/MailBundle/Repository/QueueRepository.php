@@ -12,6 +12,23 @@ use Adena\MailBundle\Entity\Campaign;
  */
 class QueueRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getAsArrayForCampaign($campaign){
+        return $this->createQueryBuilder('q')
+            ->where('q.campaign = :campaign')
+            ->setParameter('campaign', $campaign)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function removeById($id){
+        return $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * Handles batch inserting by doing a raw PDO query instead of using the Doctrine to prevent memory limit errors.
      * Note: This will work only for MySQL because we use "INSERT INTO table (columns) VALUES (),(),()"
@@ -19,6 +36,7 @@ class QueueRepository extends \Doctrine\ORM\EntityRepository
      * @param                                   $emails
      * @param \Adena\MailBundle\Entity\Campaign $campaign
      *
+     * @throws \Exception
      * @see http://stackoverflow.com/a/9088630
      */
     public function nativeBulkInsertForCampaign($emails, Campaign $campaign){
@@ -44,7 +62,10 @@ class QueueRepository extends \Doctrine\ORM\EntityRepository
 
         // Prepare the statement
         $statement = $conn->prepare($sql);
+
         // Execute it with our flat array of values.
-        $statement->execute($values);
+        if(!$statement->execute($values)){
+            throw new \Exception($statement->errorCode());
+        }
     }
 }

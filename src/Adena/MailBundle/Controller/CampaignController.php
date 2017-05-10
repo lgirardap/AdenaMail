@@ -17,23 +17,25 @@ class CampaignController extends CoreController
     }
 
     public function sendAction(Campaign $campaign){
-        if($campaign->getStatus() != Campaign::STATUS_NEW){
-            $this->addFlash('warning', 'Campaign already started.');
-            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
-        }
+//
+//        if($campaign->getStatus() != Campaign::STATUS_NEW){
+//            $this->addFlash('warning', 'Campaign already started.');
+//            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
+//        }
 
+        // We use our Campaign to queue Library to add the campaign email to the queue table
         $campaignToQueue = $this->get("adena_mail.entity_helper.campaign_to_queue");
         $campaignToQueue->createQueue($campaign);
 
-        // if ok
-            // change status
-        // if not
-            // errors
-
-        // flash message
+        // Change the campaign status to in_progress
+        $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
 
         // TODO create console command
         // exec console command
+
+        $this->addFlash('success', 'Sending campaign.');
 
         return new Response('<body></body>');
     }

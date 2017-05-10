@@ -10,4 +10,18 @@ namespace Adena\MailBundle\Repository;
  */
 class CampaignRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param $id
+     *
+     * @return \Adena\MailBundle\Entity\Campaign
+     */
+    public function getWithEmail($id){
+        return $this->createQueryBuilder('c')
+            ->join('c.email', 'e')
+            ->addSelect('e')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleResult();
+    }
 }

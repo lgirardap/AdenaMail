@@ -44,7 +44,6 @@ class DatasourceListener
         }
     }
 
-    //TODO check if triggers an update
     public function postLoad(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();

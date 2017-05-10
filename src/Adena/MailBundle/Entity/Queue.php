@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Queue
  *
- * @ORM\Table(name="queue")
+ * @ORM\Table(name="queue", uniqueConstraints={@ORM\UniqueConstraint(name="email_campaign_unique", columns={"email", "campaign_id"})})
  * @ORM\Entity(repositoryClass="Adena\MailBundle\Repository\QueueRepository")
  */
 class Queue

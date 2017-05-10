@@ -30,3 +30,8 @@ services:
     class: Adena\MailBundle\EntityHelper\MailingListEmailsFetcher
     arguments:
       - "@external_connection.mysql"
+
+  adena_mail.mail_engine:
+      class: Adena\MailBundle\MailEngine\MailEngine
+      arguments:
+        - "@doctrine.orm.default_entity_manager"
