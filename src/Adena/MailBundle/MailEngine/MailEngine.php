@@ -19,6 +19,11 @@ class MailEngine
         $this->em = $em;
     }
 
+    /**
+     * @param \Swift_Message $message Only the "to" part of the message will be set here, we expect everything else
+     *                                to be already set in the $message parameter.
+     * @param array $queues Should be an array of ARRAYS, not objects.
+     */
     public function run(\Swift_Message $message, array $queues){
         // Get the senders
         $senders = $this->em->getRepository('AdenaMailBundle:Sender')->findBy(array('active' => 1));

@@ -28,25 +28,6 @@ class CampaignSendCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
-
-        // Get the campaign with the Email already loaded
-        /** @var \Adena\MailBundle\Entity\Campaign $campaign */
-        $campaign = $em->getRepository('AdenaMailBundle:Campaign')->getWithEmail($input->getArgument('campaign_id'));
-
-        // Get the queue for the specified campaign AS ARRAYS, not objects
-        $queues = $em->getRepository('AdenaMailBundle:Queue')->getAsArrayForCampaign($campaign);
-
-        // The parameters common to each message (email) sent
-        $message = \Swift_Message::newInstance();
-        $message
-            ->setSubject($campaign->getEmail()->getSubject())
-            ->setFrom('account@land-fx.com', 'Land-FX')
-            ->setBody(
-                $campaign->getEmail()->getTemplate(),
-                'text/html'
-            );
-
-        $this->getContainer()->get('adena_mail.mail_engine')->run($message, $queues);
+        $this->getContainer()->get('adena_mail.entity_helper.campaign_sender')->send($input->getArgument('campaign_id'));
     }
 }
