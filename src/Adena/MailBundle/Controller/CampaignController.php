@@ -5,39 +5,47 @@ namespace Adena\MailBundle\Controller;
 use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Entity\Campaign;
 use Adena\MailBundle\Form\CampaignType;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class CampaignController extends CoreController
 {
     public function viewAction(Campaign $campaign){
+        // For the IN_PROGRESS campaigns, let's find out how many emails are remaining in the queue
+        $remainingEmails = 0;
+        if(Campaign::STATUS_IN_PROGRESS == $campaign->getStatus()){
+            $remainingEmails = $this->getDoctrine()->getRepository('AdenaMailBundle:Queue')->countByCampaign($campaign);
+        }
+
         return $this->render('AdenaMailBundle:Campaign:view.html.twig', [
-            'campaign' => $campaign
+            'campaign' => $campaign,
+            'remainingEmails' => $remainingEmails
         ]);
     }
 
     public function sendAction(Campaign $campaign){
-//
-//        if($campaign->getStatus() != Campaign::STATUS_NEW){
-//            $this->addFlash('warning', 'Campaign already started.');
-//            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
-//        }
+        if($campaign->getStatus() != Campaign::STATUS_NEW){
+            $this->addFlash('warning', 'Campaign already started.');
+            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
+        }
 
-        // We use our Campaign to queue Library to add the campaign email to the queue table
+        // We use our Campaign to queue service to add the campaign emails to the queue table
+        // After that point it's impossible to change the mailing list associated to the campaign.
         $campaignToQueue = $this->get("adena_mail.entity_helper.campaign_to_queue");
         $campaignToQueue->createQueue($campaign);
 
         // Change the campaign status to in_progress
         $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
+        // Set the sentAt time to now
+        $campaign->setSentAt(new \DateTime());
         $em = $this->getDoctrine()->getManager();
         $em->flush();
 
-        // TODO create console command
-        // exec console command
-
+        // Launch the actual send in a different process through the console command
+        $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
+        
         $this->addFlash('success', 'Sending campaign.');
 
-        return new Response('<body></body>');
+        return $this->redirectToRoute('adena_mail_campaign_list');
     }
 
     public function indexAction()

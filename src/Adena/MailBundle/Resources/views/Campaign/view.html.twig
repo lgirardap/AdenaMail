@@ -2,6 +2,17 @@
 
 {% block adenamail_body %}
     <p>{{ campaign.name }}</p>
-    <a href="{{ path('adena_mail_campaign_send', {id: campaign.id}) }}" class="btn btn-danger">Send this campaign (cannot be canceled!)</a>
+
+    {% if campaign.status is constant('STATUS_NEW', campaign) %}
+        <a href="{{ path('adena_mail_campaign_send', {id: campaign.id}) }}" class="btn btn-danger">Send this campaign (cannot be canceled!)</a>
+    {% endif %}
+    {% if campaign.status is constant('STATUS_IN_PROGRESS', campaign) %}
+        <p>This campaign is currently sending!</p>
+        <p>Progress: {{ campaign.emailsCount - remainingEmails }} out of {{ campaign.emailsCount }} emails sent.</p>
+    {% endif %}
+    {% if campaign.status is constant('STATUS_ENDED', campaign) %}
+        <p>This campaign has ended.</p>
+        <p>It sent out {{ campaign.emailsCount }} emails.</p>
+    {% endif %}
 {% endblock %}
 

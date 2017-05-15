@@ -2,6 +2,10 @@ services:
   tool.encrypt:
       class: Adena\CoreBundle\Tools\EncryptTool
       arguments: ['%secret%']
+  tool.background_runner:
+        class: Adena\CoreBundle\Tools\BackgroundRunner
+        arguments:
+          - "%kernel.root_dir%"
   external_connection.mysql:
       class: Adena\CoreBundle\ExternalConnection\MysqlExternalConnection
       shared: false

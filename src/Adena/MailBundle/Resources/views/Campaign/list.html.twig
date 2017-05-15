@@ -19,6 +19,9 @@
                         Created At
                     </th>
                     <th>
+                        Status
+                    </th>
+                    <th>
                         Actions
                     </th>
                 </tr>
@@ -33,9 +36,14 @@
                             {{ campaign.createdAt|date('Y-m-d H:m:s')}}
                         </td>
                         <td>
-                            <a href="{{ path('adena_mail_campaign_edit', {'id': campaign.id}) }}">
-                                Edit
-                            </a> |
+                            {{ campaign.status }}
+                        </td>
+                        <td>
+                            {% if campaign.status is constant('STATUS_NEW', campaign) %}
+                                <a href="{{ path('adena_mail_campaign_edit', {'id': campaign.id}) }}">
+                                    Edit
+                                </a> |
+                            {% endif %}
                             <a href="{{ path('adena_mail_campaign_delete', {'id': campaign.id}) }}">
                                 Delete
                             </a>

@@ -12,7 +12,16 @@ use Adena\MailBundle\Entity\Campaign;
  */
 class QueueRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function getAsArrayForCampaign($campaign){
+    public function countByCampaign($campaign){
+        $qb = $this->createQueryBuilder('q');
+        $qb->select('count(q.id)')
+            ->where('q.campaign = :campaign')
+            ->setParameter('campaign', $campaign);
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function getAsArrayByCampaign($campaign){
         return $this->createQueryBuilder('q')
             ->where('q.campaign = :campaign')
             ->setParameter('campaign', $campaign)

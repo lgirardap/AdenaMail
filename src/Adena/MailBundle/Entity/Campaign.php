@@ -43,10 +43,24 @@ class Campaign
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetimetz")
+     * @ORM\Column(name="created_at", type="datetimetz")
      * @Assert\NotBlank()
      */
     private $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="sent_at", type="datetimetz", nullable=true)
+     */
+    private $sentAt;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="emails_count", type="integer")
+     */
+    private $emailsCount;
 
     /**
      * @var ArrayCollection
@@ -78,6 +92,7 @@ class Campaign
         $this->mailingLists = new ArrayCollection();
         $this->createdAt = new \DateTime();
         $this->status = self::STATUS_NEW;
+        $this->emailsCount = 0;
     }
 
     /**
@@ -236,5 +251,53 @@ class Campaign
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Set sentAt
+     *
+     * @param \DateTime $sentAt
+     *
+     * @return Campaign
+     */
+    public function setSentAt($sentAt)
+    {
+        $this->sentAt = $sentAt;
+
+        return $this;
+    }
+
+    /**
+     * Get sentAt
+     *
+     * @return \DateTime
+     */
+    public function getSentAt()
+    {
+        return $this->sentAt;
+    }
+
+    /**
+     * Set emailsCount
+     *
+     * @param integer $emailsCount
+     *
+     * @return Campaign
+     */
+    public function setEmailsCount($emailsCount)
+    {
+        $this->emailsCount = $emailsCount;
+
+        return $this;
+    }
+
+    /**
+     * Get emailsCount
+     *
+     * @return integer
+     */
+    public function getEmailsCount()
+    {
+        return $this->emailsCount;
     }
 }

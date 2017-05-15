@@ -25,8 +25,6 @@ class CampaignToQueue
 
     /**
      * @param \Adena\MailBundle\Entity\Campaign $campaign
-     *
-     * @return array - We return the Emails Queue array
      */
     public function createQueue(Campaign $campaign)
     {
@@ -45,6 +43,10 @@ class CampaignToQueue
 
         // Create the Queue rows needed
         $this->em->getRepository('AdenaMailBundle:Queue')->nativeBulkInsertForCampaign($emails, $campaign);
+
+        // Update the number of emails for this campaign
+        $campaign->setEmailsCount(count($emails));
+        $this->em->flush();
     }
 
     /**
