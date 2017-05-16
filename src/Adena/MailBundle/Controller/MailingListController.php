@@ -24,6 +24,18 @@ class MailingListController extends CoreController
         ]);
     }
 
+    public function testAction(MailingList $mailingList){
+        $mailingTester = $this->get('adena_mail.entity_helper.mailing_list_tester');
+
+        if(!$mailingTester->test($mailingList)) {
+            $this->addFlash('danger', 'Error in the query: '.$mailingTester->getErrors());
+        }else {
+            $this->addFlash('success', 'Cool query bro');
+        }
+
+        return $this->redirectToReferer();
+    }
+
     public function deleteAction(Request $request, MailingList $mailingList){
         // CSRF protection
         $form = $this->get('form.factory')->create();

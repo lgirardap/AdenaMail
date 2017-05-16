@@ -82,6 +82,13 @@ adena_mail_mailing_list_delete:
   requirements:
     id: \d+
 
+adena_mail_mailing_list_test:
+  path: /mailing-list/test/{id}
+  defaults:
+    _controller: AdenaMailBundle:MailingList:test
+  requirements:
+    id: \d+
+
 adena_mail_mailing_list_list:
   path: /mailing-list
   defaults:

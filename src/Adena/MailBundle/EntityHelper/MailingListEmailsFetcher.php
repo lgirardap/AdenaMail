@@ -49,6 +49,8 @@ class MailingListEmailsFetcher
             'port'       => $datasource->getPort()
         ]);
 
+        $this->mysqlExternal->close();
+
         return array_column($results, 'email');
     }
 

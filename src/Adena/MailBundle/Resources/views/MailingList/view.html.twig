@@ -8,6 +8,11 @@
     <p>{{ mailingList.type }}</p>
     <h4>Content</h4>
     <p>{{ mailingList.content }}</p>
+    {% if(mailingList.type is constant('TYPE_QUERY', mailingList)) %}
+        <a href="{{ path('adena_mail_mailing_list_test', {id: mailingList.id}) }}" class="btn btn-default">
+            Test Query
+        </a>
+    {% endif %}
     {%  include('AdenaMailBundle:Common/Button:edit_link_button.html.twig') with {'path': path('adena_mail_mailing_list_edit', {id: mailingList.id})} %}
     {%  include('AdenaMailBundle:Common/Button:delete_link_button.html.twig') with {'path': path('adena_mail_mailing_list_delete', {id: mailingList.id})} %}
 {% endblock %}

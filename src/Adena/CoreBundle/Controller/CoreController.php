@@ -3,8 +3,8 @@
 namespace Adena\CoreBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class CoreController extends Controller
 {
@@ -32,5 +32,13 @@ class CoreController extends Controller
         return new JsonResponse([
             'url'=>$redirectUrl
         ], $status);
+    }
+
+    public function redirectToReferer() {
+        return $this->redirect(
+            $this->get('request_stack')->getCurrentRequest()
+                ->headers
+                ->get('referer')
+        );
     }
 }
