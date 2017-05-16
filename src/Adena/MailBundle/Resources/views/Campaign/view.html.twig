@@ -3,7 +3,22 @@
 {% block adenamail_body %}
     <p>{{ campaign.name }}</p>
 
-    {% if campaign.status is constant('STATUS_NEW', campaign) %}
+    {% if (campaign.status is constant('STATUS_NEW', campaign) or campaign.status is constant('STATUS_TESTED', campaign))  %}
+        {{ form_start(testForm, {attr: {novalidate: 'novalidate'}}) }}
+        {{ form_widget(testForm) }}
+
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button type="submit" value="save" class="btn btn-primary">
+                    <i class="glyphicon glyphicon-scale"></i>
+                    {{ 'Test !'|trans }}
+                </button>
+            </div>
+        </div>
+        {{ form_end(testForm) }}
+    {% endif %}
+
+    {% if campaign.status is constant('STATUS_TESTED', campaign) %}
         <a href="{{ path('adena_mail_campaign_send', {id: campaign.id}) }}" class="btn btn-danger">Send this campaign (cannot be canceled!)</a>
     {% endif %}
     {% if campaign.status is constant('STATUS_IN_PROGRESS', campaign) %}

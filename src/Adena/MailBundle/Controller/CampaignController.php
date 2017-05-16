@@ -5,6 +5,7 @@ namespace Adena\MailBundle\Controller;
 use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Entity\Campaign;
 use Adena\MailBundle\Form\CampaignType;
+use Adena\MailBundle\Form\TestMailingListType;
 use Symfony\Component\HttpFoundation\Request;
 
 class CampaignController extends CoreController
@@ -16,7 +17,12 @@ class CampaignController extends CoreController
             $remainingEmails = $this->getDoctrine()->getRepository('AdenaMailBundle:Queue')->countByCampaign($campaign);
         }
 
+        $testForm = $this->get("form.factory")->create(TestMailingListType::class);
+
+
+
         return $this->render('AdenaMailBundle:Campaign:view.html.twig', [
+            'testForm' => $testForm->createView(),
             'campaign' => $campaign,
             'remainingEmails' => $remainingEmails
         ]);

@@ -15,11 +15,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Campaign
 {
     const STATUS_NEW = 'new';
+    const STATUS_TESTED = 'tested';
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_PAUSED = 'paused';
     const STATUS_ENDED = 'ended';
     const STATUSES = [
         self::STATUS_NEW => self::STATUS_NEW,
+        self::STATUS_TESTED => self::STATUS_TESTED,
         self::STATUS_IN_PROGRESS => self::STATUS_IN_PROGRESS,
         self::STATUS_PAUSED => self::STATUS_PAUSED,
         self::STATUS_ENDED => self::STATUS_ENDED,

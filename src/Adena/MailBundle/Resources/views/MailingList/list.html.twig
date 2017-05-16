@@ -15,6 +15,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
+                    <th>Test</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -23,6 +24,7 @@
                     <tr>
                         <td>{{ mailingList.id }}</td>
                         <td><a href="{{ path('adena_mail_mailing_list_view', {'id': mailingList.id}) }}">{{ mailingList.name }}</a></td>
+                        <td>{{ mailingList.isTest ? 'Yes' : 'No' }}</td>
                         <td>
                             {% if(mailingList.type is constant('TYPE_QUERY', mailingList)) %}
                                 <a href="{{ path('adena_mail_mailing_list_test', {id: mailingList.id}) }}">

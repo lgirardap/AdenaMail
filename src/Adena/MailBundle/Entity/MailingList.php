@@ -57,12 +57,25 @@ class MailingList
     private $type;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_test", type="boolean")
+     * @Assert\NotBlank()
+     */
+    private $isTest;
+
+    /**
      * @var Datasource
      * 
      * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Datasource", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true)
      */
     private $datasource;
+
+    public function __construct()
+    {
+        $this->isTest = false;
+    }
 
     /**
      * Datasource is only checked when the type is "query", so we need a custom validator to handle it.
@@ -204,5 +217,29 @@ class MailingList
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * Set isTest
+     *
+     * @param boolean $isTest
+     *
+     * @return MailingList
+     */
+    public function setIsTest($isTest)
+    {
+        $this->isTest = $isTest;
+
+        return $this;
+    }
+
+    /**
+     * Get isTest
+     *
+     * @return boolean
+     */
+    public function getIsTest()
+    {
+        return $this->isTest;
     }
 }
