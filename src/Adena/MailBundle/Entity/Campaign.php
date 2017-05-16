@@ -16,10 +16,12 @@ class Campaign
 {
     const STATUS_NEW = 'new';
     const STATUS_IN_PROGRESS = 'in_progress';
+    const STATUS_PAUSED = 'paused';
     const STATUS_ENDED = 'ended';
     const STATUSES = [
         self::STATUS_NEW => self::STATUS_NEW,
         self::STATUS_IN_PROGRESS => self::STATUS_IN_PROGRESS,
+        self::STATUS_PAUSED => self::STATUS_PAUSED,
         self::STATUS_ENDED => self::STATUS_ENDED,
     ];
 
@@ -86,6 +88,14 @@ class Campaign
      * @Assert\Valid()
      */
     private $email;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Adena\MailBundle\Entity\Queue", mappedBy="campaign", cascade={"remove"})
+     *
+     */
+    private $queues;
+
 
     public function __construct()
     {
@@ -299,5 +309,39 @@ class Campaign
     public function getEmailsCount()
     {
         return $this->emailsCount;
+    }
+
+    /**
+     * Add queue
+     *
+     * @param \Adena\MailBundle\Entity\Queue $queue
+     *
+     * @return Campaign
+     */
+    public function addQueue(\Adena\MailBundle\Entity\Queue $queue)
+    {
+        $this->queues[] = $queue;
+
+        return $this;
+    }
+
+    /**
+     * Remove queue
+     *
+     * @param \Adena\MailBundle\Entity\Queue $queue
+     */
+    public function removeQueue(\Adena\MailBundle\Entity\Queue $queue)
+    {
+        $this->queues->removeElement($queue);
+    }
+
+    /**
+     * Get queues
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getQueues()
+    {
+        return $this->queues;
     }
 }

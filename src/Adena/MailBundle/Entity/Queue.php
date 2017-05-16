@@ -31,7 +31,7 @@ class Queue
     /**
      * @var \Adena\MailBundle\Entity\Campaign
      *
-     * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Campaign")
+     * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Campaign", inversedBy="queues")
      */
     private $campaign;
 

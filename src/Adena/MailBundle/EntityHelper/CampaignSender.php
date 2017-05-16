@@ -37,10 +37,16 @@ class CampaignSender
             );
 
         // Run the mail engine
-        $this->mailEngine->run($message, $queues);
+        try {
+            $this->mailEngine->run($message, $queues, $campaign->getId()."_".$campaign->getSentAt()->format('Ymd'));
 
-        // Done with this campaign, change the status.
-        $campaign->setStatus(Campaign::STATUS_ENDED);
-        $this->em->flush();
+            // Done with this campaign, change the status.
+            $campaign->setStatus(Campaign::STATUS_ENDED);
+        }catch(\Swift_TransportException $e) {
+            // The send was interrupted, let's pause the campaign
+            $campaign->setStatus(Campaign::STATUS_PAUSED);
+        }finally{
+            $this->em->flush();
+        }
     }
 }

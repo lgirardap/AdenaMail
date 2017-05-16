@@ -41,3 +41,4 @@ services:
       class: Adena\MailBundle\MailEngine\MailEngine
       arguments:
         - "@doctrine.orm.default_entity_manager"
+        - "%kernel.logs_dir%"
