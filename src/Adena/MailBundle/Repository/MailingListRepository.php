@@ -2,6 +2,8 @@
 
 namespace Adena\MailBundle\Repository;
 
+use Adena\MailBundle\Entity\Campaign;
+
 /**
  * MailingListRepository
  *
@@ -10,4 +12,20 @@ namespace Adena\MailBundle\Repository;
  */
 class MailingListRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    public function getTestMailingListQueryBuilder()
+    {
+        return $this
+            ->createQueryBuilder('m')
+            ->where('m.isTest = 1')
+            ;
+    }
+
+    public function getRegularMailingListQueryBuilder()
+    {
+        return $this
+            ->createQueryBuilder('m')
+            ->where('m.isTest = 0')
+            ;
+    }
 }

@@ -4,12 +4,17 @@ namespace Adena\MailBundle\Controller;
 
 use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Entity\Campaign;
+use Adena\MailBundle\Form\CampaignTestMailingListType;
 use Adena\MailBundle\Form\CampaignType;
-use Adena\MailBundle\Form\TestMailingListType;
 use Symfony\Component\HttpFoundation\Request;
 
 class CampaignController extends CoreController
 {
+    public function indexAction()
+    {
+        return $this->render('AdenaMailBundle:Campaign:index.html.twig');
+    }
+
     public function viewAction(Campaign $campaign){
         // For the IN_PROGRESS campaigns, let's find out how many emails are remaining in the queue
         $remainingEmails = 0;
@@ -17,34 +22,70 @@ class CampaignController extends CoreController
             $remainingEmails = $this->getDoctrine()->getRepository('AdenaMailBundle:Queue')->countByCampaign($campaign);
         }
 
-        $testForm = $this->get("form.factory")->create(TestMailingListType::class);
-
-
-
         return $this->render('AdenaMailBundle:Campaign:view.html.twig', [
-            'testForm' => $testForm->createView(),
             'campaign' => $campaign,
             'remainingEmails' => $remainingEmails
         ]);
     }
 
+    public function testAction(Request $request, Campaign $campaign)
+    {
+        if($campaign->getStatus() != Campaign::STATUS_NEW && $campaign->getStatus() != Campaign::STATUS_TESTED){
+            $this->addFlash('warning', 'This campaign is already sent and you cannot test it again.');
+            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
+        }
+
+        $form = $this->get('form.factory')->create(CampaignTestMailingListType::class, $campaign);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            // Send the (test) campaign
+            $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
+
+            $this->addFlash('success', 'Sending test campaign.');
+
+            $redirectUrl = $this->generateUrl('adena_mail_campaign_view', [
+                'id' => $campaign->getId()
+            ]);
+
+            if($request->isXmlHttpRequest()) {
+                return $this->jsonRedirect($redirectUrl);
+            }
+            return $this->redirect($redirectUrl);
+        }
+
+        if($request->isXmlHttpRequest()){
+            return $this->jsonRender('AdenaMailBundle:Campaign:test_form.html.twig', [
+                'campaign' => $campaign,
+                'form' => $form->createView(),
+            ], 400);
+        }
+
+        return $this->render('AdenaMailBundle:Campaign:test.html.twig', array(
+            'campaign' => $campaign,
+            'form' => $form->createView()
+        ));
+    }
+
     public function sendAction(Campaign $campaign){
-        if($campaign->getStatus() != Campaign::STATUS_NEW){
-            $this->addFlash('warning', 'Campaign already started.');
+        if($campaign->getStatus() != Campaign::STATUS_TESTED){
+            // TODO make pretty message with ifs
+            $this->addFlash('warning', 'Campaign already started or not tested.');
             return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
         }
 
         // We use our Campaign to queue service to add the campaign emails to the queue table
         // After that point it's impossible to change the mailing list associated to the campaign.
-        $campaignToQueue = $this->get("adena_mail.entity_helper.campaign_to_queue");
-        $campaignToQueue->createQueue($campaign);
+//        $campaignToQueue = $this->get("adena_mail.entity_helper.campaign_to_queue");
+//        $campaignToQueue->createQueue($campaign);
 
         // Change the campaign status to in_progress
-        $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
-        // Set the sentAt time to now
-        $campaign->setSentAt(new \DateTime());
-        $em = $this->getDoctrine()->getManager();
-        $em->flush();
+//        $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
+//        // Set the sentAt time to now
+//        $campaign->setSentAt(new \DateTime());
+//        $em = $this->getDoctrine()->getManager();
+//        $em->flush();
 
         // Launch the actual send in a different process through the console command
         $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
@@ -54,9 +95,22 @@ class CampaignController extends CoreController
         return $this->redirectToRoute('adena_mail_campaign_list');
     }
 
-    public function indexAction()
-    {
-        return $this->render('AdenaMailBundle:Campaign:index.html.twig');
+    public function resumeAction(Campaign $campaign){
+        if($campaign->getStatus() != Campaign::STATUS_PAUSED){
+            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
+        }
+
+        // Change the campaign status to in_progress
+        $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+
+        // Launch the actual send in a different process through the console command
+        $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:resume '.$campaign->getId());
+
+        $this->addFlash('success', 'Campaign resumed.');
+
+        return $this->redirectToRoute('adena_mail_campaign_list');
     }
 
     /**
@@ -153,13 +207,19 @@ class CampaignController extends CoreController
      */
     public function editAction( Request $request, Campaign $campaign )
     {
+        if($campaign->getStatus() != Campaign::STATUS_NEW && $campaign->getStatus() != Campaign::STATUS_TESTED){
+            $this->addFlash('warning', 'This campaign is already sent and you cannot edit it.');
+            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
+        }
+
         $form = $this->get('form.factory')->create(CampaignType::class, $campaign);
         if( $request->isMethod('POST') && $form->handleRequest($request)->isValid()){
-
+            // Set the status back to NEW if we edit it. We must test it again.
+            $campaign->setStatus(Campaign::STATUS_NEW);
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('success', 'Campaign updated.');
+            $this->addFlash('success', 'Campaign updated.');
 
             $redirectUrl = $this->generateUrl('adena_mail_campaign_edit', [
                 'id' => $campaign->getId()

@@ -2,6 +2,7 @@
 
 namespace Adena\MailBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -60,7 +61,6 @@ class MailingList
      * @var boolean
      *
      * @ORM\Column(name="is_test", type="boolean")
-     * @Assert\NotBlank()
      */
     private $isTest;
 
@@ -72,9 +72,16 @@ class MailingList
      */
     private $datasource;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Adena\MailBundle\Entity\Campaign", mappedBy="mailingLists")
+     */
+    private $campaigns;
+
     public function __construct()
     {
         $this->isTest = false;
+        $this->campaigns = new ArrayCollection();
     }
 
     /**
@@ -241,5 +248,39 @@ class MailingList
     public function getIsTest()
     {
         return $this->isTest;
+    }
+
+    /**
+     * Add campaign
+     *
+     * @param \Adena\MailBundle\Entity\Campaign $campaign
+     *
+     * @return MailingList
+     */
+    public function addCampaign(\Adena\MailBundle\Entity\Campaign $campaign)
+    {
+        $this->campaigns[] = $campaign;
+
+        return $this;
+    }
+
+    /**
+     * Remove campaign
+     *
+     * @param \Adena\MailBundle\Entity\Campaign $campaign
+     */
+    public function removeCampaign(\Adena\MailBundle\Entity\Campaign $campaign)
+    {
+        $this->campaigns->removeElement($campaign);
+    }
+
+    /**
+     * Get campaigns
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCampaigns()
+    {
+        return $this->campaigns;
     }
 }

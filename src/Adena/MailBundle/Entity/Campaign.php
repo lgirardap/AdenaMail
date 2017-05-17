@@ -4,6 +4,7 @@ namespace Adena\MailBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Psr\Log\InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,12 +16,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Campaign
 {
     const STATUS_NEW = 'new';
+    const STATUS_TESTING = 'testing';
     const STATUS_TESTED = 'tested';
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_PAUSED = 'paused';
     const STATUS_ENDED = 'ended';
     const STATUSES = [
         self::STATUS_NEW => self::STATUS_NEW,
+        self::STATUS_TESTING => self::STATUS_TESTING,
         self::STATUS_TESTED => self::STATUS_TESTED,
         self::STATUS_IN_PROGRESS => self::STATUS_IN_PROGRESS,
         self::STATUS_PAUSED => self::STATUS_PAUSED,
@@ -68,11 +71,19 @@ class Campaign
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Adena\MailBundle\Entity\MailingList", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Adena\MailBundle\Entity\MailingList", cascade={"persist"}, inversedBy="campaigns")
      * @Assert\Valid()
      * @Assert\Count(min = 1)
      */
     private $mailingLists;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Adena\MailBundle\Entity\MailingList", cascade={"persist"})
+     * @ORM\JoinTable(name="campaign_test_mailing_list")
+     * @Assert\Valid()
+     */
+    private $testMailingLists;
 
     /**
      * @var string
@@ -174,6 +185,9 @@ class Campaign
      */
     public function addMailingList(\Adena\MailBundle\Entity\MailingList $mailingList)
     {
+        if($mailingList->getIsTest()){
+            throw new InvalidArgumentException('You can only add regular mailinglists.');
+        }
         $this->mailingLists[] = $mailingList;
 
         return $this;
@@ -345,5 +359,42 @@ class Campaign
     public function getQueues()
     {
         return $this->queues;
+    }
+
+    /**
+     * Add testMailingList
+     *
+     * @param \Adena\MailBundle\Entity\MailingList $testMailingList
+     *
+     * @return Campaign
+     */
+    public function addTestMailingList(\Adena\MailBundle\Entity\MailingList $testMailingList)
+    {
+        if(!$testMailingList->getIsTest()){
+            throw new InvalidArgumentException('You can only add test mailinglists.');
+        }
+        $this->testMailingLists[] = $testMailingList;
+
+        return $this;
+    }
+
+    /**
+     * Remove testMailingList
+     *
+     * @param \Adena\MailBundle\Entity\MailingList $testMailingList
+     */
+    public function removeTestMailingList(\Adena\MailBundle\Entity\MailingList $testMailingList)
+    {
+        $this->testMailingLists->removeElement($testMailingList);
+    }
+
+    /**
+     * Get testMailingLists
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTestMailingLists()
+    {
+        return $this->testMailingLists;
     }
 }

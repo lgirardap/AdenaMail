@@ -2,6 +2,8 @@
 
 namespace Adena\MailBundle\Repository;
 
+use Adena\MailBundle\Entity\Campaign;
+
 /**
  * CampaignRepository
  *

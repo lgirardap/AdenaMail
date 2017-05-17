@@ -41,6 +41,7 @@ services:
       arguments:
         - "@doctrine.orm.default_entity_manager"
         - "@adena_mail.mail_engine"
+        - "@adena_mail.entity_helper.campaign_to_queue"
 
   adena_mail.mail_engine:
       class: Adena\MailBundle\MailEngine\MailEngine

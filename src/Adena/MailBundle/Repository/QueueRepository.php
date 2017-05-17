@@ -29,6 +29,15 @@ class QueueRepository extends \Doctrine\ORM\EntityRepository
             ->getArrayResult();
     }
 
+    public function removeAllForCampaign($campaign){
+        return $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.campaign = :campaign')
+            ->setParameter('campaign', $campaign)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function removeById($id){
         return $this->createQueryBuilder('q')
             ->delete()

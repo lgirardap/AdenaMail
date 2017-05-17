@@ -151,6 +151,12 @@ adena_mail_campaign_send:
   requirements:
       id: \d+
 
+adena_mail_campaign_test:
+  path: /campaign/test/{id}
+  defaults: { _controller: AdenaMailBundle:Campaign:test }
+  requirements:
+      id: \d+
+
 adena_mail_xhr_validation:
   path: /xhr/validation
   defaults: { _controller: AdenaMailBundle:Xhr:validation }

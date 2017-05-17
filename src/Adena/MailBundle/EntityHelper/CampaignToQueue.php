@@ -9,6 +9,7 @@
 namespace Adena\MailBundle\EntityHelper;
 
 use Adena\MailBundle\Entity\Campaign;
+use Adena\MailBundle\Entity\MailingList;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CampaignToQueue
@@ -28,27 +29,45 @@ class CampaignToQueue
      */
     public function createQueue(Campaign $campaign)
     {
-        // Get the associated mailinglists
+        // Get the associated mailingLists
         $mailingLists = $campaign->getMailingLists();
 
-        $emails = array();
-        foreach ($mailingLists as $mailingList) {
-            // Fetch the emails associated to the mailing list using the mailing list email fetcher Library
-            $newEmails = $this->emailsFetcher->fetch($mailingList);
-            $emails = array_merge($emails, $newEmails);
-        }
-
-        // Remove duplicates
-        $emails = $this->removeDuplicates($emails);
-
-        // Create the Queue rows needed
-        $this->em->getRepository('AdenaMailBundle:Queue')->nativeBulkInsertForCampaign($emails, $campaign);
+        $emailsCount = $this->_createQueues($mailingLists, $campaign);
 
         // Update the number of emails for this campaign
-        $campaign->setEmailsCount(count($emails));
+        $campaign->setEmailsCount($emailsCount);
         $this->em->flush();
     }
 
+    public function createTestEmailQueue( Campaign $campaign)
+    {
+        // Get the associated mailingLists
+        $mailingLists = $campaign->getTestMailingLists();
+
+        $this->_createQueues($mailingLists, $campaign);
+    }
+
+    public function emptyQueue(Campaign $campaign){
+        $this->em->getRepository('AdenaMailBundle:Queue')->removeAllForCampaign($campaign);
+    }
+
+    private function _createQueues($mailingLists, Campaign $campaign){
+        $queues = array();
+        foreach ($mailingLists as $mailingList) {
+            // Fetch the emails associated to the mailing list using the mailing list email fetcher Library
+            $newQueues = $this->emailsFetcher->fetch($mailingList);
+            $queues = array_merge($queues, $newQueues);
+        }
+
+        // Remove duplicates
+        $queues = $this->removeDuplicates($queues);
+
+        // Create the Queue rows needed
+        $this->em->getRepository('AdenaMailBundle:Queue')->nativeBulkInsertForCampaign($queues, $campaign);
+
+        return count($queues);
+    }
+    
     /**
      * @param $emails
      *

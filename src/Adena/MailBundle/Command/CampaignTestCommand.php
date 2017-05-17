@@ -7,16 +7,16 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CampaignSendCommand extends ContainerAwareCommand
+class CampaignTestCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('adenamail:campaign:send')
+            ->setName('adenamail:campaign:test')
 
             // the short description shown while running "php bin/console list"
-            ->setDescription('Sends the campaign provided')
+            ->setDescription('Tests sending the campaign provided')
 
             // the full command description shown when running the command with
             // the "--help" option
@@ -35,7 +35,7 @@ class CampaignSendCommand extends ContainerAwareCommand
         if(!$campaign){
             $output->writeln('Invalid campaign!');
         }else {
-            $this->getContainer()->get('adena_mail.entity_helper.campaign_sender')->send($campaign);
+            $this->getContainer()->get('adena_mail.entity_helper.campaign_sender')->test($campaign);
         }
     }
 }

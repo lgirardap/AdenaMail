@@ -1,21 +1,11 @@
 {% extends 'AdenaMailBundle::layout.html.twig' %}
 
 {% block adenamail_body %}
-    <p>{{ campaign.name }}</p>
+    <h3>{{ campaign.name }}</h3>
 
-    {% if (campaign.status is constant('STATUS_NEW', campaign) or campaign.status is constant('STATUS_TESTED', campaign))  %}
-        {{ form_start(testForm, {attr: {novalidate: 'novalidate'}}) }}
-        {{ form_widget(testForm) }}
-
-        <div class="row">
-            <div class="col-sm-12 text-center">
-                <button type="submit" value="save" class="btn btn-primary">
-                    <i class="glyphicon glyphicon-scale"></i>
-                    {{ 'Test !'|trans }}
-                </button>
-            </div>
-        </div>
-        {{ form_end(testForm) }}
+    {% if (campaign.status is constant('STATUS_NEW', campaign))  %}
+        <p>Before sending the campaign, you must send a Test Email.</p>
+        <p><a href="{{ path('adena_mail_campaign_test', {id: campaign.id}) }}">Please click here to do so.</a></p>
     {% endif %}
 
     {% if campaign.status is constant('STATUS_TESTED', campaign) %}
