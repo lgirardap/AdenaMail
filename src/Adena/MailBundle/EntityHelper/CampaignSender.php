@@ -58,7 +58,7 @@ class CampaignSender
         }
 
         // If the campaign is currently in NEW orTESTED status, we need to create the queue before sending it
-        if(!in_array($campaign->getStatus(), [
+        if(in_array($campaign->getStatus(), [
                 Campaign::STATUS_NEW,
                 Campaign::STATUS_TESTED,
             ]

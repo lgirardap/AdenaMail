@@ -39,7 +39,7 @@
                             {{ campaign.status }}
                         </td>
                         <td>
-                            {% if campaign.status is constant('STATUS_NEW', campaign) %}
+                            {% if campaign.status is constant('STATUS_NEW', campaign) or campaign.status is constant('STATUS_TESTED', campaign) %}
                                 <a href="{{ path('adena_mail_campaign_edit', {'id': campaign.id}) }}">
                                     Edit
                                 </a> |

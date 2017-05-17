@@ -31,7 +31,6 @@ class CampaignToQueue
     {
         // Get the associated mailingLists
         $mailingLists = $campaign->getMailingLists();
-
         $emailsCount = $this->_createQueues($mailingLists, $campaign);
 
         // Update the number of emails for this campaign

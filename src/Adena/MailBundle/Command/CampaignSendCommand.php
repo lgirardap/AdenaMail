@@ -35,7 +35,7 @@ class CampaignSendCommand extends ContainerAwareCommand
         if(!$campaign){
             $output->writeln('Invalid campaign!');
         }else {
-            $this->getContainer()->get('adena_mail.entity_helper.campaign_sender')->send($campaign);
+            $this->getContainer()->get('adena_mail.entity_helper.campaign_sender')->startResume($campaign);
         }
     }
 }
