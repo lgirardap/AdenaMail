@@ -1,0 +1,3 @@
+services:
+  adena_mail.action_control.campaign:
+      class: Adena\MailBundle\ActionControl\CampaignActionControl

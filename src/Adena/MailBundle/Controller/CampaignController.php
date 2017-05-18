@@ -30,7 +30,9 @@ class CampaignController extends CoreController
 
     public function testAction(Request $request, Campaign $campaign)
     {
-        if($campaign->getStatus() != Campaign::STATUS_NEW && $campaign->getStatus() != Campaign::STATUS_TESTED){
+        $campaignActionControl = $this->get('adena_mail.action_control.campaign');
+        if(!$campaignActionControl->isAllowed('test', $campaign)){
+
             $this->addFlash('warning', 'This campaign is already sent and you cannot test it again.');
             return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
         }
@@ -69,7 +71,10 @@ class CampaignController extends CoreController
     }
 
     public function sendAction(Campaign $campaign){
-        if($campaign->getStatus() != Campaign::STATUS_TESTED){
+
+        $campaignActionControl = $this->get('adena_mail.action_control.campaign');
+        if(!$campaignActionControl->isAllowed('start_resume', $campaign)){
+
             // TODO make pretty message with ifs
             $this->addFlash('warning', 'Campaign already started or not tested.');
             return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
@@ -95,6 +100,7 @@ class CampaignController extends CoreController
         return $this->redirectToRoute('adena_mail_campaign_list');
     }
 
+    // TODO Check out if still usefull
     public function resumeAction(Campaign $campaign){
         if($campaign->getStatus() != Campaign::STATUS_PAUSED){
             return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
@@ -207,7 +213,9 @@ class CampaignController extends CoreController
      */
     public function editAction( Request $request, Campaign $campaign )
     {
-        if($campaign->getStatus() != Campaign::STATUS_NEW && $campaign->getStatus() != Campaign::STATUS_TESTED){
+
+        $campaignActionControl = $this->get('adena_mail.action_control.campaign');
+        if(!$campaignActionControl->isAllowed('edit', $campaign)){
             $this->addFlash('warning', 'This campaign is already sent and you cannot edit it.');
             return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
         }

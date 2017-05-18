@@ -2,6 +2,7 @@
 
 namespace Adena\MailBundle\EntityHelper;
 
+use Adena\MailBundle\ActionControl\CampaignActionControl;
 use Adena\MailBundle\Entity\Campaign;
 use Adena\MailBundle\MailEngine\MailEngine;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,22 +13,25 @@ class CampaignSender
     private $em;
     private $mailEngine;
     private $campaignToQueue;
+    private $campaignActionControl;
 
-    public function __construct(EntityManagerInterface $em, MailEngine $mailEngine, CampaignToQueue $campaignToQueue)
+    public function __construct(
+        EntityManagerInterface $em,
+        MailEngine $mailEngine,
+        CampaignToQueue $campaignToQueue,
+        CampaignActionControl $campaignActionControl)
     {
         $this->mailEngine = $mailEngine;
         $this->em            = $em;
         $this->campaignToQueue = $campaignToQueue;
+        $this->campaignActionControl = $campaignActionControl;
     }
 
     public function test(Campaign $campaign)
     {
-        // We can only test new and already tested campaigns.
-        if(!in_array($campaign->getStatus(), [
-                Campaign::STATUS_NEW,
-                Campaign::STATUS_TESTED,
-            ]
-        )){
+
+        // If the campaign cannot be test, we have to stop the script and throw an exception
+        if(!$this->campaignActionControl->isAllowed("test", $campaign)){
             throw new \InvalidArgumentException('The provided campaign cannot be sent because its status is: '.$campaign->getStatus());
         }
 
@@ -47,22 +51,13 @@ class CampaignSender
 
     public function startResume(Campaign $campaign)
     {
-        // Only new, tested or paused campaigns can be started or resumed.
-        if(!in_array($campaign->getStatus(), [
-                Campaign::STATUS_NEW,
-                Campaign::STATUS_TESTED,
-                Campaign::STATUS_PAUSED
-            ]
-        )){
+        // If the campaign cannot be start_resume, we have to stop the script and throw an exception
+        if(!$this->campaignActionControl->isAllowed("start_resume", $campaign)){
             throw new \InvalidArgumentException('The provided campaign cannot be sent because its status is: '.$campaign->getStatus());
         }
 
-        // If the campaign is currently in NEW orTESTED status, we need to create the queue before sending it
-        if(in_array($campaign->getStatus(), [
-                Campaign::STATUS_NEW,
-                Campaign::STATUS_TESTED,
-            ]
-        )){
+        // If the campaign can be send, we need to create the queue before sending it
+        if($this->campaignActionControl->isAllowed("send", $campaign)){
             // Empty the queue for that campaign
             $this->campaignToQueue->emptyQueue($campaign);
 
@@ -110,4 +105,5 @@ class CampaignSender
             $this->em->flush();
         }
     }
+
 }

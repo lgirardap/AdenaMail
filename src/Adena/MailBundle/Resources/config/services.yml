@@ -1,6 +1,7 @@
 imports:
     - { resource: services/sender.yml }
     - { resource: services/datasource.yml }
+    - { resource: services/action_control.yml }
 
 services:
   adena_mail.form_extention.icon:
@@ -42,6 +43,7 @@ services:
         - "@doctrine.orm.default_entity_manager"
         - "@adena_mail.mail_engine"
         - "@adena_mail.entity_helper.campaign_to_queue"
+        - "@adena_mail.action_control.campaign"
 
   adena_mail.mail_engine:
       class: Adena\MailBundle\MailEngine\MailEngine
