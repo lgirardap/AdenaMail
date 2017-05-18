@@ -16,7 +16,7 @@ class CampaignActionControl
     const TEST          = 'test';
     const SEND          = 'send';
     const START_RESUME  = 'start_resume';
-    const EDIT          = 'EDIT';
+    const EDIT          = 'edit';
 
     public function isAllowed($action, Campaign $campaign)
     {
@@ -51,7 +51,6 @@ class CampaignActionControl
     private function _canSend(Campaign $campaign)
     {
         if(in_array($campaign->getStatus(), [
-                Campaign::STATUS_NEW,
                 Campaign::STATUS_TESTED,
             ]
         )){

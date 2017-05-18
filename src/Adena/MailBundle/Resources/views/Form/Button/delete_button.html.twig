@@ -1,4 +1,6 @@
-<button type="submit" value="delete" class="btn btn-danger">
-    <i class="glyphicon glyphicon-trash"></i>
-    {{ 'delete'|trans }}
-</button>
+{% include "AdenaMailBundle:Form/Button:default_button.html.twig" with {
+    type : 'submit',
+    class : 'btn-danger',
+    icon : 'glyphicon glyphicon-trash',
+    label : 'delete'} %}
+

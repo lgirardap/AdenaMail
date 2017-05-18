@@ -1,0 +1,4 @@
+<button type="{{ type|default("submit")|trim }}" value="{{ value|default("")|trim }}" class="btn {{ class|default("btn-default")|trim }}">
+    <i class="{{ icon|default("")|trim }}"></i>
+    {{ label|default("submit")|trans|trim }}
+</button>

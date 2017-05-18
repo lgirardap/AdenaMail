@@ -39,11 +39,24 @@
                             {{ campaign.status }}
                         </td>
                         <td>
-                            {% if campaign.status is constant('STATUS_NEW', campaign) or campaign.status is constant('STATUS_TESTED', campaign) %}
+                            {% if  campaignActionControl.allowed('edit', campaign) %}
                                 <a href="{{ path('adena_mail_campaign_edit', {'id': campaign.id}) }}">
                                     Edit
                                 </a> |
                             {% endif %}
+
+                            {% if campaignActionControl.allowed('test', campaign) %}
+                                <a href="{{ path('adena_mail_campaign_test', {'id': campaign.id}) }}">
+                                    Test
+                                </a> |
+                            {% endif %}
+
+                            {% if campaignActionControl.allowed('send', campaign) %}
+                                <a href="{{ path('adena_mail_campaign_send', {'id': campaign.id}) }}">
+                                    Send
+                                </a> |
+                            {% endif %}
+
                             <a href="{{ path('adena_mail_campaign_delete', {'id': campaign.id}) }}">
                                 Delete
                             </a>

@@ -45,11 +45,9 @@ class CampaignController extends CoreController
             // Send the (test) campaign
             $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
 
-            $this->addFlash('success', 'Sending test campaign.');
+            $this->addFlash('success', 'Sending test campaign for : '.$campaign->getName());
 
-            $redirectUrl = $this->generateUrl('adena_mail_campaign_view', [
-                'id' => $campaign->getId()
-            ]);
+            $redirectUrl = $this->generateUrl('adena_mail_campaign_list');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);
@@ -70,7 +68,7 @@ class CampaignController extends CoreController
         ));
     }
 
-    public function sendAction(Campaign $campaign){
+    public function sendAction(Campaign $campaign, Request $request){
 
         $campaignActionControl = $this->get('adena_mail.action_control.campaign');
         if(!$campaignActionControl->isAllowed('start_resume', $campaign)){
@@ -80,43 +78,22 @@ class CampaignController extends CoreController
             return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
         }
 
-        // We use our Campaign to queue service to add the campaign emails to the queue table
-        // After that point it's impossible to change the mailing list associated to the campaign.
-//        $campaignToQueue = $this->get("adena_mail.entity_helper.campaign_to_queue");
-//        $campaignToQueue->createQueue($campaign);
+        $form = $this->get('form.factory')->create();
 
-        // Change the campaign status to in_progress
-//        $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
-//        // Set the sentAt time to now
-//        $campaign->setSentAt(new \DateTime());
-//        $em = $this->getDoctrine()->getManager();
-//        $em->flush();
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
-        // Launch the actual send in a different process through the console command
-        $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
-        
-        $this->addFlash('success', 'Sending campaign.');
+            // Launch the actual send in a different process through the console command
+            $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
 
-        return $this->redirectToRoute('adena_mail_campaign_list');
-    }
+            $this->addFlash('success', 'Sending campaign.');
 
-    // TODO Check out if still usefull
-    public function resumeAction(Campaign $campaign){
-        if($campaign->getStatus() != Campaign::STATUS_PAUSED){
-            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
+            return $this->redirectToRoute('adena_mail_campaign_list');
         }
 
-        // Change the campaign status to in_progress
-        $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
-        $em = $this->getDoctrine()->getManager();
-        $em->flush();
-
-        // Launch the actual send in a different process through the console command
-        $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:resume '.$campaign->getId());
-
-        $this->addFlash('success', 'Campaign resumed.');
-
-        return $this->redirectToRoute('adena_mail_campaign_list');
+        return $this->render('@AdenaMail/Campaign/send.html.twig', array(
+            'campaign'    => $campaign,
+            'form'        => $form->createView(),
+        ));
     }
 
     /**
@@ -166,9 +143,12 @@ class CampaignController extends CoreController
         $campaignRepository = $em->getRepository('AdenaMailBundle:Campaign');
 
         $campaigns = $campaignRepository->findAll();
+        $campaignActionControl = $this->get("adena_mail.action_control.campaign");
+
 
         return $this->render('AdenaMailBundle:Campaign:list.html.twig', array(
-            'campaigns' => $campaigns
+            'campaigns' => $campaigns,
+            'campaignActionControl' => $campaignActionControl
         ));
     }
 
@@ -191,7 +171,7 @@ class CampaignController extends CoreController
             $em->remove($campaign);
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('success', "This campaign has been deleted");
+            $this->addFlash('success', "This campaign has been deleted");
 
             return $this->redirectToRoute('adena_mail_campaign_list');
         }

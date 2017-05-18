@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 
 class CampaignTestMailingListType extends AbstractType
 {
@@ -25,6 +26,7 @@ class CampaignTestMailingListType extends AbstractType
                 'query_builder' =>  function(MailingListRepository $repository){
                     return $repository->getTestMailingListQueryBuilder();
                 },
+                'constraints' => array(new Count(array("min" => 1)))
             ]);
     }
 
