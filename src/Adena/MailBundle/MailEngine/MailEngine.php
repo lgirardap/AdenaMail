@@ -16,6 +16,7 @@ class MailEngine
     private $logsDir;
     /** @var  \InfiniteIterator */
     private $senders;
+    private $queues;
 
     public function __construct(EntityManagerInterface $em, $kernelLogDir)
     {
@@ -33,6 +34,9 @@ class MailEngine
      * @throws \Swift_TransportException
      */
     public function run(\Swift_Message $message, array $queues, $logName = "default"){
+        $logName = $this->logsDir."/mail_engine_".$logName.".log";
+        $this->queues = $queues;
+
         // Get the senders
         // Allows us to loop infinitely on our senders array (goes back to the beginning if reached the end)
         $this->senders = new \InfiniteIterator(
@@ -50,9 +54,9 @@ class MailEngine
         $mailer = \Swift_Mailer::newInstance($transport);
 
         // Loop on all the email addresses
-        while(!empty($queues)){
+        while(!empty($this->queues)){
             // Get the queue
-            $queue = end($queues);
+            $queue = end($this->queues);
 
             // Get the next sender
             $this->senders->next();
@@ -64,19 +68,26 @@ class MailEngine
                 ->setPassword($currentSender->getPassword())
                 ->stop() // stop() forces SwiftMailer to re-connect with the new information
             ;
+            try {
 
-            // The message recipient
-            $message
-                ->setTo($queue['email']);
+                // The message recipient
+                $message
+                    ->setTo($queue['email']);
+            }catch(\Swift_RfcComplianceException $e){
+                // Email incorrect, delete it from the Queue and the $this->queues array
+                $this->_removeFromQueue($queue);
+                // Log it
+                file_put_contents($logName, 'ERROR EMAIL INVALID '.$queue['email'].PHP_EOL, FILE_APPEND);
+            }
+
 
             // Send it!
             try {
                 if ($mailer->send($message) > 0) {
-                    // Successfully sent, delete it from the Queue and the $queues array
-                    $this->em->getRepository('AdenaMailBundle:Queue')->removeById($queue['id']);
-                    array_pop($queues);
+                    // Successfully sent, delete it from the Queue and the $this->queues array
+                    $this->_removeFromQueue($queue);
                     // Log it
-                    file_put_contents($this->logsDir."/mail_engine_".$logName.".log", $queue['email'].PHP_EOL, FILE_APPEND);
+                    file_put_contents($logName, $queue['email'].PHP_EOL, FILE_APPEND);
                 }
             }catch(\Swift_TransportException $e){
                 switch($e->getCode()){
@@ -94,6 +105,12 @@ class MailEngine
                 }
             }
         }
+    }
+
+    private function _removeFromQueue($queue)
+    {
+        $this->em->getRepository('AdenaMailBundle:Queue')->removeById($queue['id']);
+        array_pop($this->queues);
     }
 
     private function _removeCurrentSender(){

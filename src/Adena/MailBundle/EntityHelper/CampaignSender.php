@@ -35,15 +35,15 @@ class CampaignSender
             throw new \InvalidArgumentException('The provided campaign cannot be sent because its status is: '.$campaign->getStatus());
         }
 
-        // Change Campaign status to TESTING
-        $campaign->setStatus(Campaign::STATUS_TESTING);
-        $this->em->flush();
-
         // Empty the queue for that campaign
         $this->campaignToQueue->emptyQueue($campaign);
 
         // Run the CampaignToQueue service for test email
         $this->campaignToQueue->createTestEmailQueue($campaign);
+
+        // Change Campaign status to TESTING
+        $campaign->setStatus(Campaign::STATUS_TESTING);
+        $this->em->flush();
 
         $logName = $campaign->getId()."_test_";
         $this->_doSend($campaign, Campaign::STATUS_TESTED, Campaign::STATUS_NEW, $logName);
@@ -56,16 +56,6 @@ class CampaignSender
             throw new \InvalidArgumentException('The provided campaign cannot be sent because its status is: '.$campaign->getStatus());
         }
 
-        // Campaign is sending...
-        $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
-
-        // If the sent at attribute is not set
-        // Update the campaign sent at time
-        if( !$campaign->getSentAt() ){
-            $campaign->setSentAt(new \DateTime());
-        }
-        $this->em->flush();
-
         // If the campaign can be send, we need to create the queue before sending it
         if($this->campaignActionControl->isAllowed("send", $campaign)){
             // Empty the queue for that campaign
@@ -73,7 +63,14 @@ class CampaignSender
 
             // Run the CampaignToQueue service
             $this->campaignToQueue->createQueue($campaign);
+
+            // Update the campaign sent at time
+            $campaign->setSentAt(new \DateTime());
         }
+
+        // Campaign is sending...
+        $campaign->setStatus(Campaign::STATUS_IN_PROGRESS);
+        $this->em->flush();
 
         // If it's not new or tested (so it's paused), just restart the engine
         $logName = $campaign->getId()."_".$campaign->getSentAt()->format('Ymd');
