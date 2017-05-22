@@ -45,7 +45,7 @@ class CampaignController extends CoreController
             // Send the (test) campaign
             $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
 
-            $this->addFlash('success', 'Sending test campaign for : '.$campaign->getName());
+            $this->addFlash('success', 'Your test campaign will be sent shortly : '.$campaign->getName());
 
             $redirectUrl = $this->generateUrl('adena_mail_campaign_list');
 
@@ -85,7 +85,7 @@ class CampaignController extends CoreController
             // Launch the actual send in a different process through the console command
             $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
 
-            $this->addFlash('success', 'Sending campaign.');
+            $this->addFlash('success', 'Your campaign will be sent shortly.');
 
             return $this->redirectToRoute('adena_mail_campaign_list');
         }
@@ -114,7 +114,7 @@ class CampaignController extends CoreController
 
             $this->addFlash('success', 'Campaign successfully added');
 
-            $redirectUrl = $this->generateUrl('adena_mail_campaign_add');
+            $redirectUrl = $this->generateUrl('adena_mail_campaign_list');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);
@@ -209,9 +209,7 @@ class CampaignController extends CoreController
 
             $this->addFlash('success', 'Campaign updated.');
 
-            $redirectUrl = $this->generateUrl('adena_mail_campaign_edit', [
-                'id' => $campaign->getId()
-            ]);
+            $redirectUrl = $this->generateUrl('adena_mail_campaign_list');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);

@@ -32,7 +32,7 @@ class SenderController extends CoreController
 
             $this->addFlash('success', 'Sender successfully added');
 
-            $redirectUrl = $this->generateUrl('adena_mail_sender_add');
+            $redirectUrl = $this->generateUrl('adena_mail_sender_list');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);

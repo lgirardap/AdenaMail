@@ -31,7 +31,7 @@ class DatasourceController extends CoreController
 
             $this->addFlash('success', 'Datasource successfully added');
 
-            $redirectUrl = $this->generateUrl('adena_mail_datasource_add');
+            $redirectUrl = $this->generateUrl('adena_mail_datasource_list');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);
@@ -115,9 +115,7 @@ class DatasourceController extends CoreController
 
             $request->getSession()->getFlashBag()->add('success', 'Datasource updated.');
 
-            $redirectUrl = $this->generateUrl('adena_mail_datasource_edit', [
-                'id' => $datasource->getId()
-            ]);
+            $redirectUrl = $this->generateUrl('adena_mail_datasource_list');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);
