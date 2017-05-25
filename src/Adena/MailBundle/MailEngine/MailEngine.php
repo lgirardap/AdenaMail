@@ -9,6 +9,7 @@
 namespace Adena\MailBundle\MailEngine;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class MailEngine
 {
@@ -17,6 +18,8 @@ class MailEngine
     /** @var  \InfiniteIterator */
     private $senders;
     private $queues;
+    private $logName;
+    private $errorLogName;
 
     public function __construct(EntityManagerInterface $em, $kernelLogDir)
     {
@@ -34,7 +37,8 @@ class MailEngine
      * @throws \Swift_TransportException
      */
     public function run(\Swift_Message $message, array $queues, $logName = "default"){
-        $logName = $this->logsDir."/mail_engine_".$logName.".log";
+        $this->logName = $this->logsDir."/mail_engine_".$logName.".log";
+        $this->errorLogName = $this->logsDir."/mail_engine_".$logName.".error.log";
         $this->queues = $queues;
 
         // Get the senders
@@ -77,7 +81,9 @@ class MailEngine
                 // Email incorrect, delete it from the Queue and the $this->queues array
                 $this->_removeFromQueue($queue);
                 // Log it
-                file_put_contents($logName, 'ERROR EMAIL INVALID '.$queue['email'].PHP_EOL, FILE_APPEND);
+                file_put_contents($this->logName, 'ERROR EMAIL INVALID '.$queue['email'].PHP_EOL, FILE_APPEND);
+                // Continue the loop without doing anything else
+                continue;
             }
 
 
@@ -87,20 +93,25 @@ class MailEngine
                     // Successfully sent, delete it from the Queue and the $this->queues array
                     $this->_removeFromQueue($queue);
                     // Log it
-                    file_put_contents($logName, $queue['email'].PHP_EOL, FILE_APPEND);
+                    file_put_contents($this->logName, $queue['email'].PHP_EOL, FILE_APPEND);
                 }
             }catch(\Swift_TransportException $e){
                 switch($e->getCode()){
                     // Invalid Login
                     case 535:
-                        file_put_contents($this->logsDir."/mail_engine_".$logName.".error.log", "Error 535: Login for sender ".$currentSender->getName()." invalid".PHP_EOL, FILE_APPEND);
+                        file_put_contents($this->errorLogName, "Error 535: Login for sender ".$currentSender->getName()." invalid".PHP_EOL, FILE_APPEND);
                         $this->_removeCurrentSender();
                         break;
 
                     // Email limit exceeded
                     case 550:
-                        file_put_contents($this->logsDir."/mail_engine_".$logName.".error.log", "Error 550: Limit exceeded for ".$currentSender->getName().PHP_EOL, FILE_APPEND);
+                        file_put_contents($this->errorLogName, "Error 550: Limit exceeded for ".$currentSender->getName().PHP_EOL, FILE_APPEND);
                         $this->_removeCurrentSender();
+                        break;
+
+                    default:
+                        file_put_contents($this->errorLogName, "Unhandled Swift_TransportException: ".$e->getCode()." : ".$e->getMessage().PHP_EOL, FILE_APPEND);
+                        throw $e;
                         break;
                 }
             }
@@ -122,6 +133,7 @@ class MailEngine
         // If no more senders available
         if(count($arrayIterator) < 1) {
             // Throw an error so we can stop sending emails (we can't send them anyways)
+            file_put_contents($this->errorLogName, "No more senders available".PHP_EOL, FILE_APPEND);
             throw new \Swift_TransportException('No more senders available.');
         }
     }

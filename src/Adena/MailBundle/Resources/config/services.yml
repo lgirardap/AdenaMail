@@ -44,6 +44,7 @@ services:
         - "@adena_mail.mail_engine"
         - "@adena_mail.entity_helper.campaign_to_queue"
         - "@adena_mail.action_control.campaign"
+        - "%kernel.logs_dir%"
 
   adena_mail.mail_engine:
       class: Adena\MailBundle\MailEngine\MailEngine

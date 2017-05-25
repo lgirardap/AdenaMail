@@ -57,6 +57,12 @@
                                 </a> |
                             {% endif %}
 
+                            {% if campaignActionControl.allowed('resume', campaign) %}
+                                <a href="{{ path('adena_mail_campaign_send', {'id': campaign.id}) }}">
+                                    Resume
+                                </a> |
+                            {% endif %}
+
                             <a href="{{ path('adena_mail_campaign_delete', {'id': campaign.id}) }}">
                                 Delete
                             </a>

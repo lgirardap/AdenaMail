@@ -16,6 +16,7 @@ class CampaignActionControl
     const TEST          = 'test';
     const SEND          = 'send';
     const START_RESUME  = 'start_resume';
+    const RESUME        = 'resume';
     const EDIT          = 'edit';
 
     public function isAllowed($action, Campaign $campaign)
@@ -27,6 +28,8 @@ class CampaignActionControl
                 return $this->_canSend($campaign);
             case self::START_RESUME:
                 return $this->_canStartResume($campaign);
+            case self::RESUME:
+                return $this->_canResume($campaign);
             case self::EDIT:
                 return $this->_canEdit($campaign);
              }
@@ -79,6 +82,18 @@ class CampaignActionControl
         if(in_array($campaign->getStatus(), [
                 Campaign::STATUS_NEW,
                 Campaign::STATUS_TESTED
+            ]
+        )){
+            return true;
+        }
+
+        return false;
+    }
+
+    private function _canResume(Campaign $campaign)
+    {
+        if(in_array($campaign->getStatus(), [
+                Campaign::STATUS_PAUSED
             ]
         )){
             return true;

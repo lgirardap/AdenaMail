@@ -6,6 +6,7 @@ use Adena\MailBundle\ActionControl\CampaignActionControl;
 use Adena\MailBundle\Entity\Campaign;
 use Adena\MailBundle\MailEngine\MailEngine;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class CampaignSender
 {
@@ -14,17 +15,20 @@ class CampaignSender
     private $mailEngine;
     private $campaignToQueue;
     private $campaignActionControl;
+    private $logDirs;
 
     public function __construct(
         EntityManagerInterface $em,
         MailEngine $mailEngine,
         CampaignToQueue $campaignToQueue,
-        CampaignActionControl $campaignActionControl)
+        CampaignActionControl $campaignActionControl,
+        $logsDir)
     {
         $this->mailEngine = $mailEngine;
         $this->em            = $em;
         $this->campaignToQueue = $campaignToQueue;
         $this->campaignActionControl = $campaignActionControl;
+        $this->logsDir = $logsDir;
     }
 
     public function test(Campaign $campaign)
@@ -101,6 +105,11 @@ class CampaignSender
         }catch(\Swift_TransportException $e) {
             // The send was interrupted, let's pause the campaign
             $campaign->setStatus($errorStatus);
+        }catch(Exception $e){
+            // The send was interrupted, let's pause the campaign
+            $campaign->setStatus($errorStatus);
+            file_put_contents($this->logsDir."/mail_engine_".$logName.".error.log", "Unhandled exception: ".$e->getCode()." : ".$e->getMessage().PHP_EOL, FILE_APPEND);
+            throw $e;
         }finally{
             $this->em->flush();
         }
