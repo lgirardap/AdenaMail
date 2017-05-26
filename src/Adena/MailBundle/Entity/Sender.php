@@ -46,10 +46,18 @@ class Sender
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
+     */
+    private $password;
+
+    /**
+     * A non persisted field that's used to create the encoded password.
+     *
+     * @var string
+     *
      * @Assert\Length(min=5)
      * @Assert\NotBlank()
      */
-    private $password;
+    private $plainPassword;
 
     /**
      * @var bool
@@ -57,7 +65,6 @@ class Sender
      * @ORM\Column(name="active", type="boolean")
      */
     private $active = true;
-
 
     /**
      * Get id
@@ -163,5 +170,43 @@ class Sender
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlainPassword(): string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param string $plainPassword
+     *
+     * @return Sender
+     */
+    public function setPlainPassword(string $plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+        // The plainPassword changed so the password is not valid anymore.
+        // Let's set it to null so it is regenerated when doctrine saves the entity
+        $this->password = null;
+
+        return $this;
+    }
+
+    /**
+     * Use this instead of the setPlainPassword() when you want to change the $plainPassword but NOT reset the $password
+     * Can be used when you want to change the $plainPassword without triggering a doctrine update.
+     *
+     * @param string $plainPassword
+     *
+     * @return Sender
+     */
+    public function initPlainPassword(string $plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
     }
 }

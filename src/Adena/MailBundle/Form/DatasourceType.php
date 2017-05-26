@@ -19,7 +19,7 @@ class DatasourceType extends AbstractType
             ->add('host',           TextType::class)
             ->add('port',           IntegerType::class)
             ->add('username',       TextType::class)
-            ->add('password',       TextType::class)
+            ->add('plainPassword',  TextType::class)
             ->add('databaseName',   TextType::class)
             ->add('name',           TextType::class);
     }

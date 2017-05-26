@@ -44,7 +44,7 @@ class MailingListEmailsFetcher
         $results    = $this->mysqlExternal->executeQuery($mailingList->getContent(), [
             'servername' => $datasource->getHost(),
             'username'   => $datasource->getUsername(),
-            'password'   => $datasource->getPassword(),
+            'password'   => $datasource->getPlainPassword(),
             'database'   => $datasource->getDatabaseName(),
             'port'       => $datasource->getPort()
         ]);

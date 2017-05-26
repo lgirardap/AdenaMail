@@ -23,7 +23,7 @@ class SenderType extends AbstractType
         $builder
             ->add('name',       TextType::class)
             ->add('email',      EmailType::class)
-            ->add('password',   TextType::class)
+            ->add('plainPassword',   TextType::class)
             ->add('active',     CheckboxType::class);
     }
 

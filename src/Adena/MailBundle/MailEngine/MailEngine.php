@@ -69,7 +69,7 @@ class MailEngine
             // Connect to the new current sender
             $transport
                 ->setUsername($currentSender->getEmail())
-                ->setPassword($currentSender->getPassword())
+                ->setPassword($currentSender->getPlainPassword())
                 ->stop() // stop() forces SwiftMailer to re-connect with the new information
             ;
             try {

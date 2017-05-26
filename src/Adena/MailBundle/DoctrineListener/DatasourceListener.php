@@ -26,8 +26,8 @@ class DatasourceListener
             return;
         }
 
-        if($entity->getPassword()) {
-            $entity->setPassword($this->encryptTool->encrypt($entity->getPassword()));
+        if($entity->getPlainPassword()) {
+            $entity->setPassword($this->encryptTool->encrypt($entity->getPlainPassword()));
         }
     }
 
@@ -39,8 +39,8 @@ class DatasourceListener
             return;
         }
 
-        if($entity->getPassword()) {
-            $entity->setPassword($this->encryptTool->encrypt($entity->getPassword()));
+        if($entity->getPlainPassword()) {
+            $entity->setPassword($this->encryptTool->encrypt($entity->getPlainPassword()));
         }
     }
 
@@ -53,7 +53,9 @@ class DatasourceListener
         }
 
         if($entity->getPassword()) {
-            $entity->setPassword($this->encryptTool->decrypt($entity->getPassword()));
+            $entity->initPlainPassword($this->encryptTool->decrypt($entity->getPassword()));
+        }else{
+            $entity->initPlainPassword('');
         }
     }
 }

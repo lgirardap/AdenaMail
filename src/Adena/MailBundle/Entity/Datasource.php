@@ -61,6 +61,13 @@ class Datasource
     private $password;
 
     /**
+     * A non persisted field that's used to create the encoded password.
+     *
+     * @var string
+     */
+    private $plainPassword;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="database_name", type="string", length=255)
@@ -228,5 +235,43 @@ class Datasource
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param string $plainPassword
+     *
+     * @return Datasource
+     */
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+        // The plainPassword changed so the password is not valid anymore.
+        // Let's set it to null so it is regenerated when doctrine saves the entity
+        $this->password = null;
+
+        return $this;
+    }
+
+    /**
+     * Use this instead of the setPlainPassword() when you want to change the $plainPassword but NOT reset the $password
+     * Can be used when you want to change the $plainPassword without triggering a doctrine update.
+     *
+     * @param string $plainPassword
+     *
+     * @return Datasource
+     */
+    public function initPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
     }
 }

@@ -28,7 +28,7 @@ class SenderListener
             return;
         }
 
-        $entity->setPassword($this->encryptTool->encrypt($entity->getPassword()));
+        $entity->setPassword($this->encryptTool->encrypt($entity->getPlainPassword()));
     }
 
     public function preUpdate(LifecycleEventArgs $args)
@@ -39,7 +39,7 @@ class SenderListener
             return;
         }
 
-        $entity->setPassword($this->encryptTool->encrypt($entity->getPassword()));
+        $entity->setPassword($this->encryptTool->encrypt($entity->getPlainPassword()));
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -50,6 +50,6 @@ class SenderListener
             return;
         }
 
-        $entity->setPassword($this->encryptTool->decrypt($entity->getPassword()));
+        $entity->initPlainPassword($this->encryptTool->decrypt($entity->getPassword()));
     }
 }

@@ -9,11 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SenderController extends CoreController
 {
-    public function indexAction()
-    {
-        return $this->render('AdenaMailBundle:Sender:index.html.twig');
-    }
-
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *

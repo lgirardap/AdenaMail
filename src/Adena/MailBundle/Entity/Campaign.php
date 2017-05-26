@@ -50,7 +50,7 @@ class Campaign
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="created_at", type="datetimetz")
+     * @ORM\Column(name="created_at", type="datetime")
      * @Assert\NotBlank()
      */
     private $createdAt;
@@ -58,7 +58,7 @@ class Campaign
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="sent_at", type="datetimetz", nullable=true)
+     * @ORM\Column(name="sent_at", type="datetime", nullable=true)
      */
     private $sentAt;
 
