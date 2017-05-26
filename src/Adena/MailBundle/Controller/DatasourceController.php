@@ -108,9 +108,7 @@ class DatasourceController extends CoreController
     public function editAction( Request $request, Datasource $datasource )
     {
         $form = $this->get('form.factory')->create(DatasourceType::class, $datasource);
-        dump($form->getData());
         if( $request->isMethod('POST') && $form->handleRequest($request)->isValid()){
-            dump($datasource);
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
