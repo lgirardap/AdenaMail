@@ -175,7 +175,7 @@ class Sender
     /**
      * @return string
      */
-    public function getPlainPassword(): string
+    public function getPlainPassword()
     {
         return $this->plainPassword;
     }
@@ -185,7 +185,7 @@ class Sender
      *
      * @return Sender
      */
-    public function setPlainPassword(string $plainPassword)
+    public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
         // The plainPassword changed so the password is not valid anymore.
@@ -203,7 +203,7 @@ class Sender
      *
      * @return Sender
      */
-    public function initPlainPassword(string $plainPassword)
+    public function initPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
 
