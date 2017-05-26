@@ -5,7 +5,9 @@
     <h4>Subject</h4>
     <p>{{ email.subject }}</p>
     <h4>Template</h4>
-    <p>{{ email.template|raw }}</p>
+    <p>
+        <iframe srcdoc="{{ email.template }}" sandbox="sandbox" height="800" width="100%"></iframe>
+    </p>
     {%  include('AdenaMailBundle:Common/Button:edit_link_button.html.twig') with {'path': path('adena_mail_email_edit', {id: email.id})} %}
     {%  include('AdenaMailBundle:Common/Button:delete_link_button.html.twig') with {'path': path('adena_mail_email_delete', {id: email.id})} %}
 {% endblock %}
