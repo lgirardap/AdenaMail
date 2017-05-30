@@ -55,7 +55,7 @@ class MailEngine
         // Because we use a specific transport, we can't use $this->get('mailer'), so we build our own
         // instance instead.
         $mailer = \Swift_Mailer::newInstance($transport);
-        
+
         // Loop on all the email addresses
         while(!empty($this->queues)){
             // Get the queue

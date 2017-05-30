@@ -30,7 +30,7 @@ class CampaignType extends AbstractType
             ])
             ->add('email', EntityType::class, [
                 'class' => Email::class,
-                'choice_label' => 'subject'
+                'choice_label' => 'name'
             ])
         ;
     }
