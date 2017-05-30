@@ -49,7 +49,7 @@ class MailEngine
         // Create SMTP Transport
         $transport = \Swift_SmtpTransport::newInstance();
         $transport
-            ->setHost("ssl://smtp.gmail2.com")
+            ->setHost("ssl://smtp.gmail.com")
             ->setPort("465");
 
         // Because we use a specific transport, we can't use $this->get('mailer'), so we build our own
