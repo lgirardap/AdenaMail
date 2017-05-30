@@ -6,28 +6,17 @@
  * Time: 12:48 PM
  */
 
-namespace Adena\MailBundle\MailEngine;
+namespace Adena\MailBundle\Queue;
 
 use Adena\MailBundle\Entity\MailEngineInstance;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
-class MailEngine
+class QueueOperator
 {
     private $em;
-    private $logsDir;
-    /** @var  \InfiniteIterator */
-    private $senders;
-    private $queues;
-    private $logName;
-    private $errorLogName;
-    /** @var  \Adena\MailBundle\Entity\MailEngineInstance */
-    private $instance;
 
-    public function __construct(EntityManagerInterface $em, $kernelLogDir)
+    public function __construct(EntityManagerInterface $em )
     {
         $this->em = $em;
-        $this->logsDir = $kernelLogDir;
     }
 
     /**

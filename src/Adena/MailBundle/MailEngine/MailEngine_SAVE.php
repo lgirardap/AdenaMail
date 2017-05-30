@@ -101,6 +101,7 @@ class MailEngine
                 if ($mailer->send($message) > 0) {
                     // Successfully sent, delete it from the Queue and the $this->queues array
                     $this->_removeFromQueue($queue);
+
                     // Log it
                     file_put_contents($this->logName, $queue['email'].PHP_EOL, FILE_APPEND);
                 }
