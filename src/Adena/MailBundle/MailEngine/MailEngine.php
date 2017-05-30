@@ -8,9 +8,7 @@
 
 namespace Adena\MailBundle\MailEngine;
 
-use Adena\MailBundle\Entity\MailEngineInstance;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 class MailEngine
 {
@@ -21,8 +19,6 @@ class MailEngine
     private $queues;
     private $logName;
     private $errorLogName;
-    /** @var  \Adena\MailBundle\Entity\MailEngineInstance */
-    private $instance;
 
     public function __construct(EntityManagerInterface $em, $kernelLogDir)
     {
@@ -39,11 +35,7 @@ class MailEngine
      *
      * @throws \Swift_TransportException
      */
-    public function run(\Swift_Message $message, array $queues, $logName = "default")
-    {
-        $this->instance = new MailEngineInstance();
-        $this->instance->setCampaign('???');
-
+    public function run(\Swift_Message $message, array $queues, $logName = "default"){
         $this->logName = $this->logsDir."/mail_engine_".$logName.".log";
         $this->errorLogName = $this->logsDir."/mail_engine_".$logName.".error.log";
         $this->queues = $queues;
@@ -57,17 +49,15 @@ class MailEngine
         // Create SMTP Transport
         $transport = \Swift_SmtpTransport::newInstance();
         $transport
-            ->setHost("ssl://smtp.gmail.com")
+            ->setHost("ssl://smtp.gmail2.com")
             ->setPort("465");
 
         // Because we use a specific transport, we can't use $this->get('mailer'), so we build our own
         // instance instead.
         $mailer = \Swift_Mailer::newInstance($transport);
-
+        
         // Loop on all the email addresses
-        // todo add check if still running
-        $run = true;
-        while(!empty($this->queues) && $run){
+        while(!empty($this->queues)){
             // Get the queue
             $queue = end($this->queues);
 
@@ -102,7 +92,7 @@ class MailEngine
                     // Successfully sent, delete it from the Queue and the $this->queues array
                     $this->_removeFromQueue($queue);
                     // Log it
-                    file_put_contents($this->logName, $queue['email'].PHP_EOL, FILE_APPEND);
+                    file_put_contents($this->logName, $queue['email'] . PHP_EOL, FILE_APPEND);
                 }
             }catch(\Swift_TransportException $e){
                 switch($e->getCode()){
@@ -123,6 +113,8 @@ class MailEngine
                         throw $e;
                         break;
                 }
+            }catch(\Swift_IoException $e){ // When the connection times out, Swift_IoExceptions are returned, handle them
+                file_put_contents($this->errorLogName, 'IOException: '.$e->getCode()." : ".$e->getMessage().PHP_EOL, FILE_APPEND);
             }
         }
     }
