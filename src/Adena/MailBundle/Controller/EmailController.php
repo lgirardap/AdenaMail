@@ -16,6 +16,7 @@ class EmailController extends CoreController
     }
 
     public function listAction($page){
+
         try {
             $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Email')->getEmailsQuery();
 
@@ -27,6 +28,7 @@ class EmailController extends CoreController
         }catch(\InvalidArgumentException $e){
             throw $this->createNotFoundException($e->getMessage());
         }
+
     }
 
     public function deleteAction(Request $request, Email $email){
