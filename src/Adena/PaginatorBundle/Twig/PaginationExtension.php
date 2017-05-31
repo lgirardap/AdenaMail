@@ -39,6 +39,10 @@ class PaginationExtension extends \Twig_Extension
             }
         }
 
+        if ($this->range > $paginator->getNbPages()) {
+            $this->range = $paginator->getNbPages();
+        }
+
         $delta = ceil($this->range / 2);
         if ($paginator->getPage() - $delta > $paginator->getNbPages() - $this->range) {
             $pages = range($paginator->getNbPages() - $this->range + 1, $paginator->getNbPages());
