@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Adena\CoreBundle\AdenaCoreBundle(),
             new Adena\MailBundle\AdenaMailBundle(),
+            new Adena\PaginatorBundle\AdenaPaginatorBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

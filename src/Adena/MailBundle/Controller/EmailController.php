@@ -15,12 +15,18 @@ class EmailController extends CoreController
         ]);
     }
 
-    public function listAction(){
-        $emails = $this->getDoctrine()->getRepository('AdenaMailBundle:Email')->findAll();
+    public function listAction($page){
+        try {
+            $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Email')->getEmailsQuery();
 
-        return $this->render('AdenaMailBundle:Email:list.html.twig', [
-            'emails' => $emails
-        ]);
+            $emails = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 1);
+
+            return $this->render('AdenaMailBundle:Email:list.html.twig', array(
+                'emails'        => $emails
+            ));
+        }catch(\InvalidArgumentException $e){
+            throw $this->createNotFoundException($e->getMessage());
+        }
     }
 
     public function deleteAction(Request $request, Email $email){

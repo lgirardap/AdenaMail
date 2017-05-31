@@ -51,9 +51,16 @@
                                 </a> |
                             {% endif %}
 
-                            {% if campaignActionControl.allowed('send', campaign) %}
+                            {% if campaignActionControl.allowed('start', campaign) %}
                                 <a href="{{ path('adena_mail_campaign_send', {'id': campaign.id}) }}">
                                     Send
+                                </a> |
+                            {% endif %}
+
+
+                            {% if campaignActionControl.allowed('pause', campaign) %}
+                                <a href="{{ path('adena_mail_campaign_pause', {'id': campaign.id}) }}">
+                                    Pause
                                 </a> |
                             {% endif %}
 

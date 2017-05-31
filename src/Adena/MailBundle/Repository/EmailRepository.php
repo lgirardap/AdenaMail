@@ -2,6 +2,8 @@
 
 namespace Adena\MailBundle\Repository;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 /**
  * EmailRepository
  *
@@ -10,4 +12,15 @@ namespace Adena\MailBundle\Repository;
  */
 class EmailRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    public function getEmailsQuery()
+    {
+        $query = $this
+            ->createQueryBuilder('e')
+            ->orderBy('e.createdAt', 'desc')
+            ->getQuery();
+
+        return $query;
+    }
+
 }

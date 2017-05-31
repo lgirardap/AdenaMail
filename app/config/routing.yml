@@ -1,3 +1,7 @@
+adena_paginator:
+    resource: "@AdenaPaginatorBundle/Resources/config/routing.yml"
+    prefix:   /
+
 adena_core:
     resource: "@AdenaCoreBundle/Resources/config/routing.yml"
     prefix:   /

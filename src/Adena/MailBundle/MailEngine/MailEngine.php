@@ -1,16 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Girard Lionel
- * Date: 5/8/2017
- * Time: 12:48 PM
- */
 
 namespace Adena\MailBundle\MailEngine;
 
-use Adena\MailBundle\Entity\MailEngineInstance;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 class MailEngine
 {
@@ -18,35 +10,28 @@ class MailEngine
     private $logsDir;
     /** @var  \InfiniteIterator */
     private $senders;
-    private $queues;
     private $logName;
     private $errorLogName;
-    /** @var  \Adena\MailBundle\Entity\MailEngineInstance */
-    private $instance;
+    /** @var \Swift_mailer */
+    private $mailer;
+    /** @var \Swift_SmtpTransport */
+    private $transport;
+    private $initialized;
 
     public function __construct(EntityManagerInterface $em, $kernelLogDir)
     {
         $this->em = $em;
         $this->logsDir = $kernelLogDir;
+        $this->initialized = false;
     }
 
     /**
-     * @param \Swift_Message $message Only the "to" part of the message will be set here, we expect everything else
-     *                                to be already set in the $message parameter.
-     * @param array          $queues  Should be an array of ARRAYS, not objects.
-     *
      * @param string         $logName
-     *
-     * @throws \Swift_TransportException
      */
-    public function run(\Swift_Message $message, array $queues, $logName = "default")
+    public function initialize($logName = "default")
     {
-        $this->instance = new MailEngineInstance();
-        $this->instance->setCampaign('???');
-
         $this->logName = $this->logsDir."/mail_engine_".$logName.".log";
         $this->errorLogName = $this->logsDir."/mail_engine_".$logName.".error.log";
-        $this->queues = $queues;
 
         // Get the senders
         // Allows us to loop infinitely on our senders array (goes back to the beginning if reached the end)
@@ -55,82 +40,79 @@ class MailEngine
         );
 
         // Create SMTP Transport
-        $transport = \Swift_SmtpTransport::newInstance();
-        $transport
+        $this->transport = \Swift_SmtpTransport::newInstance();
+        $this->transport
             ->setHost("ssl://smtp.gmail.com")
             ->setPort("465");
 
         // Because we use a specific transport, we can't use $this->get('mailer'), so we build our own
         // instance instead.
-        $mailer = \Swift_Mailer::newInstance($transport);
+        $this->mailer = \Swift_Mailer::newInstance($this->transport);
 
-        // Loop on all the email addresses
-        // todo add check if still running
-        $run = true;
-        while(!empty($this->queues) && $run){
-            // Get the queue
-            $queue = end($this->queues);
+        $this->initialized = true;
+    }
 
+    /**
+     * @param \Swift_Message $message We expect everything to be already set in the $message parameter.
+     *
+     * @param                $logName
+     *
+     * @return bool
+     * @throws \Swift_TransportException
+     */
+    public function send(\Swift_Message $message, $logName = "default"){
+        if(!$this->initialized){
+            $this->initialize($logName);
+        }
+
+        // The goal here is to test sending the email until we tried all the senders or the email is sent.
+        // It looks like we are looping indefinitely, but we are not.
+        // Two things can happen:
+        // 1: We raised no exception while sending the email, and we return TRUE or FALSE, thus exiting the loop
+        // 2: We raised an exception and we removed the current sender from the list. When we have no more senders
+        // available, we throw an exception, thus exiting the loop (if we have senders remaining, we keep looping,
+        // which is exactly the behavior wanted).
+        while(true) {
             // Get the next sender
             $this->senders->next();
             $currentSender = $this->senders->current();
 
             // Connect to the new current sender
-            $transport
+            $this->transport
                 ->setUsername($currentSender->getEmail())
                 ->setPassword($currentSender->getPlainPassword())
                 ->stop() // stop() forces SwiftMailer to re-connect with the new information
             ;
-            try {
-
-                // The message recipient
-                $message
-                    ->setTo($queue['email']);
-            }catch(\Swift_RfcComplianceException $e){
-                // Email incorrect, delete it from the Queue and the $this->queues array
-                $this->_removeFromQueue($queue);
-                // Log it
-                file_put_contents($this->logName, 'ERROR EMAIL INVALID '.$queue['email'].PHP_EOL, FILE_APPEND);
-                // Continue the loop without doing anything else
-                continue;
-            }
-
 
             // Send it!
             try {
-                if ($mailer->send($message) > 0) {
-                    // Successfully sent, delete it from the Queue and the $this->queues array
-                    $this->_removeFromQueue($queue);
-                    // Log it
-                    file_put_contents($this->logName, $queue['email'].PHP_EOL, FILE_APPEND);
+                if ($this->mailer->send($message) > 0) {
+                    return TRUE;
                 }
-            }catch(\Swift_TransportException $e){
-                switch($e->getCode()){
+                return FALSE;
+            } catch (\Swift_TransportException $e) {
+                switch ($e->getCode()) {
                     // Invalid Login
                     case 535:
-                        file_put_contents($this->errorLogName, "Error 535: Login for sender ".$currentSender->getName()." invalid".PHP_EOL, FILE_APPEND);
+                        file_put_contents($this->errorLogName, "Error 535: Login for sender " . $currentSender->getName() . " invalid" . PHP_EOL, FILE_APPEND);
                         $this->_removeCurrentSender();
                         break;
 
                     // Email limit exceeded
                     case 550:
-                        file_put_contents($this->errorLogName, "Error 550: Limit exceeded for ".$currentSender->getName().PHP_EOL, FILE_APPEND);
+                        file_put_contents($this->errorLogName, "Error 550: Limit exceeded for " . $currentSender->getName() . PHP_EOL, FILE_APPEND);
                         $this->_removeCurrentSender();
                         break;
 
                     default:
-                        file_put_contents($this->errorLogName, "Unhandled Swift_TransportException: ".$e->getCode()." : ".$e->getMessage().PHP_EOL, FILE_APPEND);
+                        file_put_contents($this->errorLogName, "Unhandled Swift_TransportException: " . $e->getCode() . " : " . $e->getMessage() . PHP_EOL, FILE_APPEND);
                         throw $e;
                         break;
                 }
+            } catch (\Swift_IoException $e) {
+
             }
         }
-    }
-
-    private function _removeFromQueue($queue)
-    {
-        $this->em->getRepository('AdenaMailBundle:Queue')->removeById($queue['id']);
-        array_pop($this->queues);
     }
 
     private function _removeCurrentSender(){

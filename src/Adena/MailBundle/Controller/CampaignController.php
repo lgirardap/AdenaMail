@@ -134,6 +134,31 @@ class CampaignController extends CoreController
         ));
     }
 
+    public function pauseAction( Request $request, Campaign $campaign )
+    {
+        $campaignActionControl = $this->get('adena_mail.action_control.campaign');
+        if(!$campaignActionControl->isAllowed('pause', $campaign)){
+
+            $this->addFlash('warning', 'You cannot pause this campaign');
+            return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
+        }
+
+        $form = $this->get('form.factory')->create();
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+            $this->get("adena_mail.entity_helper.campaign_sender")->pause($campaign);
+            $this->addFlash('success', 'Your campaign has been paused.');
+
+            return $this->redirectToRoute('adena_mail_campaign_list');
+        }
+
+        return $this->render('@AdenaMail/Campaign/pause.html.twig', array(
+            'campaign'    => $campaign,
+            'form'        => $form->createView(),
+        ));
+    }
+
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */

@@ -15,9 +15,11 @@ class CampaignActionControl
 
     const TEST          = 'test';
     const SEND          = 'send';
+    const START         = 'start';
     const START_RESUME  = 'start_resume';
     const RESUME        = 'resume';
     const EDIT          = 'edit';
+    const PAUSE         = 'pause';
 
     public function isAllowed($action, Campaign $campaign)
     {
@@ -26,6 +28,10 @@ class CampaignActionControl
                 return $this->_canTest($campaign);
             case self::SEND:
                 return $this->_canSend($campaign);
+            case self::START:
+                return $this->_canStart($campaign);
+            case self::PAUSE:
+                return $this->_canPause($campaign);
             case self::START_RESUME:
                 return $this->_canStartResume($campaign);
             case self::RESUME:
@@ -51,30 +57,14 @@ class CampaignActionControl
         return false;
     }
 
-    private function _canSend(Campaign $campaign)
+    private function _canStart(Campaign $campaign)
     {
-        if(in_array($campaign->getStatus(), [
-                Campaign::STATUS_TESTED,
-            ]
-        )){
-          return true;
-        }
-
-        return false;
+        return $campaign->getStatus() == Campaign::STATUS_TESTED;
     }
 
     private function _canStartResume(Campaign $campaign)
     {
-        if(in_array($campaign->getStatus(), [
-                Campaign::STATUS_NEW,
-                Campaign::STATUS_TESTED,
-                Campaign::STATUS_PAUSED
-            ]
-        )){
-            return true;
-        }
-
-        return false;
+        return $this->_canStart($campaign) || $this->_canResume($campaign);
     }
 
     private function _canEdit(Campaign $campaign)
@@ -92,13 +82,20 @@ class CampaignActionControl
 
     private function _canResume(Campaign $campaign)
     {
-        if(in_array($campaign->getStatus(), [
-                Campaign::STATUS_PAUSED
-            ]
-        )){
-            return true;
-        }
+        return $campaign->getStatus() == Campaign::STATUS_PAUSED;
+    }
 
-        return false;
+    private function _canPause(Campaign $campaign)
+    {
+        return $campaign->getStatus() == Campaign::STATUS_IN_PROGRESS;
+    }
+
+    private function _canSend(Campaign $campaign)
+    {
+        return in_array($campaign->getStatus(), [
+                Campaign::STATUS_IN_PROGRESS,
+                Campaign::STATUS_TESTING
+            ]
+        );
     }
 }

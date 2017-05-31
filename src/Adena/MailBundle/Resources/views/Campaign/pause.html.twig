@@ -1,0 +1,19 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block adenamail_body %}
+    {%  include('AdenaMailBundle:Common/Button:back_link_button.html.twig') with {'label': 'Back to list', 'path': path('adena_mail_campaign_list')} %}
+
+    <h2>Pause campaign</h2>
+
+    <p>
+        Are you sure you wanna pause this campaign "{{ campaign.name }}" ?
+    </p>
+
+    {# Keep the ID in the action #}
+    <form action="{{ path('adena_mail_campaign_pause', {'id': campaign.id}) }}" method="post" class="nojsvalidate">
+        {%  include 'AdenaMailBundle:Form/Button:button.html.twig' with { label: 'Pause campaign', icon: 'glyphicon glyphicon-pause', class: 'btn-info' } %}
+        {# Generates our form (only CSFR) #}
+        {{ form_rest(form) }}
+    </form>
+{% endblock %}
+

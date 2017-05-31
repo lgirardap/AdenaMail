@@ -29,7 +29,7 @@ adena_mail_email_add:
     _controller: AdenaMailBundle:Email:add
 
 adena_mail_email_view:
-  path: /email/{id}
+  path: /email/view/{id}
   defaults:
     _controller: AdenaMailBundle:Email:view
   requirements:
@@ -50,10 +50,12 @@ adena_mail_email_delete:
     id: \d+
 
 adena_mail_email_list:
-  path: /email
+  path: /email/{page}
   defaults:
     _controller: AdenaMailBundle:Email:list
-
+    page: 1
+  requirements:
+    page: \d*
 
 adena_mail_mailing_list_add:
   path: /mailing-list/add/{type}
@@ -148,6 +150,12 @@ adena_mail_campaign_view:
 adena_mail_campaign_send:
   path: /campaign/send/{id}
   defaults: { _controller: AdenaMailBundle:Campaign:send }
+  requirements:
+      id: \d+
+
+adena_mail_campaign_pause:
+  path: /campaign/pause/{id}
+  defaults: { _controller: AdenaMailBundle:Campaign:pause }
   requirements:
       id: \d+
 

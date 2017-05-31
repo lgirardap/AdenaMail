@@ -5,6 +5,7 @@ namespace Adena\MailBundle\EntityHelper;
 use Adena\MailBundle\ActionControl\CampaignActionControl;
 use Adena\MailBundle\Entity\Campaign;
 use Adena\MailBundle\MailEngine\MailEngine;
+use Adena\MailBundle\Queue\QueueDatabaseIterator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
@@ -15,20 +16,35 @@ class CampaignSender
     private $mailEngine;
     private $campaignToQueue;
     private $campaignActionControl;
-    private $logDirs;
+    /**
+     * @var \Adena\MailBundle\Queue\QueueDatabaseIterator
+     */
+    private $queueDatabaseIterator;
+    private $logsDir;
 
     public function __construct(
         EntityManagerInterface $em,
         MailEngine $mailEngine,
         CampaignToQueue $campaignToQueue,
         CampaignActionControl $campaignActionControl,
+        QueueDatabaseIterator $queueDatabaseIterator,
         $logsDir)
     {
         $this->mailEngine = $mailEngine;
         $this->em            = $em;
         $this->campaignToQueue = $campaignToQueue;
         $this->campaignActionControl = $campaignActionControl;
+        $this->queueDatabaseIterator = $queueDatabaseIterator;
         $this->logsDir = $logsDir;
+    }
+
+    public function pause(Campaign $campaign){
+        if(!$this->campaignActionControl->isAllowed("pause", $campaign)){
+            throw new \InvalidArgumentException('This campaign cannot be paused its status is : '.$campaign->getStatus());
+        }
+
+        $campaign->setStatus(Campaign::STATUS_PAUSED);
+        $this->em->flush();
     }
 
     public function test(Campaign $campaign)
@@ -61,7 +77,7 @@ class CampaignSender
         }
 
         // If the campaign can be send, we need to create the queue before sending it
-        if($this->campaignActionControl->isAllowed("send", $campaign)){
+        if($this->campaignActionControl->isAllowed("start", $campaign)){
             // Empty the queue for that campaign
             $this->campaignToQueue->emptyQueue($campaign);
 
@@ -84,35 +100,50 @@ class CampaignSender
     private function _doSend(Campaign $campaign, $successStatus, $errorStatus, $logName)
     {
         // Get the queue for the specified campaign AS ARRAYS, not objects
-        $queues = $this->em->getRepository('AdenaMailBundle:Queue')->getAsArrayByCampaign($campaign);
+        $this->queueDatabaseIterator->setQueues(
+            $this->em->getRepository('AdenaMailBundle:Queue')->getAsArrayByCampaign($campaign)
+        );
 
-        // The parameters common to each message (email) sent
-        $message = \Swift_Message::newInstance();
-        $message
-            ->setSubject($campaign->getEmail()->getSubject())
-            ->setFrom('account@land-fx.com', 'Land-FX')
-            ->setBody(
-                $campaign->getEmail()->getTemplate(),
-                'text/html'
-            );
+        $success = TRUE;
+        foreach($this->queueDatabaseIterator as $queue){
 
-        // Run the mail engine
-        try {
-            $this->mailEngine->run($message, $queues, $logName);
+            $this->em->refresh($campaign);
+            if(!$this->campaignActionControl->isAllowed('send', $campaign)){
+                return;
+            }
 
-            // Done with this campaign, change the status.
-            $campaign->setStatus($successStatus);
-        }catch(\Swift_TransportException $e) {
-            // The send was interrupted, let's pause the campaign
-            $campaign->setStatus($errorStatus);
-        }catch(Exception $e){
-            // The send was interrupted, let's pause the campaign
-            $campaign->setStatus($errorStatus);
-            file_put_contents($this->logsDir."/mail_engine_".$logName.".error.log", "Unhandled exception: ".$e->getCode()." : ".$e->getMessage().PHP_EOL, FILE_APPEND);
-            throw $e;
-        }finally{
-            $this->em->flush();
+            try {
+                $message = \Swift_Message::newInstance();
+                $message
+                    ->setSubject($campaign->getEmail()->getSubject())
+                    ->setTo($queue['email'])
+                    ->setFrom('account@land-fx.com', 'Land-FX')
+                    ->setBody(
+                        $campaign->getEmail()->getTemplate(),
+                        'text/html'
+                    );
+
+                if($this->mailEngine->send($message)){
+                    file_put_contents($this->logsDir."/mail_engine_".$logName.".log", $queue['email'].PHP_EOL, FILE_APPEND);
+                }
+            }catch(\Swift_RfcComplianceException $e){ // Invalid email address
+                // Log it
+                file_put_contents($logName, 'ERROR EMAIL INVALID '.$queue['email'].PHP_EOL, FILE_APPEND);
+                // Continue the loop without doing anything else (will skip the invalid email)
+                continue;
+            }catch(\Swift_TransportException $e) {
+                // The send was interrupted, let's pause the campaign
+                $success = false;
+                break;
+            }catch(Exception $e){
+                // The send was interrupted, let's pause the campaign
+                $success = false;
+                file_put_contents($this->logsDir."/mail_engine_".$logName.".error.log", "Unhandled exception: ".$e->getCode()." : ".$e->getMessage().PHP_EOL, FILE_APPEND);
+                break;
+            }
         }
+        // Done with this campaign, change the status.
+        $campaign->setStatus($success ? $successStatus : $errorStatus);
+        $this->em->flush();
     }
-
 }
