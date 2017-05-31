@@ -16,12 +16,18 @@ class MailingListController extends CoreController
         ]);
     }
 
-    public function listAction(){
-        $mailingLists = $this->getDoctrine()->getRepository('AdenaMailBundle:MailingList')->findAll();
+    public function listAction($page){
+        try {
+            $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:MailingList')->getMailingListsQuery();
 
-        return $this->render('AdenaMailBundle:MailingList:list.html.twig', [
-            'mailingLists' => $mailingLists
-        ]);
+            $mailingLists = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
+
+            return $this->render('AdenaMailBundle:MailingList:list.html.twig', array(
+                'mailingLists' => $mailingLists
+            ));
+        }catch(\InvalidArgumentException $e){
+            throw $this->createNotFoundException($e->getMessage());
+        }
     }
 
     public function testAction(MailingList $mailingList){

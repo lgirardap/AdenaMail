@@ -26,4 +26,16 @@ class CampaignRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getSingleResult();
     }
+
+    public function getActiveCampaignsQuery()
+    {
+        $query = $this
+            ->createQueryBuilder('c')
+            ->where('c.status != :status_ended')
+            ->setParameter('status_ended', Campaign::STATUS_ENDED)
+            ->orderBy('c.createdAt', 'desc')
+            ->getQuery();
+
+        return $query;
+    }
 }

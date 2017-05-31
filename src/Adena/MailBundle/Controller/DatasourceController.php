@@ -51,19 +51,18 @@ class DatasourceController extends CoreController
         ));
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function listAction(){
+    public function listAction($page){
+        try {
+            $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Datasource')->getDatasourcesQuery();
 
-        $em = $this->getDoctrine()->getManager();
-        $datasourceRepository = $em->getRepository('AdenaMailBundle:Datasource');
+            $datasources = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
 
-        $datasources = $datasourceRepository->findAll();
-
-        return $this->render('AdenaMailBundle:Datasource:list.html.twig', array(
-            'datasources' => $datasources
-        ));
+            return $this->render('AdenaMailBundle:Datasource:list.html.twig', array(
+                'datasources' => $datasources
+            ));
+        }catch(\InvalidArgumentException $e){
+            throw $this->createNotFoundException($e->getMessage());
+        }
     }
 
     /**

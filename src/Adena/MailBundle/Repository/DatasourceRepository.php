@@ -10,4 +10,13 @@ namespace Adena\MailBundle\Repository;
  */
 class DatasourceRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getDatasourcesQuery()
+    {
+        $query = $this
+            ->createQueryBuilder('d')
+            ->orderBy('d.name', 'desc')
+            ->getQuery();
+
+        return $query;
+    }
 }

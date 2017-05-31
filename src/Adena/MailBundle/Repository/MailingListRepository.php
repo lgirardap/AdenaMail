@@ -28,4 +28,14 @@ class MailingListRepository extends \Doctrine\ORM\EntityRepository
             ->where('m.isTest = 0')
             ;
     }
+
+    public function getMailingListsQuery()
+    {
+        $query = $this
+            ->createQueryBuilder('m')
+            ->orderBy('m.name', 'desc')
+            ->getQuery();
+
+        return $query;
+    }
 }

@@ -50,16 +50,18 @@ class SenderController extends CoreController
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function listAction(){
+    public function listAction($page){
+        try {
+            $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Sender')->getSendersQuery();
 
-        $em = $this->getDoctrine()->getManager();
-        $senderRepository = $em->getRepository('AdenaMailBundle:Sender');
+            $senders = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
 
-        $senders = $senderRepository->findAll();
-
-        return $this->render('AdenaMailBundle:Sender:list.html.twig', array(
-            'senders' => $senders
-        ));
+            return $this->render('AdenaMailBundle:Sender:list.html.twig', array(
+                'senders' => $senders
+            ));
+        }catch(\InvalidArgumentException $e){
+            throw $this->createNotFoundException($e->getMessage());
+        }
     }
 
     /**
