@@ -38,7 +38,7 @@ class Paginator
 
         $nbPages = ceil(count($paginator) / $nbPerPage);
 
-        if ($page > $nbPages) {
+        if ($page > 1 && $page > $nbPages) {
             throw new \InvalidArgumentException("Page ".$page." does not exist.");
         }
 
