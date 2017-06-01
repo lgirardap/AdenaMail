@@ -12,10 +12,12 @@ use Symfony\Component\Process\PhpExecutableFinder;
 class BackgroundRunner
 {
     private $rootDir;
+    private $env;
 
-    public function __construct($rootDir)
+    public function __construct($rootDir, $env)
     {
         $this->rootDir = $rootDir;
+        $this->env = $env;
     }
 
     /**
@@ -50,6 +52,6 @@ class BackgroundRunner
         // kernel.project_dir instead of kernel.root_dir/../
         $consolePath = $this->rootDir.'/../bin/console';
 
-        $this->run($phpPath.' '.$consolePath.' '.$command);
+        $this->run($phpPath.' '.$consolePath.' --env='.$this->env.' '.$command);
     }
 }

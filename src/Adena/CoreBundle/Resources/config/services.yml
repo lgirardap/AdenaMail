@@ -6,6 +6,7 @@ services:
         class: Adena\CoreBundle\Tools\BackgroundRunner
         arguments:
           - "%kernel.root_dir%"
+          - "%kernel.environment%"
   external_connection.mysql:
       class: Adena\CoreBundle\ExternalConnection\MysqlExternalConnection
       shared: false
