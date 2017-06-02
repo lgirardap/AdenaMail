@@ -63,11 +63,14 @@ class MailEngine
 
         // The goal here is to test sending the email until we tried all the senders or the email is sent.
         // It looks like we are looping indefinitely, but we are not.
-        // Two things can happen:
+        // Three things can happen:
         // 1: We raised no exception while sending the email, and we return TRUE or FALSE, thus exiting the loop
         // 2: We raised an exception and we removed the current sender from the list. When we have no more senders
         // available, we throw an exception, thus exiting the loop (if we have senders remaining, we keep looping,
         // which is exactly the behavior wanted).
+        // 3 : The connection timed out more than $tries times, we exit the loop.
+        $tries = 5;
+        $currentTry = 0;
         while(true) {
             // Get the next sender
             $this->senders->next();
@@ -83,6 +86,7 @@ class MailEngine
             // Send it!
             try {
                 if ($this->mailer->send($message) > 0) {
+                    $currentTry = 0;
                     return TRUE;
                 }
                 return FALSE;
@@ -101,12 +105,22 @@ class MailEngine
                         break;
 
                     default:
-                        $this->logger->error("STOPPING: Unhandled Swift_TransportException: " . $e->getCode() . " : " . $e->getMessage());
-                        throw $e;
+                        // Test if it's a Timed Out error
+                        if(stristr($e->getMessage(), 'timed out')){
+                            if($currentTry >= $tries){
+                                $this->logger->error("STOPPING: Time outed too many times.");
+                                throw new \Swift_TransportException('Timed out too many times.');
+                            }
+
+                            $currentTry++;
+                            continue;
+                        }else {
+                            // We don't know how to handle this exception, let's log it and stop sending.
+                            $this->logger->error("STOPPING: Unhandled Swift_TransportException: " . $e->getCode() . " : " . $e->getMessage());
+                            throw $e;
+                        }
                         break;
                 }
-            } catch (\Swift_IoException $e) {
-
             }
         }
     }

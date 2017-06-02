@@ -36,7 +36,7 @@ monolog:
         mail_engine_mails:
             type:       swift_mailer
             from_email: 'lgirardap@land-fx.com'
-            to_email:   'lgirardap@land-fx.com'
+            to_email:   "%mail_engine_to_email%"
             subject:    'An Error Occurred! %%message%%'
             level:      error
             formatter:  monolog.formatter.html
