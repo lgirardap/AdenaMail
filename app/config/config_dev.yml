@@ -12,6 +12,7 @@ web_profiler:
     intercept_redirects: false
 
 monolog:
+    channels: ['mail_engine']
     handlers:
         main:
             type: stream
@@ -21,14 +22,25 @@ monolog:
         console:
             type:   console
             channels: [!event, !doctrine]
-        # uncomment to get logging in your browser
-        # you may have to allow bigger header sizes in your Web server configuration
-        #firephp:
-        #    type:   firephp
-        #    level:  info
-        #chromephp:
-        #    type:   chromephp
-        #    level:  info
-
+        mail_engine:
+            type: group
+            members: [mail_engine_files, mail_engine_mails]
+            channels: [mail_engine]
+            priority: 1
+            bubble: false
+        mail_engine_files:
+            type: stream
+            path: "%kernel.logs_dir%/mail_engine.log"
+            level: debug
+            channels: [mail_engine]
+        mail_engine_mails:
+            type:       swift_mailer
+            from_email: 'lgirardap@land-fx.com'
+            to_email:   'lgirardap@land-fx.com'
+            subject:    'An Error Occurred! %%message%%'
+            level:      error
+            formatter:  monolog.formatter.html
+            content_type: text/html
+            channels: [mail_engine]
 #swiftmailer:
 #    delivery_addresses: ['me@example.com']

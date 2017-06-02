@@ -3,6 +3,7 @@
 namespace Adena\MailBundle\MailEngine;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Logger;
 
 class MailEngine
 {
@@ -17,22 +18,19 @@ class MailEngine
     /** @var \Swift_SmtpTransport */
     private $transport;
     private $initialized;
+    /** @var \Monolog\Logger */
+    private $logger;
 
-    public function __construct(EntityManagerInterface $em, $kernelLogDir)
+    public function __construct(EntityManagerInterface $em, Logger $logger, $kernelLogDir)
     {
         $this->em = $em;
         $this->logsDir = $kernelLogDir;
         $this->initialized = false;
+        $this->logger = $logger;
     }
 
-    /**
-     * @param string         $logName
-     */
-    public function initialize($logName = "default")
+    public function initialize()
     {
-        $this->logName = $this->logsDir."/mail_engine_".$logName.".log";
-        $this->errorLogName = $this->logsDir."/mail_engine_".$logName.".error.log";
-
         // Get the senders
         // Allows us to loop infinitely on our senders array (goes back to the beginning if reached the end)
         $this->senders = new \InfiniteIterator(
@@ -55,14 +53,12 @@ class MailEngine
     /**
      * @param \Swift_Message $message We expect everything to be already set in the $message parameter.
      *
-     * @param                $logName
-     *
      * @return bool
      * @throws \Swift_TransportException
      */
-    public function send(\Swift_Message $message, $logName = "default"){
+    public function send(\Swift_Message $message){
         if(!$this->initialized){
-            $this->initialize($logName);
+            $this->initialize();
         }
 
         // The goal here is to test sending the email until we tried all the senders or the email is sent.
@@ -94,18 +90,18 @@ class MailEngine
                 switch ($e->getCode()) {
                     // Invalid Login
                     case 535:
-                        file_put_contents($this->errorLogName, "Error 535: Login for sender " . $currentSender->getName() . " invalid" . PHP_EOL, FILE_APPEND);
+                        $this->logger->warning("Error 535: Login for sender " . $currentSender->getName() . " invalid.");
                         $this->_removeCurrentSender();
                         break;
 
                     // Email limit exceeded
                     case 550:
-                        file_put_contents($this->errorLogName, "Error 550: Limit exceeded for " . $currentSender->getName() . PHP_EOL, FILE_APPEND);
+                        $this->logger->warning("Error 550: Limit exceeded for " . $currentSender->getName());
                         $this->_removeCurrentSender();
                         break;
 
                     default:
-                        file_put_contents($this->errorLogName, "Unhandled Swift_TransportException: " . $e->getCode() . " : " . $e->getMessage() . PHP_EOL, FILE_APPEND);
+                        $this->logger->error("STOPPING: Unhandled Swift_TransportException: " . $e->getCode() . " : " . $e->getMessage());
                         throw $e;
                         break;
                 }
@@ -124,7 +120,7 @@ class MailEngine
         // If no more senders available
         if(count($arrayIterator) < 1) {
             // Throw an error so we can stop sending emails (we can't send them anyways)
-            file_put_contents($this->errorLogName, "No more senders available".PHP_EOL, FILE_APPEND);
+            $this->logger->error("STOPPING: No more senders available.");
             throw new \Swift_TransportException('No more senders available.');
         }
     }

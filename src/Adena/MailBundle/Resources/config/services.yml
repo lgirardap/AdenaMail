@@ -51,6 +51,7 @@ services:
       class: Adena\MailBundle\MailEngine\MailEngine
       arguments:
         - "@doctrine.orm.default_entity_manager"
+        - "@monolog.logger.mail_engine"
         - "%kernel.logs_dir%"
       shared: false
 

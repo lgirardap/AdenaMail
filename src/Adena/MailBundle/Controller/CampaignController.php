@@ -160,6 +160,8 @@ class CampaignController extends CoreController
     }
 
     /**
+     * @param $page
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listAction($page){
