@@ -11,16 +11,19 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 
 class CampaignSender
 {
+    const INTERRUPTED = 'interrupted';
+    const SUCCESS = 'success';
+    const PAUSED = 'paused';
+
 
     private $em;
     private $mailEngine;
     private $campaignToQueue;
     private $campaignActionControl;
-    /**
-     * @var \Adena\MailBundle\Queue\QueueDatabaseIterator
-     */
+    /** @var \Adena\MailBundle\Queue\QueueDatabaseIterator */
     private $queueDatabaseIterator;
     private $logsDir;
+    private $logsLocation;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -65,8 +68,16 @@ class CampaignSender
         $campaign->setStatus(Campaign::STATUS_TESTING);
         $this->em->flush();
 
-        $logName = $campaign->getId()."_test_";
-        $this->_doSend($campaign, Campaign::STATUS_TESTED, Campaign::STATUS_NEW, $logName);
+        $this->logsLocation = $this->logsDir."/campaign_".$campaign->getName()."_".$campaign->getId()."_test.log";
+        $result = $this->_doSend($campaign);
+        if($result === self::SUCCESS) {
+            // Done with this campaign, change the status.
+            $campaign->setStatus(Campaign::STATUS_TESTED);
+        }else if($result === self::INTERRUPTED){
+            // Something happened, pause the campaign
+            $campaign->setStatus(Campaign::STATUS_NEW);
+        }
+        $this->em->flush();
     }
 
     public function startResume(Campaign $campaign)
@@ -93,23 +104,30 @@ class CampaignSender
         $this->em->flush();
 
         // If it's not new or tested (so it's paused), just restart the engine
-        $logName = $campaign->getId()."_".$campaign->getSentAt()->format('Ymd');
-        $this->_doSend($campaign, Campaign::STATUS_ENDED, Campaign::STATUS_PAUSED, $logName);
+        $this->logsLocation = $this->logsDir."/campaign_".$campaign->getName()."_".$campaign->getId().".log";
+        $result = $this->_doSend($campaign);
+        if($result === self::SUCCESS) {
+            // Done with this campaign, change the status.
+            $campaign->setStatus(Campaign::STATUS_ENDED);
+        }else if($result === self::INTERRUPTED){
+            // Something happened, pause the campaign
+            $campaign->setStatus(Campaign::STATUS_PAUSED);
+        }
+        $this->em->flush();
     }
 
-    private function _doSend(Campaign $campaign, $successStatus, $errorStatus, $logName)
+    private function _doSend(Campaign $campaign)
     {
         // Get the queue for the specified campaign AS ARRAYS, not objects
         $this->queueDatabaseIterator->setQueues(
             $this->em->getRepository('AdenaMailBundle:Queue')->getAsArrayByCampaign($campaign)
         );
 
-        $success = TRUE;
         foreach($this->queueDatabaseIterator as $queue){
 
             $this->em->refresh($campaign);
             if(!$this->campaignActionControl->isAllowed('send', $campaign)){
-                return;
+                return self::PAUSED;
             }
 
             try {
@@ -124,26 +142,24 @@ class CampaignSender
                     );
 
                 if($this->mailEngine->send($message)){
-                    file_put_contents($this->logsDir."/mail_engine_".$logName.".log", $queue['email'].PHP_EOL, FILE_APPEND);
+                    $this->_log($queue['email']);
                 }
             }catch(\Swift_RfcComplianceException $e){ // Invalid email address
                 // Log it
-                file_put_contents($logName, 'ERROR EMAIL INVALID '.$queue['email'].PHP_EOL, FILE_APPEND);
+                $this->_log("ERROR EMAIL INVALID ".$queue['email']);
                 // Continue the loop without doing anything else (will skip the invalid email)
                 continue;
             }catch(\Swift_TransportException $e) {
-                // The send was interrupted, let's pause the campaign
-                $success = false;
-                break;
+                return self::INTERRUPTED;
             }catch(Exception $e){
-                // The send was interrupted, let's pause the campaign
-                $success = false;
-                file_put_contents($this->logsDir."/mail_engine_".$logName.".error.log", "Unhandled exception: ".$e->getCode()." : ".$e->getMessage().PHP_EOL, FILE_APPEND);
-                break;
+                $this->_log("Unhandled exception: ".$e->getCode()." : ".$e->getMessage());
+                return self::INTERRUPTED;
             }
         }
-        // Done with this campaign, change the status.
-        $campaign->setStatus($success ? $successStatus : $errorStatus);
-        $this->em->flush();
+        return self::SUCCESS;
+    }
+
+    private function _log($message){
+        file_put_contents($this->logsLocation, "[".date('Y-m-d H:i:s')."] ".$message.PHP_EOL, FILE_APPEND);
     }
 }

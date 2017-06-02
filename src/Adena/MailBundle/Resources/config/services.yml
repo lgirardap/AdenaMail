@@ -51,9 +51,11 @@ services:
       class: Adena\MailBundle\MailEngine\MailEngine
       arguments:
         - "@doctrine.orm.default_entity_manager"
-        - "@monolog.logger.mail_engine"
+        - "@logger"
         - "%kernel.logs_dir%"
       shared: false
+      tags:
+        - {name: "monolog.logger", channel: "mail_engine"}
 
   adena_mail.queue.queue_database_iterator:
     class: Adena\MailBundle\Queue\QueueDatabaseIterator

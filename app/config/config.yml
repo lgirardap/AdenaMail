@@ -71,3 +71,26 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+monolog:
+    handlers:
+        mail_engine:
+            type: group
+            members: [mail_engine_files, mail_engine_mails]
+            channels: [mail_engine]
+            priority: 1
+            bubble: false
+        mail_engine_files:
+            type: stream
+            path: "%kernel.logs_dir%/mail_engine.log"
+            level: debug
+            channels: [mail_engine]
+        mail_engine_mails:
+            type:       swift_mailer
+            from_email: 'lgirardap@land-fx.com'
+            to_email:   "%mail_engine_to_email%"
+            subject:    'An Error Occurred! %%message%%'
+            level:      error
+            formatter:  monolog.formatter.html
+            content_type: text/html
+            channels: [mail_engine]
