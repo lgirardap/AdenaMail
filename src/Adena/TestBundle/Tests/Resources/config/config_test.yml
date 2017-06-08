@@ -1,0 +1,8 @@
+doctrine:
+    orm:
+        auto_mapping: true
+        mappings:
+            AdenaTestBundle:
+                type: annotation
+                dir: Tests/Entity
+                prefix: Adena\TestBundle\Tests\Entity

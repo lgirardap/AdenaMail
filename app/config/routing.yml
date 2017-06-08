@@ -1,3 +1,7 @@
+adena_test:
+    resource: "@AdenaTestBundle/Resources/config/routing.yml"
+    prefix:   /
+
 adena_paginator:
     resource: "@AdenaPaginatorBundle/Resources/config/routing.yml"
     prefix:   /
