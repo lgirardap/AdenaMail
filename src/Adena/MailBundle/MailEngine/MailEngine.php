@@ -86,6 +86,7 @@ class MailEngine
             // Send it!
             try {
                 if ($this->mailer->send($message) > 0) {
+                    // Reset current try
                     $currentTry = 0;
                     return TRUE;
                 }
