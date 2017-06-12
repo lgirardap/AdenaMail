@@ -4,13 +4,7 @@ namespace Adena\TestBundle\Tests\ActionControl;
 
 use Adena\TestBundle\FixturesLoader\FixturesLoader;
 use Adena\TestBundle\Tests\Repository\FixturesLoaderTestRepository;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\CachedReader;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\ORM\Configuration;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
-use Doctrine\ORM\Mapping\Driver\PHPDriver;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class FixturesLoaderTest extends KernelTestCase
@@ -19,6 +13,16 @@ class FixturesLoaderTest extends KernelTestCase
      * @var \Doctrine\ORM\EntityManager
      */
     private $em;
+
+    /**
+     * @var FixturesLoaderTestRepository $fixtureTestRepository
+     */
+    private $fixtureTestRepository;
+
+    /**
+     * @var FixturesLoader $fixtureLoader
+     */
+    private $fixtureLoader;
 
     /**
      * {@inheritDoc}
@@ -32,57 +36,78 @@ class FixturesLoaderTest extends KernelTestCase
             ->get('doctrine')
             ->getManager();
 
-//        $this->em
+        // We create the table we will use to do the fixtures tests
+        $this->fixtureTestRepository = $this->em->getRepository('AdenaTestBundle:FixturesLoaderTest');
+        $this->fixtureTestRepository->createTable();
+
+        $this->fixtureLoader = static::$kernel->getContainer()->get('adena_test.fixtures_loader');
     }
 
-    public function testLoadFixtures()
+
+    public function testIsFixtureLoader()
     {
-        $fixtureLoader = static::$kernel->getContainer()->get('adena_test.fixtures_loader');
-        $this->assertInstanceOf(FixturesLoader::class, $fixtureLoader);
+        $this->assertInstanceOf(FixturesLoader::class, $this->fixtureLoader);
+    }
 
 
-        // ==== Test import global
-        // When we get fixture, we want to load the data in database and check if the data are accurate
-        // Load fixture should load data and data2
-        $fixtureLoader->loadFixtures();
-
-        // To check the fixture, lets get the repository of FixtureLoaderTestData
-        $fixturesTest = $this->em->getRepository('AdenaTestBundle:FixturesLoaderTest')->findAll();
-        $testCaca = $this->em->getRepository('AdenaMailBundle:Campaign')->findAll();
-
-        $this->assertCount(2, $fixturesTest);
-
-        // ==== Test import list of one fixture
-        $fixturesToLoad = array(
-            '/Tests/DataFixtures/ORM/FixturesLoaderTestData.php'
-        );
-        $fixtureLoader->loadFixtures($fixturesToLoad);
-
-        // To check the fixture, lets get the repository of FixtureLoaderTestData
-
-        /** @var array $fixturesTest */
-        $fixturesTest = $this->em->getRepository('AdenaTestBundle:FixturesLoaderTest')->findAll();
-        $this->assertCount(1, $fixturesTest);
-        $this->assertEquals('data1', $fixturesTest[0]->getData1());
-        $this->assertEquals('data2', $fixturesTest[0]->getData2());
-
-
+    public function testLoadFixturesFromPaths()
+    {
         // ==== Test import list of two fixture
         $fixturesToLoad = array(
-            '/Tests/DataFixtures/ORM/FixturesLoaderTestData.php',
-            '/Tests/DataFixtures/ORM/FixturesLoaderTestData2.php',
+            'src/Adena/TestBundle/Tests/DataFixtures/FixturesLoaderTestData.php',
+            'src/Adena/TestBundle/Tests/DataFixtures/FixturesLoaderTestData2.php',
         );
-        $fixtureLoader->loadFixtures($fixturesToLoad);
-
-        // To check the fixture, lets get the repository of FixtureLoaderTestData
+        $this->fixtureLoader->loadFixturesFromPaths($fixturesToLoad);
 
         /** @var array $fixturesTest */
-        $fixturesTest = $this->em->getRepository('AdenaTestBundle:FixturesLoaderTest')->findAll();
-        $this->assertCount(1, $fixturesTest);
+        $fixturesTest = $this->fixtureTestRepository->findAll();
+        $this->assertCount(2, $fixturesTest);
         $this->assertEquals('data1', $fixturesTest[0]->getData1());
         $this->assertEquals('data2', $fixturesTest[0]->getData2());
         $this->assertEquals('data2-1', $fixturesTest[1]->getData1());
         $this->assertEquals('data2-2', $fixturesTest[1]->getData2());
+
+        // ==== Test import list of one fixture
+        $fixturesToLoad = array(
+            'src/Adena/TestBundle/Tests/DataFixtures/FixturesLoaderTestData2.php',
+        );
+        $this->fixtureLoader->loadFixturesFromPaths($fixturesToLoad);
+
+        /** @var array $fixturesTest */
+        $fixturesTest = $this->fixtureTestRepository->findAll();
+        $this->assertCount(1, $fixturesTest);
+        $this->assertEquals('data2-1', $fixturesTest[0]->getData1());
+        $this->assertEquals('data2-2', $fixturesTest[0]->getData2());
+
+    }
+
+    public function testLoadFixtures()
+    {
+        // ==== Test import one fixture
+        $fixtureToLoad = array('src/Adena/TestBundle/Tests/DataFixtures/');
+        $this->fixtureLoader->loadFixtures( $fixtureToLoad );
+
+        /** @var array $fixturesTest */
+        $fixturesTest = $this->fixtureTestRepository->findAll();
+        $this->assertCount(2, $fixturesTest);
+        $this->assertEquals('data1', $fixturesTest[0]->getData1());
+        $this->assertEquals('data2', $fixturesTest[0]->getData2());
+    }
+
+    public function testLoadAllFixtures()
+    {
+        // ==== Test import of all fixtures ( from bundle fixtures folders )
+        // We should get a InvalidArgumentException here since at least one of the bundle default fixture folder will be empty,
+        // enough to fire the exception
+        $this->expectException(InvalidArgumentException::class);
+        $this->fixtureLoader->loadAllFixtures();
+    }
+
+    public function testDeleteAllFixtures(){
+
+        $this->fixtureLoader->deleteAllFixtures();
+        $fixturesTest = $this->fixtureTestRepository->findAll();
+        $this->assertCount(0, $fixturesTest);
 
     }
 
@@ -93,8 +118,14 @@ class FixturesLoaderTest extends KernelTestCase
     {
         parent::tearDown();
 
+        // We clean up the fixture test table
+        $this->fixtureTestRepository->dropTable();
+
         $this->em->close();
-        $this->em = null; // avoid memory leaks
+        $this->em = null;
+
+        $this->fixtureTestRepository = null;
+        $this->fixtureLoader = null;
     }
 
 }

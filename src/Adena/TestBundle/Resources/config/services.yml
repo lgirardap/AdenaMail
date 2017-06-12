@@ -1,4 +1,5 @@
 services:
   adena_test.fixtures_loader:
     class: Adena\TestBundle\FixturesLoader\FixturesLoader
-    arguments: ['@doctrine.orm.default_entity_manager']
+    arguments: ['@doctrine.orm.default_entity_manager', '%kernel.root_dir%', '%kernel.bundles_metadata%']
+

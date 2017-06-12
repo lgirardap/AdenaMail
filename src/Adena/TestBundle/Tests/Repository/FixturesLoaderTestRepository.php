@@ -2,6 +2,8 @@
 
 namespace Adena\TestBundle\Tests\Repository;
 
+use Doctrine\ORM\Tools\SchemaTool;
+
 /**
  * FixturesLoaderTestRepository
  *
@@ -10,4 +12,19 @@ namespace Adena\TestBundle\Tests\Repository;
  */
 class FixturesLoaderTestRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function createTable()
+    {
+        $schemaTool = new SchemaTool($this->getEntityManager());
+        $schemaTool->createSchema(
+            [$this->getClassMetadata()]
+        );
+    }
+
+    public function dropTable()
+    {
+        $schemaTool = new SchemaTool($this->getEntityManager());
+        $schemaTool->dropSchema(
+            [$this->getClassMetadata()]
+        );
+    }
 }
