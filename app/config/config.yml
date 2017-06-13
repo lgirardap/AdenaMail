@@ -94,3 +94,6 @@ monolog:
             formatter:  monolog.formatter.html
             content_type: text/html
             channels: [mail_engine]
+
+adena_paginator:
+    nbPerPage: 2

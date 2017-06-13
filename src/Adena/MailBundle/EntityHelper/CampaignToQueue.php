@@ -77,7 +77,7 @@ class CampaignToQueue
         // Remove duplicate emails from the list
         $uniques = [];
         foreach ($emails as $key => $email) {
-            $uniques[$email] = true;
+            $uniques[strtolower($email)] = true;
         }
         $emails  = array_keys($uniques);
         $uniques = null;
