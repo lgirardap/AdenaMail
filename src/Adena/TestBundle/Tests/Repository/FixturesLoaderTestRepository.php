@@ -12,6 +12,12 @@ use Doctrine\ORM\Tools\SchemaTool;
  */
 class FixturesLoaderTestRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function coolMethode(){
+        $qb = $this->createQueryBuilder('a');
+
+        return $qb;
+    }
+
     public function createTable()
     {
         $schemaTool = new SchemaTool($this->getEntityManager());
