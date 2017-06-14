@@ -58,7 +58,6 @@ class FixturesLoader
     {
         $loader = new Loader();
         foreach ($paths as $path) {
-
             $path = $this->projectRootDir."/../".$path;
             if (is_dir($path)) {
                 $loader->loadFromDirectory($path);
@@ -77,11 +76,13 @@ class FixturesLoader
         }
 
         $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 0;");
+
         $purger = new ORMPurger($this->em);
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
 
         $executor = new ORMExecutor($this->em, $purger);
         $executor->execute($fixtures);
+
         $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 1;");
 
         return $fixtures;

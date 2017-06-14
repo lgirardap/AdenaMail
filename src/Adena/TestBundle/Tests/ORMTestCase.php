@@ -2,19 +2,18 @@
 
 namespace Adena\TestBundle\Tests;
 
-use Adena\TestBundle\Tests\Entity\FixturesLoaderTest;
+use Doctrine\ORM\EntityManager;
+use Doctrine\Common\EventManager;
 use Doctrine\ORM\Mapping\DefaultNamingStrategy;
 use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
-use Doctrine\ORM\EntityManager;
-use Doctrine\Common\EventManager;
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Doctrine\ORM\Tools\SchemaTool;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-abstract class ORMTestCase extends KernelTestCase
+abstract class ORMTestCase extends TestCase
 {
+
     /**
      * @var EntityManager
      */
@@ -25,7 +24,6 @@ abstract class ORMTestCase extends KernelTestCase
      */
     protected function setUp()
     {
-
     }
 
     /**
@@ -33,11 +31,13 @@ abstract class ORMTestCase extends KernelTestCase
      * annotation mapping driver and custom
      * connection
      *
-     * @param array $conn
+     * @param array        $conn
+     * @param array        $paths
      * @param EventManager $evm
-     * @return EntityManager
+     *
+     * @return \Doctrine\ORM\EntityManager
      */
-    protected function getMockCustomEntityManager(array $conn, EventManager $evm = null)
+    protected function getMockCustomEntityManager(array $conn, $paths = array(), EventManager $evm = null)
     {
         $config = $this->getMockAnnotatedConfig();
         $em = EntityManager::create($conn, $config);
@@ -47,9 +47,30 @@ abstract class ORMTestCase extends KernelTestCase
         }, (array)$this->getUsedEntityFixtures());
 
         $schemaTool = new SchemaTool($em);
-        $schemaTool->dropSchema(array());
+        $schemaTool->dropSchema($schema);
         $schemaTool->createSchema($schema);
         return $this->em = $em;
+    }
+
+    /**
+     * Paths is the paths where your entity folders should be found
+     *
+     * @param array                              $paths
+     * @param \Doctrine\Common\EventManager|null $evm
+     */
+    protected function getMockMysqlEntityManager($paths = array(), EventManager $evm = null){
+        // TODO -- Add config support
+        $conn = array(
+            'driver'  => 'pdo_mysql',
+            'charset' => 'UTF8',
+            'host' => '127.0.0.1',
+            'port' => null,
+            'dbname' => 'adena_mail_test',
+            'user' => 'root',
+            'password' => null
+        );
+
+        $this->getMockCustomEntityManager( $conn, $paths, $evm);
     }
 
     /**
@@ -66,16 +87,28 @@ abstract class ORMTestCase extends KernelTestCase
             'driver' => 'pdo_sqlite',
             'memory' => true,
         );
+
+        $paths = array();
         $config = $this->getMockAnnotatedConfig();
+
         $em = EntityManager::create($conn, $config, $evm ?: $this->getEventManager());
+
         $schema = array_map(function($class) use ($em) {
             return $em->getClassMetadata($class);
         }, (array)$this->getUsedEntityFixtures());
+
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema(array());
         $schemaTool->createSchema($schema);
         return $this->em = $em;
     }
+
+    /**
+     * Get a list of used fixture classes
+     *
+     * @return array
+     */
+    abstract protected function getUsedEntityFixtures();
 
     private function getEventManager()
     {
@@ -86,23 +119,18 @@ abstract class ORMTestCase extends KernelTestCase
     /**
      * Creates default mapping driver
      *
-     * @return \Doctrine\ORM\Mapping\Driver\Driver
+     * @return \Doctrine\ORM\Mapping\Driver\AnnotationDriver
      */
     protected function getMetadataDriverImplementation()
     {
-        //return new AnnotationDriver($_ENV['annotation_reader']);
-
         \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
         $reader = new \Doctrine\Common\Annotations\AnnotationReader();
-        return new AnnotationDriver(new \Doctrine\Common\Annotations\CachedReader($reader, new \Doctrine\Common\Cache\ArrayCache()));
+        return new AnnotationDriver(
+            new \Doctrine\Common\Annotations\CachedReader($reader, new \Doctrine\Common\Cache\ArrayCache()),
+            array(__dir__)
+        );
     }
 
-    /**
-     * Get a list of used fixture classes
-     *
-     * @return array
-     */
-    abstract protected function getUsedEntityFixtures();
 
     /**
      * Get annotation mapping configuration
@@ -176,4 +204,5 @@ abstract class ORMTestCase extends KernelTestCase
 
         return $config;
     }
+
 }

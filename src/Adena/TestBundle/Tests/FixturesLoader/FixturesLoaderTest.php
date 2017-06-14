@@ -3,16 +3,15 @@
 namespace Adena\TestBundle\Tests\ActionControl;
 
 use Adena\TestBundle\FixturesLoader\FixturesLoader;
+use Adena\TestBundle\Tests\ORMTestCase;
 use Adena\TestBundle\Tests\Repository\FixturesLoaderTestRepository;
-use InvalidArgumentException;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class FixturesLoaderTest extends KernelTestCase
+class FixturesLoaderTest extends ORMTestCase
 {
     /**
      * @var \Doctrine\ORM\EntityManager
      */
-    private $em;
+    protected $em;
 
     /**
      * @var FixturesLoaderTestRepository $fixtureTestRepository
@@ -30,17 +29,25 @@ class FixturesLoaderTest extends KernelTestCase
 
     protected function setUp()
     {
-        self::bootKernel();
 
-        $this->em = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
+        // For the test purpose, we just inform our mocked EM that our entities may be found in the tests ( __DIR__ ) directory
+        $paths = array(__dir__);
+        $this->getMockMysqlEntityManager( $paths );
+//        $this->getMockSqliteEntityManager();
 
-        // We create the table we will use to do the fixtures tests
-        $this->fixtureTestRepository = $this->em->getRepository('AdenaTestBundle:FixturesLoaderTest');
-        $this->fixtureTestRepository->createTable();
+        // We have to mock the project root dir and the Bundles Meta data since we can't access the kernel
+        $projectRootDir = dirname(__FILE__, 5);
 
-        $this->fixtureLoader = static::$kernel->getContainer()->get('adena_test.fixtures_loader');
+        $bundlesMetaData = array(
+            'AdenaTestBundle' => array(
+                'parent' => null,
+                'path' => $projectRootDir,
+                'namespace' => "Adena\TestBundle"
+            )
+        );
+
+        $this->fixtureTestRepository = $this->em->getRepository('Adena\TestBundle\Tests\Entity\FixturesLoaderTest');
+        $this->fixtureLoader = new FixturesLoader($this->em, $projectRootDir, $bundlesMetaData);
     }
 
 
@@ -94,16 +101,11 @@ class FixturesLoaderTest extends KernelTestCase
         $this->assertEquals('data2', $fixturesTest[0]->getData2());
     }
 
-    public function testLoadAllFixtures()
-    {
-        // ==== Test import of all fixtures ( from bundle fixtures folders )
-        // We should get a InvalidArgumentException here since at least one of the bundle default fixture folder will be empty,
-        // enough to fire the exception
-        $this->expectException(InvalidArgumentException::class);
-        $this->fixtureLoader->loadAllFixtures();
-    }
-
     public function testDeleteAllFixtures(){
+
+        // ==== Test import one fixture
+        $fixtureToLoad = array('src/Adena/TestBundle/Tests/DataFixtures/');
+        $this->fixtureLoader->loadFixtures( $fixtureToLoad );
 
         $this->fixtureLoader->deleteAllFixtures();
         $fixturesTest = $this->fixtureTestRepository->findAll();
@@ -118,9 +120,6 @@ class FixturesLoaderTest extends KernelTestCase
     {
         parent::tearDown();
 
-        // We clean up the fixture test table
-        $this->fixtureTestRepository->dropTable();
-
         $this->em->close();
         $this->em = null;
 
@@ -128,4 +127,15 @@ class FixturesLoaderTest extends KernelTestCase
         $this->fixtureLoader = null;
     }
 
+    /**
+     * Get a list of used entity fixture classes
+     *
+     * @return array
+     */
+    protected function getUsedEntityFixtures()
+    {
+        return [
+            'Adena\TestBundle\Tests\Entity\FixturesLoaderTest'
+        ];
+    }
 }
