@@ -109,6 +109,15 @@ class Campaign
      */
     private $queues;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Adena\MailBundle\Entity\Sender")
+     * @Assert\Valid()
+     * @Assert\Count(min = 1)
+     */
+    private $senders;
+
+
 
     public function __construct()
     {

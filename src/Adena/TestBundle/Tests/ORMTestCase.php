@@ -125,6 +125,7 @@ abstract class ORMTestCase extends TestCase
     {
         \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
         $reader = new \Doctrine\Common\Annotations\AnnotationReader();
+        // TODO -- Change __dir__ if issue
         return new AnnotationDriver(
             new \Doctrine\Common\Annotations\CachedReader($reader, new \Doctrine\Common\Cache\ArrayCache()),
             array(__dir__)

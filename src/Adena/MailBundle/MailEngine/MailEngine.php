@@ -11,8 +11,6 @@ class MailEngine
     private $logsDir;
     /** @var  \InfiniteIterator */
     private $senders;
-    private $logName;
-    private $errorLogName;
     /** @var \Swift_mailer */
     private $mailer;
     /** @var \Swift_SmtpTransport */
