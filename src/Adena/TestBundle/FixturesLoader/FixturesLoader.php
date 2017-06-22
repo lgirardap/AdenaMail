@@ -7,8 +7,6 @@ use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Kernel;
 
 class FixturesLoader
 {
@@ -28,7 +26,14 @@ class FixturesLoader
     }
 
 
-    public function loadFixturesFromPaths( $paths = null )
+    /**
+     * Load fixture from a specified array of paths
+     *
+     * @param null $paths
+     *
+     * @return array
+     */
+    public function loadFixturesFromPaths($paths = null )
     {
         if($paths){
 
@@ -43,6 +48,11 @@ class FixturesLoader
         return $fixtures;
     }
 
+    /**
+     * Load all the bundles fixtures
+     *
+     * @return array
+     */
     public function loadAllFixtures()
     {
         $paths = array();
@@ -88,6 +98,10 @@ class FixturesLoader
         return $fixtures;
     }
 
+
+    /**
+     * Delete all the fixture inserted in the Schema
+     */
     public function deleteAllFixtures(){
 
         $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 0;");

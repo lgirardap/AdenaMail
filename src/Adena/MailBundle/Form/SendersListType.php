@@ -2,8 +2,9 @@
 
 namespace Adena\MailBundle\Form;
 
+use Adena\MailBundle\Entity\Sender;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,9 +19,15 @@ class SendersListType extends AbstractType
     {
         $builder
             ->add('name',               TextType::class)
-            ->add('email',              EmailType::class)
-            ->add('plainPassword',      TextType::class)
-            ->add('active',             CheckboxType::class);
+            ->add('fromEmail',          EmailType::class)
+            ->add('fromName',           TextType::class)
+            ->add('senders',            EntityType::class, [
+                'class' => Sender::class,
+                'multiple' => true,
+                'choice_label' => 'name'
+            ]
+            )
+        ;
     }
 
     /**
@@ -29,7 +36,7 @@ class SendersListType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Adena\MailBundle\Entity\SendersListType'
+            'data_class' => 'Adena\MailBundle\Entity\SendersList'
         ));
     }
 

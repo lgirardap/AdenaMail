@@ -4,17 +4,24 @@ namespace Adena\PaginatorBundle\Tests\Paginator;
 
 use Adena\PaginatorBundle\Paginator\Paginator;
 use Adena\PaginatorBundle\Tests\Entity\ArticleTest;
-use Adena\TestBundle\Tests\ORMTestCase;
+use Adena\TestBundle\Tests\ORMTestHelper;
+use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
-class PaginatorTest extends ORMTestCase
+class PaginatorTest extends TestCase
 {
     private $query;
+    /**
+     * @var \Doctrine\ORM\EntityManager $em
+     */
+    private $em;
+
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->getMockMysqlEntityManager();
+
+        $this->em = (new ORMTestHelper())->getMockMysqlEntityManager($this->getEntities());
         $this->query = $this->em->createQueryBuilder()
             ->select('a')
             ->from(ArticleTest::class, 'a')
@@ -87,7 +94,7 @@ class PaginatorTest extends ORMTestCase
      *
      * @return array
      */
-    protected function getUsedEntityFixtures()
+    protected function getEntities()
     {
         return [ArticleTest::class];
     }

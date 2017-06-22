@@ -2,6 +2,7 @@
 
 namespace Adena\TestBundle\Tests;
 
+
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\Mapping\DefaultNamingStrategy;
@@ -11,20 +12,8 @@ use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Doctrine\ORM\Tools\SchemaTool;
 use PHPUnit\Framework\TestCase;
 
-abstract class ORMTestCase extends TestCase
+class ORMTestHelper extends TestCase
 {
-
-    /**
-     * @var EntityManager
-     */
-    protected $em;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-    }
 
     /**
      * EntityManager mock object together with
@@ -32,33 +21,48 @@ abstract class ORMTestCase extends TestCase
      * connection
      *
      * @param array        $conn
-     * @param array        $paths
      * @param EventManager $evm
      *
      * @return \Doctrine\ORM\EntityManager
+     * @internal param array $paths
      */
-    protected function getMockCustomEntityManager(array $conn, $paths = array(), EventManager $evm = null)
+    private function getMockCustomEntityManager(array $conn, EventManager $evm = null)
     {
         $config = $this->getMockAnnotatedConfig();
-        $em = EntityManager::create($conn, $config);
+        $em = EntityManager::create($conn, $config, $evm ?: $this->getEventManager());
+
+
+
+        return $em;
+    }
+
+    /**
+     * @param EntityManager      $em
+     * @param array $entities
+     */
+    public function createSchema($em, $entities = array() ){
 
         $schema = array_map(function($class) use ($em) {
             return $em->getClassMetadata($class);
-        }, (array)$this->getUsedEntityFixtures());
+        }, (array)$entities);
 
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema($schema);
         $schemaTool->createSchema($schema);
-        return $this->em = $em;
+
     }
+
 
     /**
      * Paths is the paths where your entity folders should be found
      *
-     * @param array                              $paths
+     * @param array                              $entities
      * @param \Doctrine\Common\EventManager|null $evm
+     *
+     * @return \Doctrine\ORM\EntityManager
+     * @internal param array $paths
      */
-    protected function getMockMysqlEntityManager($paths = array(), EventManager $evm = null){
+    public function getMockMysqlEntityManager($entities = array(), EventManager $evm = null){
         // TODO -- Add config support
         $conn = array(
             'driver'  => 'pdo_mysql',
@@ -70,7 +74,13 @@ abstract class ORMTestCase extends TestCase
             'password' => null
         );
 
-        $this->getMockCustomEntityManager( $conn, $paths, $evm);
+        $em = $this->getMockCustomEntityManager( $conn, $evm );
+
+        if(!empty($entities)){
+            $this->createSchema($em, $entities);
+        }
+
+        return $em;
     }
 
     /**
@@ -78,37 +88,28 @@ abstract class ORMTestCase extends TestCase
      * annotation mapping driver and pdo_sqlite
      * database in memory
      *
+     * @param array        $entities
      * @param EventManager $evm
-     * @return EntityManager
+     *
+     * @return \Doctrine\ORM\EntityManager
      */
-    protected function getMockSqliteEntityManager(EventManager $evm = null)
+    public function getMockSqliteEntityManager($entities = array(), EventManager $evm = null)
     {
         $conn = array(
             'driver' => 'pdo_sqlite',
             'memory' => true,
         );
 
-        $paths = array();
-        $config = $this->getMockAnnotatedConfig();
 
-        $em = EntityManager::create($conn, $config, $evm ?: $this->getEventManager());
+        $em = $this->getMockCustomEntityManager( $conn, $evm );
 
-        $schema = array_map(function($class) use ($em) {
-            return $em->getClassMetadata($class);
-        }, (array)$this->getUsedEntityFixtures());
+        if(!empty($entities)){
+            $this->createSchema($em, $entities);
+        }
 
-        $schemaTool = new SchemaTool($em);
-        $schemaTool->dropSchema(array());
-        $schemaTool->createSchema($schema);
-        return $this->em = $em;
+        return $em;
     }
 
-    /**
-     * Get a list of used fixture classes
-     *
-     * @return array
-     */
-    abstract protected function getUsedEntityFixtures();
 
     private function getEventManager()
     {
@@ -205,5 +206,4 @@ abstract class ORMTestCase extends TestCase
 
         return $config;
     }
-
 }

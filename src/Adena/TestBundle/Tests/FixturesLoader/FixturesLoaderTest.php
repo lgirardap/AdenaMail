@@ -3,10 +3,11 @@
 namespace Adena\TestBundle\Tests\ActionControl;
 
 use Adena\TestBundle\FixturesLoader\FixturesLoader;
-use Adena\TestBundle\Tests\ORMTestCase;
+use Adena\TestBundle\Tests\ORMTestHelper;
 use Adena\TestBundle\Tests\Repository\FixturesLoaderTestRepository;
+use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
-class FixturesLoaderTest extends ORMTestCase
+class FixturesLoaderTest extends TestCase
 {
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -30,10 +31,7 @@ class FixturesLoaderTest extends ORMTestCase
     protected function setUp()
     {
 
-        // For the test purpose, we just inform our mocked EM that our entities may be found in the tests ( __DIR__ ) directory
-        $paths = array(__dir__);
-        $this->getMockMysqlEntityManager( $paths );
-//        $this->getMockSqliteEntityManager();
+        $this->em = (new ORMTestHelper())->getMockMysqlEntityManager($this->getEntities());
 
         // We have to mock the project root dir and the Bundles Meta data since we can't access the kernel
         $projectRootDir = dirname(__FILE__, 5);
@@ -132,7 +130,7 @@ class FixturesLoaderTest extends ORMTestCase
      *
      * @return array
      */
-    protected function getUsedEntityFixtures()
+    protected function getEntities()
     {
         return [
             'Adena\TestBundle\Tests\Entity\FixturesLoaderTest'
