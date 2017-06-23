@@ -11,10 +11,12 @@ class Paginator
      * @var \Doctrine\ORM\EntityManagerInterface
      */
     private $em;
+    private $nbPerPage;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, $nbPerPage)
     {
         $this->em = $em;
+        $this->nbPerPage = $nbPerPage;
     }
 
     /**
@@ -24,7 +26,13 @@ class Paginator
      *
      * @return \Adena\PaginatorBundle\Tools\Pagination\AdenaPaginator
      */
-    public function paginate($query, $page, $nbPerPage){
+    public function paginate($query, $page, $nbPerPage = null ){
+
+        $nbPerPage = $nbPerPage ?? $this->nbPerPage;
+        if(!is_numeric($nbPerPage)){
+            throw new \InvalidArgumentException('Number per page must be an integer');
+        }
+
         if ($page < 1) {
             throw new \InvalidArgumentException('Page must be one or more.');
         }

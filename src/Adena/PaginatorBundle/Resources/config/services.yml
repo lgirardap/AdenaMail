@@ -1,7 +1,7 @@
 services:
   adena_paginator.paginator.paginator:
       class: Adena\PaginatorBundle\Paginator\Paginator
-      arguments: ['@doctrine.orm.default_entity_manager']
+      arguments: ['@doctrine.orm.default_entity_manager', '%adena_paginator.nbPerPage%']
   adena_paginator.twig.extension.pagination:
       class: Adena\PaginatorBundle\Twig\PaginationExtension
       arguments: ['@request_stack']

@@ -4,6 +4,7 @@ namespace Adena\MailBundle\EntityHelper;
 
 use Adena\MailBundle\ActionControl\CampaignActionControl;
 use Adena\MailBundle\Entity\Campaign;
+use Adena\MailBundle\Entity\SendersList;
 use Adena\MailBundle\MailEngine\MailEngine;
 use Adena\MailBundle\Queue\QueueDatabaseIterator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -123,8 +124,14 @@ class CampaignSender
             $this->em->getRepository('AdenaMailBundle:Queue')->getAsArrayByCampaign($campaign)
         );
 
-        foreach($this->queueDatabaseIterator as $queue){
+        /** @var SendersList $sendersList */
+        $sendersList = $this->em->getRepository('AdenaMailBundle:SendersList')->getWithSenders($campaign->getSendersList()->getId());
 
+        $fromEmail = $campaign->getFromEmail() ?? $sendersList->getFromEmail();
+        $fromName = $campaign->getFromName() ?? $sendersList->getFromName();
+
+        $this->mailEngine->initialize($sendersList->getSenders()->toArray());
+        foreach($this->queueDatabaseIterator as $queue){
             $this->em->refresh($campaign);
             if(!$this->campaignActionControl->isAllowed('send', $campaign)){
                 return self::PAUSED;
@@ -135,7 +142,7 @@ class CampaignSender
                 $message
                     ->setSubject($campaign->getEmail()->getSubject())
                     ->setTo($queue['email'])
-                    ->setFrom('account@land-fx.com', 'Land-FX')
+                    ->setFrom($fromEmail, $fromName)
                     ->setBody(
                         $campaign->getEmail()->getTemplate(),
                         'text/html'

@@ -20,7 +20,7 @@ class EmailController extends CoreController
         try {
             $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Email')->getEmailsQuery();
 
-            $emails = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
+            $emails = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 2);
 
             return $this->render('AdenaMailBundle:Email:list.html.twig', array(
                 'emails'        => $emails

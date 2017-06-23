@@ -1,0 +1,8 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block adenamail_body %}
+    {%  include('AdenaMailBundle:Common/Button:back_link_button.html.twig') with {'label': 'Back to list', 'path': path('adena_mail_senders_list_list')} %}
+
+    {% include('AdenaMailBundle:SendersList:edit_form.html.twig') %}
+{% endblock %}
+

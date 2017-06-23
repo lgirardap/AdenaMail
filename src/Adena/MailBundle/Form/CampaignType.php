@@ -4,6 +4,7 @@ namespace Adena\MailBundle\Form;
 
 use Adena\MailBundle\Entity\Email;
 use Adena\MailBundle\Entity\MailingList;
+use Adena\MailBundle\Entity\SendersList;
 use Adena\MailBundle\Repository\MailingListRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -30,6 +31,12 @@ class CampaignType extends AbstractType
             ])
             ->add('email', EntityType::class, [
                 'class' => Email::class,
+                'choice_label' => 'name'
+            ])
+            ->add('fromName', TextType::class)
+            ->add('fromEmail', TextType::class)
+            ->add('sendersList', EntityType::class, [
+                'class' => SendersList::class,
                 'choice_label' => 'name'
             ])
         ;

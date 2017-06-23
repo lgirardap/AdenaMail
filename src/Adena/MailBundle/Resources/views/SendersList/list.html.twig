@@ -1,0 +1,63 @@
+{% extends 'AdenaMailBundle::layout.html.twig' %}
+
+{% block adenamail_body %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            {% include('AdenaMailBundle:Common/Button:create_link_button.html.twig') with {'label' : 'Add a new sendersList', 'path' : path('adena_mail_senders_list_add') } %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>
+                        Id
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        From email
+                    </th>
+                    <th>
+                        From name
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for sendersList in sendersLists %}
+                    <tr>
+                        <td>
+                            {{ sendersList.id }}
+                        </td>
+                        <td>
+                            {{ sendersList.fromEmail }}
+                        </td>
+                        <td>
+                            {{ sendersList.fromName }}
+                        </td>
+                        <td>
+                            <a href="{{ path('adena_mail_senders_list_edit', {'id': sendersList.id}) }}">
+                                Edit
+                            </a> |
+                            <a href="{{ path('adena_mail_senders_list_delete', {'id': sendersList.id}) }}">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            {{ adena_pagination_render( sendersLists ) }}
+        </div>
+    </div>
+{% endblock %}
+

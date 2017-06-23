@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Adena\CoreBundle\AdenaCoreBundle(),
             new Adena\MailBundle\AdenaMailBundle(),
             new Adena\PaginatorBundle\AdenaPaginatorBundle(),
+            new Adena\TestBundle\AdenaTestBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
@@ -27,6 +28,11 @@ class AppKernel extends Kernel
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
         }
+
+        if (in_array($this->getEnvironment(), ['test'], true)) {
+//            $bundles[] = new Adena\TestBundle\AdenaTestBundle();
+        }
+
 
         return $bundles;
     }

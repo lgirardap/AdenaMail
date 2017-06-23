@@ -48,6 +48,21 @@ class Campaign
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="from_email", type="string", length=255, nullable=true)
+     * @Assert\Email()
+     */
+    private $fromEmail;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="from_name", type="string", length=255, nullable=true)
+     */
+    private $fromName;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -109,6 +124,12 @@ class Campaign
      */
     private $queues;
 
+    /**
+     * @var SendersList
+     * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\SendersList")
+     * @Assert\Valid()
+     */
+    private $sendersList;
 
     public function __construct()
     {
@@ -396,5 +417,77 @@ class Campaign
     public function getTestMailingLists()
     {
         return $this->testMailingLists;
+    }
+
+    /**
+     * Set fromEmail
+     *
+     * @param string $fromEmail
+     *
+     * @return Campaign
+     */
+    public function setFromEmail($fromEmail)
+    {
+        $this->fromEmail = $fromEmail;
+
+        return $this;
+    }
+
+    /**
+     * Get fromEmail
+     *
+     * @return string
+     */
+    public function getFromEmail()
+    {
+        return $this->fromEmail;
+    }
+
+    /**
+     * Set fromName
+     *
+     * @param string $fromName
+     *
+     * @return Campaign
+     */
+    public function setFromName($fromName)
+    {
+        $this->fromName = $fromName;
+
+        return $this;
+    }
+
+    /**
+     * Get fromName
+     *
+     * @return string
+     */
+    public function getFromName()
+    {
+        return $this->fromName;
+    }
+
+    /**
+     * Set sendersList
+     *
+     * @param \Adena\MailBundle\Entity\SendersList $sendersList
+     *
+     * @return Campaign
+     */
+    public function setSendersList(\Adena\MailBundle\Entity\SendersList $sendersList = null)
+    {
+        $this->sendersList = $sendersList;
+
+        return $this;
+    }
+
+    /**
+     * Get sendersList
+     *
+     * @return \Adena\MailBundle\Entity\SendersList
+     */
+    public function getSendersList()
+    {
+        return $this->sendersList;
     }
 }

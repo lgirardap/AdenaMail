@@ -12,7 +12,7 @@ class CampaignActionControlTest extends TestCase
     public function testIsAllowed()
     {
 
-        // == What can a Campaign with a 'NEW' status
+        // == What can a Campaign with a 'NEW' status do
         $campaign = $this->_mockCampaignGetStatus(Campaign::STATUS_NEW);
 
         $actions = array(
@@ -27,7 +27,7 @@ class CampaignActionControlTest extends TestCase
 
         $this->_testIsAllowedResult($actions, $campaign);
 
-        // == What can a Campaign with a 'TESTING' status
+        // == What can a Campaign with a 'TESTING' status do
         $campaign = $this->_mockCampaignGetStatus(Campaign::STATUS_TESTING);
 
         $actions = array(
@@ -42,7 +42,7 @@ class CampaignActionControlTest extends TestCase
 
         $this->_testIsAllowedResult($actions, $campaign);
 
-        // == What can a Campaign with a 'TESTED' status
+        // == What can a Campaign with a 'TESTED' status do
         $campaign = $this->_mockCampaignGetStatus(Campaign::STATUS_TESTED);
 
         $actions = array(
@@ -57,7 +57,7 @@ class CampaignActionControlTest extends TestCase
 
         $this->_testIsAllowedResult($actions, $campaign);
 
-        // == What can a Campaign with a 'IN_PROGRESS' status
+        // == What can a Campaign with a 'IN_PROGRESS' status do
         $campaign = $this->_mockCampaignGetStatus(Campaign::STATUS_IN_PROGRESS);
 
         $actions = array(
@@ -72,7 +72,7 @@ class CampaignActionControlTest extends TestCase
 
         $this->_testIsAllowedResult($actions, $campaign);
 
-        // == What can a Campaign with a 'PAUSED' status
+        // == What can a Campaign with a 'PAUSED' status do
         $campaign = $this->_mockCampaignGetStatus(Campaign::STATUS_PAUSED);
 
         $actions = array(
@@ -87,7 +87,7 @@ class CampaignActionControlTest extends TestCase
 
         $this->_testIsAllowedResult($actions, $campaign);
 
-        // == What can a Campaign with a 'ENDED' status
+        // == What can a Campaign with a 'ENDED' status do
         $campaign = $this->_mockCampaignGetStatus(Campaign::STATUS_ENDED);
 
         $actions = array(
