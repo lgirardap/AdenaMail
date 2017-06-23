@@ -13,10 +13,23 @@ class SendersListRepository extends \Doctrine\ORM\EntityRepository
     public function getSendersListsQuery()
     {
         $query = $this
-            ->createQueryBuilder('s')
-            ->orderBy('s.name', 'desc')
+            ->createQueryBuilder('sl')
+            ->orderBy('sl.name', 'desc')
             ->getQuery();
 
         return $query;
+    }
+
+    public function getWithSenders($id){
+        return $this
+            ->createQueryBuilder('sl')
+            ->join('sl.senders', 's')
+            ->addSelect('s')
+            ->where('sl.id = :id')
+            ->setParameter('id', $id)
+            ->andWhere('s.active = :active')
+            ->setParameter('active', 1)
+            ->getQuery()
+            ->getSingleResult();
     }
 }

@@ -27,12 +27,12 @@ class MailEngine
         $this->logger = $logger;
     }
 
-    public function initialize()
+    public function initialize($senders)
     {
         // Get the senders
         // Allows us to loop infinitely on our senders array (goes back to the beginning if reached the end)
         $this->senders = new \InfiniteIterator(
-            new \ArrayIterator($this->em->getRepository('AdenaMailBundle:Sender')->findBy(array('active' => 1)))
+            new \ArrayIterator($senders)
         );
 
         // Create SMTP Transport
@@ -50,13 +50,13 @@ class MailEngine
 
     /**
      * @param \Swift_Message $message We expect everything to be already set in the $message parameter.
-     *
      * @return bool
+     * @throws \Exception
      * @throws \Swift_TransportException
      */
     public function send(\Swift_Message $message){
         if(!$this->initialized){
-            $this->initialize();
+            throw new \Exception("You must initialize the MailEngine before using it!");
         }
 
         // The goal here is to test sending the email until we tried all the senders or the email is sent.

@@ -26,7 +26,7 @@ class CampaignRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getSingleResult();
     }
-
+    
     public function getActiveCampaignsQuery()
     {
         $query = $this
