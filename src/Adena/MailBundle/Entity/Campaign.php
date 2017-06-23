@@ -125,10 +125,9 @@ class Campaign
     private $queues;
 
     /**
-     * @var ArrayCollection
+     * @var SendersList
      * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\SendersList")
      * @Assert\Valid()
-     * @Assert\Count(min = 1)
      */
     private $sendersList;
 
@@ -138,7 +137,6 @@ class Campaign
         $this->createdAt = new \DateTime();
         $this->status = self::STATUS_NEW;
         $this->emailsCount = 0;
-        $this->sendersList = new ArrayCollection();
     }
 
     /**
