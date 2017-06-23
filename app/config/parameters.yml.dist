@@ -15,6 +15,7 @@ parameters:
     mailer_port:       ~
     mailer_user:       ~
     mailer_password:   ~
+    mail_engine_to_email: ~
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
