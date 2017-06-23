@@ -10,4 +10,13 @@ namespace Adena\MailBundle\Repository;
  */
 class SendersListRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getSendersListsQuery()
+    {
+        $query = $this
+            ->createQueryBuilder('s')
+            ->orderBy('s.name', 'desc')
+            ->getQuery();
+
+        return $query;
+    }
 }

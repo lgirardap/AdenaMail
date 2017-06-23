@@ -4,12 +4,11 @@ namespace Adena\MailBundle\Tests\Form;
 
 use Adena\MailBundle\Entity\SendersList;
 use Adena\MailBundle\Form\SendersListType;
-
-use Adena\TestBundle\Tests\ORMTestHelper;
+use Adena\TestBundle\ORMTestHelper\ORMTestHelper;
 use Symfony\Bridge\Doctrine\Form\DoctrineOrmExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 
-class TestedTypeTest extends TypeTestCase
+class SendersListTypeTest extends TypeTestCase
 {
     private $entityManager;
 

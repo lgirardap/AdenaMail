@@ -108,6 +108,30 @@ adena_mail_mailing_list_choose_add:
   defaults:
     _controller: AdenaMailBundle:MailingList:chooseAdd
 
+adena_mail_senders_list_list:
+    path:     /senders-list/{page}
+    defaults:
+      _controller: AdenaMailBundle:SendersList:list
+      page: 1
+    requirements:
+      page: \d*
+
+adena_mail_senders_list_add:
+    path:     /senders-list/add
+    defaults: { _controller: AdenaMailBundle:SendersList:add }
+
+adena_mail_senders_list_edit:
+    path:     /senders-list/edit/{id}
+    defaults: { _controller: AdenaMailBundle:SendersList:edit }
+    requirements:
+        id: \d+
+
+adena_mail_senders_list_delete:
+    path:     /senders-list/delete/{id}
+    defaults: { _controller: AdenaMailBundle:SendersList:delete }
+    requirements:
+        id: \d+
+
 adena_mail_datasource_list:
     path:     /datasource/{page}
     defaults:

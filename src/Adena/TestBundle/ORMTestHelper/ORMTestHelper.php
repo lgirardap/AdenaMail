@@ -1,6 +1,6 @@
 <?php
 
-namespace Adena\TestBundle\Tests;
+namespace Adena\TestBundle\ORMTestHelper;
 
 
 use Doctrine\ORM\EntityManager;

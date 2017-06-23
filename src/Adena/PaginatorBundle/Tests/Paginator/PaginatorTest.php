@@ -4,7 +4,7 @@ namespace Adena\PaginatorBundle\Tests\Paginator;
 
 use Adena\PaginatorBundle\Paginator\Paginator;
 use Adena\PaginatorBundle\Tests\Entity\ArticleTest;
-use Adena\TestBundle\Tests\ORMTestHelper;
+use Adena\TestBundle\ORMTestHelper\ORMTestHelper;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
 class PaginatorTest extends TestCase

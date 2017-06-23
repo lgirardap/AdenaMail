@@ -3,7 +3,7 @@
 namespace Adena\TestBundle\Tests\ActionControl;
 
 use Adena\TestBundle\FixturesLoader\FixturesLoader;
-use Adena\TestBundle\Tests\ORMTestHelper;
+use Adena\TestBundle\ORMTestHelper\ORMTestHelper;
 use Adena\TestBundle\Tests\Repository\FixturesLoaderTestRepository;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 

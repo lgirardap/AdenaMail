@@ -4,6 +4,8 @@ namespace Adena\MailBundle\Controller;
 
 use Adena\CoreBundle\Controller\CoreController;
 use Adena\MailBundle\Entity\Sender;
+use Adena\MailBundle\Entity\SendersList;
+use Adena\MailBundle\Form\SendersListType;
 use Adena\MailBundle\Form\SenderType;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,18 +18,18 @@ class SendersListController extends CoreController
      */
     public function addAction(Request $request )
     {
-        $sender = new Sender();
-        $form = $this->get('form.factory')->create(SenderType::class, $sender);
+        $sendersList = new SendersList();
+        $form = $this->get('form.factory')->create(SendersListType::class, $sendersList);
 
         if( $request->isMethod('POST') && $form->handleRequest($request)->isValid()){
             // Save it
             $em = $this->getDoctrine()->getManager();
-            $em->persist( $sender );
+            $em->persist( $sendersList );
             $em->flush();
 
-            $this->addFlash('success', 'Sender successfully added');
+            $this->addFlash('success', 'SendersList successfully added');
 
-            $redirectUrl = $this->generateUrl('adena_mail_sender_list');
+            $redirectUrl = $this->generateUrl('adena_mail_senders_list_list');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);
@@ -37,27 +39,28 @@ class SendersListController extends CoreController
         }
 
         if($request->isXmlHttpRequest()){
-            return $this->jsonRender('AdenaMailBundle:Sender:add_form.html.twig', [
+            return $this->jsonRender('AdenaMailBundle:SendersList:add_form.html.twig', [
                 'form' => $form->createView(),
             ], 400);
         }
 
-        return $this->render('AdenaMailBundle:Sender:add.html.twig', [
+        return $this->render('AdenaMailBundle:SendersList:add.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
     /**
+     * @param $page
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listAction($page){
         try {
-            $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Sender')->getSendersQuery();
+            $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:SendersList')->getSendersListsQuery();
 
-            $senders = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
+            $sendersLists = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
 
-            return $this->render('AdenaMailBundle:Sender:list.html.twig', array(
-                'senders' => $senders
+            return $this->render('AdenaMailBundle:SendersList:list.html.twig', array(
+                'sendersLists' => $sendersLists
             ));
         }catch(\InvalidArgumentException $e){
             throw $this->createNotFoundException($e->getMessage());
@@ -66,27 +69,27 @@ class SendersListController extends CoreController
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param \Adena\MailBundle\Entity\Sender           $sender
+     * @param SendersList $sendersList
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response     *
      */
-    public function deleteAction(Request $request, Sender $sender)
+    public function deleteAction(Request $request, SendersList $sendersList)
     {
         $form = $this->get('form.factory')->create();
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-            $em->remove($sender);
+            $em->remove($sendersList);
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('info', "The sender has been deleted");
+            $this->addFlash('info', "The sendersList has been deleted");
 
-            return $this->redirectToRoute('adena_mail_sender_list');
+            return $this->redirectToRoute('adena_mail_senders_list_list');
         }
 
-        return $this->render('@AdenaMail/Sender/delete.html.twig', array(
-            'sender' => $sender,
+        return $this->render('@AdenaMail/SendersList/delete.html.twig', array(
+            'sendersList' => $sendersList,
             'form'   => $form->createView(),
         ));
     }
@@ -94,21 +97,21 @@ class SendersListController extends CoreController
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param \Adena\MailBundle\Entity\Sender           $sender
+     * @param \Adena\MailBundle\Entity\SendersList           $sendersList
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function editAction( Request $request, Sender $sender )
+    public function editAction( Request $request, SendersList $sendersList )
     {
-        $form = $this->get('form.factory')->create(SenderType::class, $sender);
+        $form = $this->get('form.factory')->create(SendersListType::class, $sendersList);
         if( $request->isMethod('POST') && $form->handleRequest($request)->isValid()){
 
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            $request->getSession()->getFlashBag()->add('success', 'Sender updated.');
+            $this->addFlash('success', 'SendersList updated.');
 
-            $redirectUrl = $this->generateUrl('adena_mail_sender_list');
+            $redirectUrl = $this->generateUrl('adena_mail_senders_list_list');
 
             if($request->isXmlHttpRequest()) {
                 return $this->jsonRedirect($redirectUrl);
@@ -119,12 +122,12 @@ class SendersListController extends CoreController
         }
 
         if($request->isXmlHttpRequest()){
-            return $this->jsonRender('AdenaMailBundle:Sender:edit_form.html.twig', [
+            return $this->jsonRender('AdenaMailBundle:SendersList:edit_form.html.twig', [
                 'form' => $form->createView(),
             ], 400);
         }
 
-        return $this->render('AdenaMailBundle:Sender:edit.html.twig', [
+        return $this->render('AdenaMailBundle:SendersList:edit.html.twig', [
             'form' => $form->createView()
         ]);
     }
