@@ -162,18 +162,24 @@ class CampaignController extends CoreController
     /**
      * @param $page
      *
+     * @param bool $showCompleted
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function listAction($page){
+    public function listAction($page, $showCompleted = false){
         try {
-            $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Campaign')->getActiveCampaignsQuery();
+            if(!$showCompleted) {
+                $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Campaign')->getActiveCampaignsQuery();
+            }else{
+                $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Campaign')->getCompletedCampaignsQuery();
+            }
 
             $campaigns = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page);
 
             $campaignActionControl = $this->get("adena_mail.action_control.campaign");
             return $this->render('AdenaMailBundle:Campaign:list.html.twig', array(
                 'campaigns' => $campaigns,
-                'campaignActionControl' => $campaignActionControl
+                'campaignActionControl' => $campaignActionControl,
+                'showCompleted' => $showCompleted
             ));
         }catch(\InvalidArgumentException $e){
             throw $this->createNotFoundException($e->getMessage());

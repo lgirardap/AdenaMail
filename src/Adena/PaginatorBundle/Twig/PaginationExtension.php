@@ -55,7 +55,7 @@ class PaginationExtension extends \Twig_Extension
         }
 
         $params = array(
-            'route' => $request->get('_route'),
+            'route' => $request->attributes->get('_route'),
             'query' => $query,
             'nbPages'   => $paginator->getNbPages(),
             'startPage' => min($pages),

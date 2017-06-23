@@ -78,6 +78,13 @@
                 {% endfor %}
                 </tbody>
             </table>
+            <p>
+                {% if(showCompleted) %}
+                    <a href="{{ path('adena_mail_campaign_list') }}">View active campaigns.</a>
+                {% else %}
+                    <a href="{{ path('adena_mail_campaign_completed_list') }}">View completed campaigns.</a>
+                {% endif %}
+            </p>
         </div>
     </div>
 

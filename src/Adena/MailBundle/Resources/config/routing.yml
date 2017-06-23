@@ -161,6 +161,16 @@ adena_mail_campaign_list:
     defaults:
       _controller: AdenaMailBundle:Campaign:list
       page: 1
+      showCompleted: false
+    requirements:
+      page: \d*
+
+adena_mail_campaign_completed_list:
+    path:     /campaign/completed/{page}
+    defaults:
+      _controller: AdenaMailBundle:Campaign:list
+      page: 1
+      showCompleted: true
     requirements:
       page: \d*
 
