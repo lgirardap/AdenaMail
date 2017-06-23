@@ -2,7 +2,6 @@
 
 namespace Adena\TestBundle\ORMTestHelper;
 
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\Mapping\DefaultNamingStrategy;
@@ -10,11 +9,10 @@ use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Doctrine\ORM\Tools\SchemaTool;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class ORMTestHelper extends TestCase
+class ORMTestHelper extends KernelTestCase
 {
-
     /**
      * EntityManager mock object together with
      * annotation mapping driver and custom
@@ -63,15 +61,16 @@ class ORMTestHelper extends TestCase
      * @internal param array $paths
      */
     public function getMockMysqlEntityManager($entities = array(), EventManager $evm = null){
-        // TODO -- Add config support
+        self::bootKernel();
+        $params = static::$kernel->getContainer()->getParameter('adena_test.mysql_connection');
         $conn = array(
             'driver'  => 'pdo_mysql',
             'charset' => 'UTF8',
-            'host' => '127.0.0.1',
-            'port' => null,
-            'dbname' => 'adena_mail_test',
-            'user' => 'root',
-            'password' => null
+            'host' => $params['host'],
+            'port' => $params['port'],
+            'dbname' => $params['dbname'],
+            'user' => $params['user'],
+            'password' => $params['password']
         );
 
         $em = $this->getMockCustomEntityManager( $conn, $evm );

@@ -19,3 +19,11 @@ swiftmailer:
 doctrine:
     dbal:
         dbname:   "%database_name%_test"
+
+adena_test:
+  mysql_connection:
+      host:     "%database_host%"
+      port:     "%database_port%"
+      dbname:   "%database_name%_test"
+      user:     "%database_user%"
+      password: "%database_password%"

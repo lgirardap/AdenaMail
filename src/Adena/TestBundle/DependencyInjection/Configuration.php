@@ -24,6 +24,19 @@ class Configuration implements ConfigurationInterface
         // configure your bundle. See the documentation linked above for
         // more information on that topic.
 
+        $rootNode
+            ->children()
+                ->arrayNode('mysql_connection')
+                    ->children()
+                    ->scalarNode('host')->end()
+                    ->scalarNode('port')->end()
+                    ->scalarNode('dbname')->end()
+                    ->scalarNode('user')->end()
+                    ->scalarNode('password')->end()
+                ->end()
+            ->end()
+            ;
+
         return $treeBuilder;
     }
 }
