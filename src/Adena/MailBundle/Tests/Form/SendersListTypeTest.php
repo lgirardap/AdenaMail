@@ -5,11 +5,8 @@ namespace Adena\MailBundle\Tests\Form;
 use Adena\MailBundle\Entity\SendersList;
 use Adena\MailBundle\Form\SendersListType;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Adena\TestBundle\Tests\ORMTestHelper;
 use Symfony\Bridge\Doctrine\Form\DoctrineOrmExtension;
-use Symfony\Bridge\Doctrine\Test\DoctrineTestHelper;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 
 class TestedTypeTest extends TypeTestCase
@@ -19,8 +16,7 @@ class TestedTypeTest extends TypeTestCase
     protected function setUp()
     {
         // mock any dependencies
-        $this->entityManager = DoctrineTestHelper::createTestEntityManager();
-
+        $this->entityManager = (new ORMTestHelper())->getMockMysqlEntityManager();
         parent::setUp();
     }
 
@@ -47,13 +43,14 @@ class TestedTypeTest extends TypeTestCase
     public function testSubmitValidData()
     {
         $formData = array(
-            'name'  => 'testname',
-            'formEmail' => 'email',
-            'formName' => 'name',
+            'name'       => 'testname',
+            'fromEmail'  => 'email',
+            'fromName'   => 'name',
+            'senders'    => 'foch',
         );
 
         $object = new SendersList();
-        $form = $this->factory->create(SendersListType::class);
+        $form = $this->factory->create(SendersListType::class, $object);
 
         // submit the data to the form directly
         $form->submit($formData);
@@ -63,6 +60,8 @@ class TestedTypeTest extends TypeTestCase
 
         $view     = $form->createView();
         $children = $view->children;
+
+        $this->assertCount(count($formData), $children);
 
         foreach (array_keys($formData) as $key) {
             $this->assertArrayHasKey($key, $children);
