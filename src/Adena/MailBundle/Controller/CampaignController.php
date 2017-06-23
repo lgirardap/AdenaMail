@@ -168,7 +168,7 @@ class CampaignController extends CoreController
         try {
             $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Campaign')->getActiveCampaignsQuery();
 
-            $campaigns = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
+            $campaigns = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page);
 
             $campaignActionControl = $this->get("adena_mail.action_control.campaign");
             return $this->render('AdenaMailBundle:Campaign:list.html.twig', array(

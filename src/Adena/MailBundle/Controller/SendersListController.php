@@ -57,7 +57,7 @@ class SendersListController extends CoreController
         try {
             $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:SendersList')->getSendersListsQuery();
 
-            $sendersLists = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
+            $sendersLists = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page);
 
             return $this->render('AdenaMailBundle:SendersList:list.html.twig', array(
                 'sendersLists' => $sendersLists

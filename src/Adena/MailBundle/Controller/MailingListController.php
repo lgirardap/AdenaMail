@@ -20,7 +20,7 @@ class MailingListController extends CoreController
         try {
             $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:MailingList')->getMailingListsQuery();
 
-            $mailingLists = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
+            $mailingLists = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page);
 
             return $this->render('AdenaMailBundle:MailingList:list.html.twig', array(
                 'mailingLists' => $mailingLists

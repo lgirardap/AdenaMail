@@ -96,4 +96,4 @@ monolog:
             channels: [mail_engine]
 
 adena_paginator:
-    nbPerPage: 2
+    nbPerPage: 10

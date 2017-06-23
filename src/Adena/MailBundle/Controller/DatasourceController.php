@@ -55,7 +55,7 @@ class DatasourceController extends CoreController
         try {
             $query = $this->getDoctrine()->getManager()->getRepository('AdenaMailBundle:Datasource')->getDatasourcesQuery();
 
-            $datasources = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page, 10);
+            $datasources = $this->get('adena_paginator.paginator.paginator')->paginate($query, $page);
 
             return $this->render('AdenaMailBundle:Datasource:list.html.twig', array(
                 'datasources' => $datasources
