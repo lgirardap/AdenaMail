@@ -30,13 +30,20 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "twig/twig": "^1.0||^2.0",
         "doctrine/doctrine-fixtures-bundle": "~2.3",
-        "twig/extensions": "~1.0"
+        "twig/extensions": "~1.0",
+        "adena/core-bundle": "master"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
         "phpunit/phpunit": "^4.8 || ^5.0",
         "symfony/phpunit-bridge": "^3.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "nkok@universal.land-fx.com:/land/repository/adena.corebundle.git"
+        }
+    ],
     "scripts": {
         "symfony-scripts": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
