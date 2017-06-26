@@ -31,7 +31,7 @@
         "twig/twig": "^1.0||^2.0",
         "doctrine/doctrine-fixtures-bundle": "~2.3",
         "twig/extensions": "~1.0",
-        "adena/core-bundle": "master"
+        "adena/core-bundle": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
