@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "nkok@universal.land-fx.com:/land/repository/adena.corebundle.git",
-                "reference": "29bda856fe0501524139a7955101367b78872af4"
+                "reference": "f54e24661feef0aa2f9b70e4e30cc32ba116b794"
             },
             "require": {
                 "php": ">=5.3.2"
@@ -34,7 +34,7 @@
                 }
             ],
             "description": "Adena CoreBundle",
-            "time": "2017-06-26 06:37:36"
+            "time": "2017-06-26 06:42:36"
         },
         {
             "name": "composer/ca-bundle",

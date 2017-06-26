@@ -43,7 +43,7 @@ class CampaignController extends CoreController
             $this->getDoctrine()->getManager()->flush();
 
             // Send the (test) campaign
-            $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
+            $this->get('adena_core.tool.background_runner')->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
 
             $this->addFlash('success', 'Your test campaign will be sent shortly : '.$campaign->getName());
 
@@ -83,7 +83,7 @@ class CampaignController extends CoreController
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             // Launch the actual send in a different process through the console command
-            $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
+            $this->get('adena_core.tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
 
             $this->addFlash('success', 'Your campaign will be sent shortly.');
 

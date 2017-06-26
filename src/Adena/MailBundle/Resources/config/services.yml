@@ -19,7 +19,7 @@ services:
     tags:
       - { name: validator.constraint_validator }
     arguments:
-      - "@external_connection.mysql"
+      - "@adena_core.external_connection.mysql"
 
   adena_mail.entity_helper.campaign_to_queue:
     class: Adena\MailBundle\EntityHelper\CampaignToQueue
@@ -30,12 +30,12 @@ services:
   adena_mail.entity_helper.mailing_list_emails_fetcher:
     class: Adena\MailBundle\EntityHelper\MailingListEmailsFetcher
     arguments:
-      - "@external_connection.mysql"
+      - "@adena_core.external_connection.mysql"
 
   adena_mail.entity_helper.mailing_list_tester:
     class: Adena\MailBundle\EntityHelper\MailingListTester
     arguments:
-      - "@external_connection.mysql"
+      - "@adena_core.external_connection.mysql"
 
   adena_mail.entity_helper.campaign_sender:
       class: Adena\MailBundle\EntityHelper\CampaignSender
