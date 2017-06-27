@@ -39,15 +39,19 @@ class ORMTestHelper extends KernelTestCase
      * @param array $entities
      */
     public function createSchema($em, $entities = array() ){
+        $schema = [];
+        $paths = [];
 
-        $schema = array_map(function($class) use ($em) {
-            return $em->getClassMetadata($class);
-        }, (array)$entities);
+        foreach($entities as $entity){
+            $reflection = new \ReflectionClass($entity);
+            $paths[] = pathinfo($reflection->getFileName(), PATHINFO_DIRNAME);
+            $schema[] = $em->getClassMetadata($entity);
+        }
+        $em->getConfiguration()->getMetadataDriverImpl()->addPaths(array_unique($paths));
 
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema($schema);
         $schemaTool->createSchema($schema);
-
     }
 
 
@@ -128,7 +132,7 @@ class ORMTestHelper extends KernelTestCase
         // TODO -- Change __dir__ if issue
         return new AnnotationDriver(
             new \Doctrine\Common\Annotations\CachedReader($reader, new \Doctrine\Common\Cache\ArrayCache()),
-            array(__dir__)
+            null
         );
     }
 
