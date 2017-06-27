@@ -59,8 +59,8 @@ class FixturesLoaderTest extends TestCase
     {
         // ==== Test import list of two fixture
         $fixturesToLoad = array(
-            'src/Adena/TestBundle/Tests/DataFixtures/FixturesLoaderTestData.php',
-            'src/Adena/TestBundle/Tests/DataFixtures/FixturesLoaderTestData2.php',
+            'src/Adena/TestBundle/Tests/DataFixtures/ORM/FixturesLoaderTestData.php',
+            'src/Adena/TestBundle/Tests/DataFixtures/ORM/FixturesLoaderTestData2.php',
         );
         $this->fixtureLoader->loadFixturesFromPaths($fixturesToLoad);
 
@@ -74,7 +74,7 @@ class FixturesLoaderTest extends TestCase
 
         // ==== Test import list of one fixture
         $fixturesToLoad = array(
-            'src/Adena/TestBundle/Tests/DataFixtures/FixturesLoaderTestData2.php',
+            'src/Adena/TestBundle/Tests/DataFixtures/ORM/FixturesLoaderTestData2.php',
         );
         $this->fixtureLoader->loadFixturesFromPaths($fixturesToLoad);
 
@@ -89,7 +89,7 @@ class FixturesLoaderTest extends TestCase
     public function testLoadFixtures()
     {
         // ==== Test import one fixture
-        $fixtureToLoad = array('src/Adena/TestBundle/Tests/DataFixtures/');
+        $fixtureToLoad = array('src/Adena/TestBundle/Tests/DataFixtures/ORM/');
         $this->fixtureLoader->loadFixtures( $fixtureToLoad );
 
         /** @var array $fixturesTest */
@@ -102,7 +102,7 @@ class FixturesLoaderTest extends TestCase
     public function testDeleteAllFixtures(){
 
         // ==== Test import one fixture
-        $fixtureToLoad = array('src/Adena/TestBundle/Tests/DataFixtures/');
+        $fixtureToLoad = array('src/Adena/TestBundle/Tests/DataFixtures/ORM/');
         $this->fixtureLoader->loadFixtures( $fixtureToLoad );
 
         $this->fixtureLoader->deleteAllFixtures();
