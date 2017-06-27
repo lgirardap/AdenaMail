@@ -85,9 +85,8 @@ class FixturesLoader
             );
         }
 
-        var_dump('deleting');
         $this->deleteAllFixtures();
-//        $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 0;");
+        $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 0;");
 
         $purger = new ORMPurger($this->em);
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
@@ -95,7 +94,7 @@ class FixturesLoader
         $executor = new ORMExecutor($this->em, $purger);
         $executor->execute($fixtures);
 
-//        $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 1;");
+        $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 1;");
 
         return $fixtures;
     }
