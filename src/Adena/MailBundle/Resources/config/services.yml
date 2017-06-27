@@ -45,6 +45,7 @@ services:
         - "@adena_mail.entity_helper.campaign_to_queue"
         - "@adena_mail.action_control.campaign"
         - "@adena_mail.queue.queue_database_iterator"
+        - "@twig"
         - "%kernel.logs_dir%"
 
   adena_mail.mail_engine:

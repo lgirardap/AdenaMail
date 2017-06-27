@@ -51,7 +51,8 @@ class MailingListEmailsFetcher
 
         $this->mysqlExternal->close();
 
-        return array_column($results, 'email');
+        return $results;
+//        return array_column($results, 'email');
     }
 
     /**
