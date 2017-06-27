@@ -3,6 +3,7 @@
 namespace Adena\MailBundle\Form;
 
 use Adena\MailBundle\Entity\MailingList;
+use Adena\MailBundle\Repository\DatasourceRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\DataMapper\CheckboxListMapper;
@@ -31,7 +32,10 @@ class MailingListType extends AbstractType
             if(MailingList::TYPE_QUERY === $type) {
                 $form->add('datasource', EntityType::class, [
                     'class' => 'Adena\MailBundle\Entity\Datasource',
-                    'choice_label' => 'name'
+                    'choice_label' => 'name',
+                    'query_builder' =>  function(DatasourceRepository $repository){
+                        return $repository->getDatasourcesQueryBuilder();
+                    },
                 ]);
 
 //                $form->add('datasource', DatasourceType::class);

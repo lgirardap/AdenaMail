@@ -13,10 +13,18 @@ class SenderRepository extends \Doctrine\ORM\EntityRepository
     public function getSendersQuery()
     {
         $query = $this
-            ->createQueryBuilder('s')
-            ->orderBy('s.name', 'desc')
+            ->getSendersQueryBuilder()
             ->getQuery();
 
         return $query;
+    }
+
+    public function getSendersQueryBuilder()
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('s')
+            ->orderBy('s.name', 'asc');
+
+        return $queryBuilder;
     }
 }

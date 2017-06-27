@@ -13,10 +13,18 @@ class DatasourceRepository extends \Doctrine\ORM\EntityRepository
     public function getDatasourcesQuery()
     {
         $query = $this
-            ->createQueryBuilder('d')
-            ->orderBy('d.name', 'desc')
+            ->getDatasourcesQueryBuilder()
             ->getQuery();
 
         return $query;
+    }
+
+    public function getDatasourcesQueryBuilder()
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('d')
+            ->orderBy('d.name', 'asc');
+
+        return $queryBuilder;
     }
 }

@@ -15,12 +15,19 @@ class EmailRepository extends \Doctrine\ORM\EntityRepository
 
     public function getEmailsQuery()
     {
-        $query = $this
-            ->createQueryBuilder('e')
-            ->orderBy('e.createdAt', 'desc')
+        $query = $this->getEmailsQueryBuilder()
             ->getQuery();
 
         return $query;
+    }
+
+    public function getEmailsQueryBuilder()
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('e')
+            ->orderBy('e.createdAt', 'desc');
+
+        return $queryBuilder;
     }
 
 }
