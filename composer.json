@@ -31,7 +31,8 @@
         "twig/twig": "^1.0||^2.0",
         "doctrine/doctrine-fixtures-bundle": "~2.3",
         "twig/extensions": "~1.0",
-        "adena/core-bundle": "dev-master"
+        "adena/core-bundle": "dev-master",
+        "adena/paginator-bundle": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
@@ -42,6 +43,10 @@
         {
             "type": "vcs",
             "url": "nkok@universal.land-fx.com:/land/repository/adena.corebundle.git"
+        },
+        {
+            "type": "vcs",
+            "url": "nkok@universal.land-fx.com:/land/repository/adena.paginatorbundle.git"
         }
     ],
     "scripts": {
