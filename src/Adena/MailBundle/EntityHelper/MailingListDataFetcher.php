@@ -9,16 +9,19 @@
 namespace Adena\MailBundle\EntityHelper;
 
 use Adena\CoreBundle\ExternalConnection\MysqlExternalConnection;
+use Adena\CoreBundle\Tools\CSVParser;
 use Adena\MailBundle\Entity\MailingList;
 
 class MailingListDataFetcher
 {
 
     private $mysqlExternal;
+    private $csvParser;
 
-    public function __construct( MysqlExternalConnection $mysqlExternal)
+    public function __construct( MysqlExternalConnection $mysqlExternal, CSVParser $csvParser)
     {
         $this->mysqlExternal = $mysqlExternal;
+        $this->csvParser = $csvParser;
     }
 
     public function fetch(MailingList $mailingList){
@@ -44,7 +47,7 @@ class MailingListDataFetcher
 
      * @return array
      */
-    private function addFromDatasource(MailingList $mailingList): array
+    private function addFromDatasource(MailingList $mailingList)
     {
         $datasource = $mailingList->getDatasource();
         $results    = $this->mysqlExternal->executeQuery($mailingList->getContent(), [
@@ -58,7 +61,6 @@ class MailingListDataFetcher
         $this->mysqlExternal->close();
 
         return $results;
-//        return array_column($results, 'email');
     }
 
     /**
@@ -66,9 +68,8 @@ class MailingListDataFetcher
 
      * @return array
      */
-    private function addFromList(MailingList $mailingList): array
+    private function addFromList(MailingList $mailingList)
     {
-        $list = explode(',', $mailingList->getContent());
-        return array_map('trim', $list);
+        return $this->csvParser->parse($mailingList->getContent());
     }
 }

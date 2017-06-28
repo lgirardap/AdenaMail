@@ -2,7 +2,7 @@
 
 namespace Adena\MailBundle\Entity;
 
-use Adena\MailBundle\Validator\Constraints\DatasourceCanConnect;
+use Adena\MailBundle\Validator\Constraints as AdenaAssert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * The following is a custom validator to check that the provided parameters are actually correct by pinging the
  * associated MySQL server.
- * @DatasourceCanConnect()
+ * @AdenaAssert\DatasourceCanConnect()
  */
 class Datasource
 {

@@ -64,7 +64,7 @@ class CampaignTester
     }
 
     public function sendTestEmail(Campaign $campaign){
-        $this->backgroundRunner->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
+        $this->backgroundRunner->runConsoleCommand('adenamail:campaign:sendtest '.$campaign->getId());
     }
 
 }

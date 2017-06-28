@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
+use Adena\MailBundle\Validator\Constraints as AdenaAssert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -105,6 +106,23 @@ class MailingList
                 ->inContext($context)
                 ->atPath('datasource')
                 ->validate($this->datasource, new  Assert\Valid(), [Constraint::DEFAULT_GROUP]);
+        }
+    }
+
+    /**
+     * If type is "list", we want to make sure the content is CSV
+     *
+     * @Assert\Callback()
+     */
+    public function validateContent(ExecutionContextInterface $context, $payload)
+    {
+        if(self::TYPE_LIST === $this->getType()){
+            // Valid CSV
+            $context
+                ->getValidator()
+                ->inContext($context)
+                ->atPath('content')
+                ->validate($this->content, new  AdenaAssert\IsValidCSV(), [Constraint::DEFAULT_GROUP]);
         }
     }
 

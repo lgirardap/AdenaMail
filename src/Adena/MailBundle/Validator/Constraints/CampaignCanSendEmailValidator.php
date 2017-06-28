@@ -21,7 +21,6 @@ class CampaignCanSendEmailValidator extends ConstraintValidator
     // This takes a full Campaign object as parameter because the associated Constraint is a Class constraint.
     public function validate($campaign, Constraint $constraint)
     {
-        dump($constraint);
         try {
             $this->campaignTester->test($campaign);
         }catch(\Exception $e){

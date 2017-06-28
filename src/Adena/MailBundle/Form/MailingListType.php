@@ -47,7 +47,7 @@ class MailingListType extends AbstractType
             if(MailingList::TYPE_QUERY === $type) {
                 $helpBlock = 'Valid SQL query.';
             }else{
-                $helpBlock = 'List of email addresses separated by a coma (,).';
+                $helpBlock = 'A valid CSV string. The first row should be the column names. The "email" column is mandatory.';
             }
 
             // Show a message to remind the user what type of content we are waiting for.
