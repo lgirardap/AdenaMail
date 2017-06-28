@@ -52,7 +52,7 @@ class CampaignTester
                 $twigTemplate->render((array)$data);
             } catch (\Exception $e) {
                 $variableName = explode(' in ', $e->getMessage())[0];
-                throw new \Exception($variableName." in the MailingList: ".$mailingList->getName());
+                throw new \Exception($variableName.' in the MailingList: "'.$mailingList->getName().'".');
             }
         }
 

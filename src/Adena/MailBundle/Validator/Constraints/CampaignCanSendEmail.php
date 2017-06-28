@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
 */
 class CampaignCanSendEmail extends Constraint
 {
-    public $message = 'The {{ error_message }}. Please update the MailingList to add it, use a different MailingList or update the Email template.';
+    public $message = 'The {{ error_message }} Please update the MailingList to add it, use a different MailingList or update the Email template.';
 
     public function validatedBy()
     {
