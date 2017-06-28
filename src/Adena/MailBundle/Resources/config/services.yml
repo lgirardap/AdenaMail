@@ -21,6 +21,13 @@ services:
     arguments:
       - "@adena_core.external_connection.mysql"
 
+  adena_mail.campaign_can_send_email_validator:
+      class: Adena\MailBundle\Validator\Constraints\CampaignCanSendEmailValidator
+      tags:
+        - { name: validator.constraint_validator }
+      arguments:
+        - "@adena_mail.entity_helper.campaign_tester"
+
   adena_mail.entity_helper.campaign_to_queue:
     class: Adena\MailBundle\EntityHelper\CampaignToQueue
     arguments:
