@@ -39,33 +39,25 @@ class CampaignController extends CoreController
 
         $form = $this->get('form.factory')->create(CampaignTestMailingListType::class, $campaign);
 
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            // Save the Mailing lists Tests for this campaign
-            $this->getDoctrine()->getManager()->flush();
+        try {
+            if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+                // Save the Mailing lists Tests for this campaign
+                $this->getDoctrine()->getManager()->flush();
 
-            //if( test KO ){
-                // Error message
-                // $this->addFlash('success', 'Your test campaign will be sent shortly : '.$campaign->getName());
-            //}
+                // Send the (test) campaign
+                $this->get('adena_mail.entity_helper.campaign_tester')->test($campaign, true);
 
+                $this->addFlash('success', 'Your test campaign will be sent shortly.');
 
-//            try{
-//                campaignSender(campaiogn)
-//            } catch {
-//                display error
-//            }
-//
-            // Send the (test) campaign
-            $this->get('adena_core.tool.background_runner')->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
+                $redirectUrl = $this->generateUrl('adena_mail_campaign_list');
 
-            $this->addFlash('success', 'Your test campaign will be sent shortly : '.$campaign->getName());
-
-            $redirectUrl = $this->generateUrl('adena_mail_campaign_list');
-
-            if($request->isXmlHttpRequest()) {
-                return $this->jsonRedirect($redirectUrl);
+                if ($request->isXmlHttpRequest()) {
+                    return $this->jsonRedirect($redirectUrl);
+                }
+                return $this->redirect($redirectUrl);
             }
-            return $this->redirect($redirectUrl);
+        }catch(\Exception $e){
+            $this->addFlash('danger', $e->getMessage());
         }
 
         if($request->isXmlHttpRequest()){

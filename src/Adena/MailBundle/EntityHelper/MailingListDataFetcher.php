@@ -35,7 +35,8 @@ class MailingListDataFetcher
 
     public function getFirstRow(MailingList $mailingList)
     {
-        return array_pop($this->fetch($mailingList));
+        $rows = $this->fetch($mailingList);
+        return reset($rows);
     }
 
     /**

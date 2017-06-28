@@ -50,7 +50,10 @@ services:
 
   adena_mail.entity_helper.campaign_tester:
       class: Adena\MailBundle\EntityHelper\CampaignTester
-      arguments: ['@twig', '@adena_mail.entity_helper.mailing_list_data_fetcher']
+      arguments:
+        - '@twig'
+        - '@adena_mail.entity_helper.mailing_list_data_fetcher'
+        - '@adena_core.tool.background_runner'
 
   adena_mail.mail_engine:
       class: Adena\MailBundle\MailEngine\MailEngine
