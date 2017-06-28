@@ -115,10 +115,12 @@ class CampaignSender
 
         // If it's not new or tested (so it's paused), just restart the engine
         $this->logsLocation = $this->logsDir."/campaign_".$campaign->getName()."_".$campaign->getId().".log";
+
         $template =  $this->twig->createTemplate($campaign->getEmail()->getTemplate());
         $templateGetter = function($data) use ($campaign, $template){
             return $template->render(json_decode($data, TRUE));
         };
+
         $result = $this->_doSend($campaign, $templateGetter);
         if($result === self::SUCCESS) {
             // Done with this campaign, change the status.

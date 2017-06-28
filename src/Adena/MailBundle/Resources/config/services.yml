@@ -25,10 +25,10 @@ services:
     class: Adena\MailBundle\EntityHelper\CampaignToQueue
     arguments:
       - "@doctrine.orm.default_entity_manager"
-      - "@adena_mail.entity_helper.mailing_list_emails_fetcher"
+      - "@adena_mail.entity_helper.mailing_list_data_fetcher"
 
-  adena_mail.entity_helper.mailing_list_emails_fetcher:
-    class: Adena\MailBundle\EntityHelper\MailingListEmailsFetcher
+  adena_mail.entity_helper.mailing_list_data_fetcher:
+    class: Adena\MailBundle\EntityHelper\MailingListDataFetcher
     arguments:
       - "@adena_core.external_connection.mysql"
 
@@ -47,6 +47,10 @@ services:
         - "@adena_mail.queue.queue_database_iterator"
         - "@twig"
         - "%kernel.logs_dir%"
+
+  adena_mail.entity_helper.campaign_tester:
+      class: Adena\MailBundle\EntityHelper\CampaignTester
+      arguments: ['@twig', '@adena_mail.entity_helper.mailing_list_data_fetcher']
 
   adena_mail.mail_engine:
       class: Adena\MailBundle\MailEngine\MailEngine

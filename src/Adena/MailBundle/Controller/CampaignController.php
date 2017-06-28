@@ -40,8 +40,21 @@ class CampaignController extends CoreController
         $form = $this->get('form.factory')->create(CampaignTestMailingListType::class, $campaign);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            // Save the Mailing lists Tests for this campaign
             $this->getDoctrine()->getManager()->flush();
 
+            //if( test KO ){
+                // Error message
+                // $this->addFlash('success', 'Your test campaign will be sent shortly : '.$campaign->getName());
+            //}
+
+
+//            try{
+//                campaignSender(campaiogn)
+//            } catch {
+//                display error
+//            }
+//
             // Send the (test) campaign
             $this->get('adena_core.tool.background_runner')->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
 
@@ -73,7 +86,6 @@ class CampaignController extends CoreController
         $campaignActionControl = $this->get('adena_mail.action_control.campaign');
         if(!$campaignActionControl->isAllowed('start_resume', $campaign)){
 
-            // TODO make pretty message with ifs
             $this->addFlash('warning', 'Campaign already started or not tested.');
             return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
         }

@@ -17,7 +17,7 @@ class CampaignToQueue
     private $em;
     private $emailsFetcher;
 
-    public function __construct(EntityManagerInterface $em, MailingListEmailsFetcher $emailsFetcher)
+    public function __construct(EntityManagerInterface $em, MailingListDataFetcher $emailsFetcher)
     {
         $this->emailsFetcher = $emailsFetcher;
         $this->em            = $em;

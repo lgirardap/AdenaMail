@@ -11,7 +11,7 @@ namespace Adena\MailBundle\EntityHelper;
 use Adena\CoreBundle\ExternalConnection\MysqlExternalConnection;
 use Adena\MailBundle\Entity\MailingList;
 
-class MailingListEmailsFetcher
+class MailingListDataFetcher
 {
 
     private $mysqlExternal;
@@ -31,6 +31,11 @@ class MailingListEmailsFetcher
         }
 
         return [];
+    }
+
+    public function getFirstRow(MailingList $mailingList)
+    {
+        return array_pop($this->fetch($mailingList));
     }
 
     /**
