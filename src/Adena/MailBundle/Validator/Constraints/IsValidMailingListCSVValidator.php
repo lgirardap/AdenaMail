@@ -3,13 +3,14 @@
 namespace Adena\MailBundle\Validator\Constraints;
 
 use Adena\CoreBundle\Tools\CSVParser;
+use Adena\MailBundle\Entity\MailingList;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 /**
 * @Annotation
 */
-class IsValidCSVValidator extends ConstraintValidator
+class IsValidMailingListCSVValidator extends ConstraintValidator
 {
     /** @var CSVParser */
     private $csvParser;
@@ -19,9 +20,13 @@ class IsValidCSVValidator extends ConstraintValidator
         $this->csvParser = $csvParser;
     }
 
-    // This takes a full $datasource object as parameter because the associated Constraint is a Class constraint.
     public function validate($value, Constraint $constraint)
     {
+        // Only for "list" type MailingLists
+        if(MailingList::TYPE_LIST !== $this->context->getRoot()->getData()->getType()){
+            return;
+        }
+
         try {
             // First parse the string using our service.
             // This will throw an exception on malformed strings or invalid number of columns (mismatch header / content)

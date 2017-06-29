@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
 * @Annotation
 */
-class IsValidCSV extends Constraint
+class IsValidMailingListCSV extends Constraint
 {
     public $message = 'This must be a valid CSV, with at least an "email" column.';
 

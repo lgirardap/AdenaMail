@@ -45,7 +45,7 @@ class MailingListType extends AbstractType
         $contentModifier = function(FormInterface $form, $type){
             // Generate the correct helpBlock message
             if(MailingList::TYPE_QUERY === $type) {
-                $helpBlock = 'Valid SQL query.';
+                $helpBlock = 'Valid SQL query. It should contain an "email" column.';
             }else{
                 $helpBlock = 'A valid CSV string. The first row should be the column names. The "email" column is mandatory.';
             }

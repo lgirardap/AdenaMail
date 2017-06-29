@@ -110,7 +110,10 @@ class MailingList
     }
 
     /**
-     * If type is "list", we want to make sure the content is CSV
+     * If type is "list", we want to make sure the content is CSV.
+     * If it's "query", we want to make sure the request works.
+     *
+     * In both case, we'll also check if the returned data has the mandatory "email" field.
      *
      * @Assert\Callback()
      */
@@ -122,7 +125,14 @@ class MailingList
                 ->getValidator()
                 ->inContext($context)
                 ->atPath('content')
-                ->validate($this->content, new  AdenaAssert\IsValidCSV(), [Constraint::DEFAULT_GROUP]);
+                ->validate($this->content, new  AdenaAssert\IsValidMailingListCSV(), [Constraint::DEFAULT_GROUP]);
+        }else{
+            // Valid Query
+            $context
+                ->getValidator()
+                ->inContext($context)
+                ->atPath('content')
+                ->validate($this->content, new  AdenaAssert\IsValidMailingListQuery(), [Constraint::DEFAULT_GROUP]);
         }
     }
 
