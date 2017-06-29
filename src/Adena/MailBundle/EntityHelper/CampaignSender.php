@@ -25,6 +25,10 @@ class CampaignSender
     private $queueDatabaseIterator;
     private $logsDir;
     private $logsLocation;
+    /**
+     * @var \Twig_Environment
+     */
+    private $twig;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -32,14 +36,16 @@ class CampaignSender
         CampaignToQueue $campaignToQueue,
         CampaignActionControl $campaignActionControl,
         QueueDatabaseIterator $queueDatabaseIterator,
+        \Twig_Environment $twig,
         $logsDir)
     {
-        $this->mailEngine = $mailEngine;
-        $this->em            = $em;
-        $this->campaignToQueue = $campaignToQueue;
+        $this->mailEngine            = $mailEngine;
+        $this->em                    = $em;
+        $this->campaignToQueue       = $campaignToQueue;
         $this->campaignActionControl = $campaignActionControl;
         $this->queueDatabaseIterator = $queueDatabaseIterator;
         $this->logsDir = $logsDir;
+        $this->twig = $twig;
     }
 
     public function pause(Campaign $campaign){
@@ -70,7 +76,10 @@ class CampaignSender
         $this->em->flush();
 
         $this->logsLocation = $this->logsDir."/campaign_".$campaign->getName()."_".$campaign->getId()."_test.log";
-        $result = $this->_doSend($campaign);
+        $templateGetter = function($data) use ($campaign){
+            return $campaign->getEmail()->getTemplate();
+        };
+        $result = $this->_doSend($campaign, $templateGetter);
         if($result === self::SUCCESS) {
             // Done with this campaign, change the status.
             $campaign->setStatus(Campaign::STATUS_TESTED);
@@ -106,7 +115,13 @@ class CampaignSender
 
         // If it's not new or tested (so it's paused), just restart the engine
         $this->logsLocation = $this->logsDir."/campaign_".$campaign->getName()."_".$campaign->getId().".log";
-        $result = $this->_doSend($campaign);
+
+        $template =  $this->twig->createTemplate($campaign->getEmail()->getTemplate());
+        $templateGetter = function($data) use ($campaign, $template){
+            return $template->render(json_decode($data, TRUE));
+        };
+
+        $result = $this->_doSend($campaign, $templateGetter);
         if($result === self::SUCCESS) {
             // Done with this campaign, change the status.
             $campaign->setStatus(Campaign::STATUS_ENDED);
@@ -117,7 +132,7 @@ class CampaignSender
         $this->em->flush();
     }
 
-    private function _doSend(Campaign $campaign)
+    private function _doSend(Campaign $campaign, $templateGetter)
     {
         // Get the queue for the specified campaign AS ARRAYS, not objects
         $this->queueDatabaseIterator->setQueues(
@@ -144,7 +159,7 @@ class CampaignSender
                     ->setTo($queue['email'])
                     ->setFrom($fromEmail, $fromName)
                     ->setBody(
-                        $campaign->getEmail()->getTemplate(),
+                        $templateGetter($queue['data']),
                         'text/html'
                     );
 

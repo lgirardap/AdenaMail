@@ -19,23 +19,45 @@ services:
     tags:
       - { name: validator.constraint_validator }
     arguments:
-      - "@external_connection.mysql"
+      - "@adena_core.external_connection.mysql"
+
+  adena_mail.campaign_can_send_email_validator:
+      class: Adena\MailBundle\Validator\Constraints\CampaignCanSendEmailValidator
+      tags:
+        - { name: validator.constraint_validator }
+      arguments:
+        - "@adena_mail.entity_helper.campaign_tester"
+
+  adena_mail.is_valid_mailing_list_csv_validator:
+        class: Adena\MailBundle\Validator\Constraints\IsValidMailingListCSVValidator
+        tags:
+          - { name: validator.constraint_validator }
+        arguments:
+          - "@adena_core.tool.csv_parser"
+
+  adena_mail.is_valid_mailing_list_query_validator:
+          class: Adena\MailBundle\Validator\Constraints\IsValidMailingListQueryValidator
+          tags:
+            - { name: validator.constraint_validator }
+          arguments:
+            - "@adena_core.external_connection.mysql"
 
   adena_mail.entity_helper.campaign_to_queue:
     class: Adena\MailBundle\EntityHelper\CampaignToQueue
     arguments:
       - "@doctrine.orm.default_entity_manager"
-      - "@adena_mail.entity_helper.mailing_list_emails_fetcher"
+      - "@adena_mail.entity_helper.mailing_list_data_fetcher"
 
-  adena_mail.entity_helper.mailing_list_emails_fetcher:
-    class: Adena\MailBundle\EntityHelper\MailingListEmailsFetcher
+  adena_mail.entity_helper.mailing_list_data_fetcher:
+    class: Adena\MailBundle\EntityHelper\MailingListDataFetcher
     arguments:
-      - "@external_connection.mysql"
+      - "@adena_core.external_connection.mysql"
+      - '@adena_core.tool.csv_parser'
 
   adena_mail.entity_helper.mailing_list_tester:
     class: Adena\MailBundle\EntityHelper\MailingListTester
     arguments:
-      - "@external_connection.mysql"
+      - "@adena_core.external_connection.mysql"
 
   adena_mail.entity_helper.campaign_sender:
       class: Adena\MailBundle\EntityHelper\CampaignSender
@@ -45,7 +67,15 @@ services:
         - "@adena_mail.entity_helper.campaign_to_queue"
         - "@adena_mail.action_control.campaign"
         - "@adena_mail.queue.queue_database_iterator"
+        - "@twig"
         - "%kernel.logs_dir%"
+
+  adena_mail.entity_helper.campaign_tester:
+      class: Adena\MailBundle\EntityHelper\CampaignTester
+      arguments:
+        - '@twig'
+        - '@adena_mail.entity_helper.mailing_list_data_fetcher'
+        - '@adena_core.tool.background_runner'
 
   adena_mail.mail_engine:
       class: Adena\MailBundle\MailEngine\MailEngine

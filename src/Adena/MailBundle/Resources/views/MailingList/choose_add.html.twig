@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-xs-12">
             <h3>Choose a method to create your new Mailing list</h3>
-            <p>You can choose between a MySQL Request or a list of email addresses to create your list.</p>
+            <p>You can choose between a MySQL Request or a CSV formatted-text to create your list.</p>
         </div>
     </div>
     <br><br>
@@ -16,7 +16,7 @@
             <a href="{{ path('adena_mail_mailing_list_add', {'type': 'query'}) }}">
                 <button class="btn btn-primary">
                     <h3>MySQL</h3>
-                    <p>Choose a Datasource and tailor your <br>custom request to generate your email list</p>
+                    <p>Choose a Datasource and tailor your <br>custom request to generate your data lis.t</p>
                 </button>
             </a>
         </div>
@@ -25,8 +25,8 @@
             <a href="{{ path('adena_mail_mailing_list_add', {'type': 'list'}) }}">
                 <button class="btn btn-default">
                     <h3>Email List</h3>
-                    <p>Copy and paste a list of email addresses <br>
-                        separated by a coma (,)
+                    <p>Copy and paste data <br>
+                        in CSV format.
                     </p>
                 </button>
             </a>

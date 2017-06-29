@@ -85,6 +85,7 @@ class FixturesLoader
             );
         }
 
+        $this->deleteAllFixtures();
         $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 0;");
 
         $purger = new ORMPurger($this->em);

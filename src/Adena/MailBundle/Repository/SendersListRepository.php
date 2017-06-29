@@ -12,9 +12,7 @@ class SendersListRepository extends \Doctrine\ORM\EntityRepository
 {
     public function getSendersListsQuery()
     {
-        $query = $this
-            ->createQueryBuilder('sl')
-            ->orderBy('sl.name', 'desc')
+        $query = $this->getSendersListsQueryBuilder()
             ->getQuery();
 
         return $query;
@@ -31,5 +29,14 @@ class SendersListRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter('active', 1)
             ->getQuery()
             ->getSingleResult();
+    }
+
+    public function getSendersListsQueryBuilder()
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('sl')
+            ->orderBy('sl.name', 'asc');
+
+        return $queryBuilder;
     }
 }

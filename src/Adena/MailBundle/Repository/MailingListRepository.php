@@ -18,6 +18,7 @@ class MailingListRepository extends \Doctrine\ORM\EntityRepository
         return $this
             ->createQueryBuilder('m')
             ->where('m.isTest = 1')
+            ->orderBy('m.name', 'ASC')
             ;
     }
 
@@ -26,6 +27,7 @@ class MailingListRepository extends \Doctrine\ORM\EntityRepository
         return $this
             ->createQueryBuilder('m')
             ->where('m.isTest = 0')
+            ->orderBy('m.name', 'ASC')
             ;
     }
 

@@ -7,11 +7,10 @@ use Adena\MailBundle\Entity\MailingList;
 
 class MailingListTester
 {
-
     private $mysqlExternal;
     private $errors = "";
 
-    public function __construct( MysqlExternalConnection $mysqlExternal)
+    public function __construct(MysqlExternalConnection $mysqlExternal)
     {
         $this->mysqlExternal = $mysqlExternal;
     }

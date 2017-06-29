@@ -39,20 +39,25 @@ class CampaignController extends CoreController
 
         $form = $this->get('form.factory')->create(CampaignTestMailingListType::class, $campaign);
 
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+        try {
+            if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+                // Save the Mailing lists Tests for this campaign
+                $this->getDoctrine()->getManager()->flush();
 
-            // Send the (test) campaign
-            $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:test '.$campaign->getId());
+                // Send the (test) campaign
+                $this->get('adena_mail.entity_helper.campaign_tester')->test($campaign, true);
 
-            $this->addFlash('success', 'Your test campaign will be sent shortly : '.$campaign->getName());
+                $this->addFlash('success', 'Your test campaign will be sent shortly.');
 
-            $redirectUrl = $this->generateUrl('adena_mail_campaign_list');
+                $redirectUrl = $this->generateUrl('adena_mail_campaign_list');
 
-            if($request->isXmlHttpRequest()) {
-                return $this->jsonRedirect($redirectUrl);
+                if ($request->isXmlHttpRequest()) {
+                    return $this->jsonRedirect($redirectUrl);
+                }
+                return $this->redirect($redirectUrl);
             }
-            return $this->redirect($redirectUrl);
+        }catch(\Exception $e){
+            $this->addFlash('danger', $e->getMessage());
         }
 
         if($request->isXmlHttpRequest()){
@@ -73,7 +78,6 @@ class CampaignController extends CoreController
         $campaignActionControl = $this->get('adena_mail.action_control.campaign');
         if(!$campaignActionControl->isAllowed('start_resume', $campaign)){
 
-            // TODO make pretty message with ifs
             $this->addFlash('warning', 'Campaign already started or not tested.');
             return $this->redirectToRoute('adena_mail_campaign_view', ['id'=>$campaign->getId()]);
         }
@@ -83,7 +87,7 @@ class CampaignController extends CoreController
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             // Launch the actual send in a different process through the console command
-            $this->get('tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
+            $this->get('adena_core.tool.background_runner')->runConsoleCommand('adenamail:campaign:send '.$campaign->getId());
 
             $this->addFlash('success', 'Your campaign will be sent shortly.');
 

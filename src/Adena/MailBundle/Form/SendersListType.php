@@ -3,6 +3,7 @@
 namespace Adena\MailBundle\Form;
 
 use Adena\MailBundle\Entity\Sender;
+use Adena\MailBundle\Repository\SenderRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -24,7 +25,10 @@ class SendersListType extends AbstractType
             ->add('senders',            EntityType::class, [
                 'class' => Sender::class,
                 'multiple' => true,
-                'choice_label' => 'name'
+                'choice_label' => 'name',
+                'query_builder' =>  function(SenderRepository $repository){
+                    return $repository->getSendersQueryBuilder();
+                },
             ]
             )
         ;

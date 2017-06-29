@@ -9,7 +9,6 @@
 namespace Adena\MailBundle\EntityHelper;
 
 use Adena\MailBundle\Entity\Campaign;
-use Adena\MailBundle\Entity\MailingList;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CampaignToQueue
@@ -18,7 +17,7 @@ class CampaignToQueue
     private $em;
     private $emailsFetcher;
 
-    public function __construct(EntityManagerInterface $em, MailingListEmailsFetcher $emailsFetcher)
+    public function __construct(EntityManagerInterface $em, MailingListDataFetcher $emailsFetcher)
     {
         $this->emailsFetcher = $emailsFetcher;
         $this->em            = $em;
@@ -63,25 +62,27 @@ class CampaignToQueue
 
         // Create the Queue rows needed
         $this->em->getRepository('AdenaMailBundle:Queue')->nativeBulkInsertForCampaign($queues, $campaign);
-
         return count($queues);
     }
     
     /**
-     * @param $emails
+     * @param $rows
      *
      * @return array
      */
-    private function removeDuplicates($emails): array
+    private function removeDuplicates($rows): array
     {
         // Remove duplicate emails from the list
         $uniques = [];
-        foreach ($emails as $key => $email) {
-            $uniques[strtolower($email)] = true;
+        foreach ($rows as $key => $row) {
+            if(in_array($row['email'], $uniques)){
+                unset($rows[$key]);
+                continue;
+            }
+            $uniques[] = strtolower($row['email']);
         }
-        $emails  = array_keys($uniques);
         $uniques = null;
 
-        return $emails;
+        return $rows;
     }
 }

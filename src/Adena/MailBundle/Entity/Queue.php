@@ -36,6 +36,13 @@ class Queue
     private $campaign;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="data", type="text", nullable=true)
+     */
+    private $data;
+
+    /**
      * Get id
      *
      * @return int
@@ -91,5 +98,29 @@ class Queue
     public function getCampaign()
     {
         return $this->campaign;
+    }
+
+    /**
+     * Get data
+     *
+     * @return string
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Set data
+     *
+     * @param string $data
+     *
+     * @return Queue
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
     }
 }
