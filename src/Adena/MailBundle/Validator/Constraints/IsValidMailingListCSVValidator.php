@@ -22,8 +22,17 @@ class IsValidMailingListCSVValidator extends ConstraintValidator
 
     public function validate($value, Constraint $constraint)
     {
+        /** @var MailingList $mailingList */
+        $mailingList = $this->context->getRoot()->getData();
+
+        // Disable this check if the mailing is being validated through another form (using @Assert\Valid on the
+        // relationship)
+        if(!($mailingList instanceof MailingList)){
+            return;
+        }
+        
         // Only for "list" type MailingLists
-        if(MailingList::TYPE_LIST !== $this->context->getRoot()->getData()->getType()){
+        if(MailingList::TYPE_LIST !== $mailingList->getType()){
             return;
         }
 

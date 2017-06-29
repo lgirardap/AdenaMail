@@ -23,13 +23,22 @@ class IsValidMailingListQueryValidator extends ConstraintValidator
 
     public function validate($value, Constraint $constraint)
     {
-        // Only for "query" type MailingLists
-        if(MailingList::TYPE_QUERY !== $this->context->getRoot()->getData()->getType()){
+        /** @var MailingList $mailingList */
+        $mailingList = $this->context->getRoot()->getData();
+
+        // Disable this check if the mailing is being validated through another form (using @Assert\Valid on the
+        // relationship)
+        if(!($mailingList instanceof MailingList)){
             return;
         }
 
         /** @var Datasource $datasource */
-        $datasource = $this->context->getRoot()->getData()->getDatasource();
+        $datasource = $mailingList->getDatasource();
+
+        // Only for "query" type MailingLists
+        if(MailingList::TYPE_QUERY !== $mailingList->getType()){
+            return;
+        }
 
         if(!$datasource){
             return;
