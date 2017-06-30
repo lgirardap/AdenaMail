@@ -14,6 +14,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *
  * @ORM\Table(name="mailing_list")
  * @ORM\Entity(repositoryClass="Adena\MailBundle\Repository\MailingListRepository")
+ *
+ * // Makes sure that the content can be transformed to an array with at least an "email" column.
+ * @AdenaAssert\MailingListContentIsValid()
  */
 class MailingList
 {
@@ -106,33 +109,6 @@ class MailingList
                 ->inContext($context)
                 ->atPath('datasource')
                 ->validate($this->datasource, new  Assert\Valid(), [Constraint::DEFAULT_GROUP]);
-        }
-    }
-
-    /**
-     * If type is "list", we want to make sure the content is CSV.
-     * If it's "query", we want to make sure the request works.
-     *
-     * In both case, we'll also check if the returned data has the mandatory "email" field.
-     *
-     * @Assert\Callback()
-     */
-    public function validateContent(ExecutionContextInterface $context, $payload)
-    {
-        if(self::TYPE_LIST === $this->getType()){
-            // Valid CSV
-            $context
-                ->getValidator()
-                ->inContext($context)
-                ->atPath('content')
-                ->validate($this->content, new  AdenaAssert\IsValidMailingListCSV(), [Constraint::DEFAULT_GROUP]);
-        }else{
-            // Valid Query
-            $context
-                ->getValidator()
-                ->inContext($context)
-                ->atPath('content')
-                ->validate($this->content, new  AdenaAssert\IsValidMailingListQuery(), [Constraint::DEFAULT_GROUP]);
         }
     }
 

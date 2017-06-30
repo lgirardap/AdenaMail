@@ -28,19 +28,13 @@ services:
       arguments:
         - "@adena_mail.entity_helper.campaign_tester"
 
-  adena_mail.is_valid_mailing_list_csv_validator:
-        class: Adena\MailBundle\Validator\Constraints\IsValidMailingListCSVValidator
+  adena_mail.mailing_list_content_is_valid_validtor:
+        class: Adena\MailBundle\Validator\Constraints\MailingListContentIsValidValidator
         tags:
           - { name: validator.constraint_validator }
         arguments:
           - "@adena_core.tool.csv_parser"
-
-  adena_mail.is_valid_mailing_list_query_validator:
-          class: Adena\MailBundle\Validator\Constraints\IsValidMailingListQueryValidator
-          tags:
-            - { name: validator.constraint_validator }
-          arguments:
-            - "@adena_core.external_connection.mysql"
+          - "@adena_core.external_connection.mysql"
 
   adena_mail.entity_helper.campaign_to_queue:
     class: Adena\MailBundle\EntityHelper\CampaignToQueue
