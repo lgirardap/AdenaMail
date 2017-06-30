@@ -13,6 +13,11 @@
         <p>Test campaign currently sending, please wait.</p>
     {% endif %}
 
+    {% if campaign.status is constant('STATUS_TESTED', campaign) %}
+        <p>Please review the campaign before sending it.</p>
+        <p><a href="{{ path('adena_mail_campaign_send', {id: campaign.id}) }}">Please click here to do so.</a></p>
+    {% endif %}
+
     {% if campaign.status is constant('STATUS_IN_PROGRESS', campaign) %}
         <p>This campaign is currently sending!</p>
         <p>Progress: {{ campaign.emailsCount - remainingEmails }} out of {{ campaign.emailsCount }} emails sent.</p>

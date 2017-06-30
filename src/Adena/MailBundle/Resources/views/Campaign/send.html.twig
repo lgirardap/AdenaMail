@@ -6,12 +6,40 @@
     <h2>Send a campaign</h2>
 
     <p>
-        Are you sure you wanna run this campaign "{{ campaign.name }}" ?
+        Are you sure you wanna run the campaign "{{ campaign.name }}" ?
     </p>
 
+    <h3>Email to be sent</h3>
+    <h4>Name</h4>
+    <p>{{ campaign.email.name }}</p>
+    <h4>Subject</h4>
+    <p>{{ campaign.email.subject }}</p>
+    <h4>Preview</h4>
+    <p>
+        <iframe srcdoc="{{ campaign.email.template }}" sandbox="sandbox" height="800" width="100%"></iframe>
+    </p>
+
+    <h3>MailingLists it will be sent to</h3>
+    <ul>
+        {% for mailingList in campaign.mailingLists %}
+            <li>{{ mailingList.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>It will be sent using the following SendersList</h3>
+    <ul>
+        <li>{{ campaign.sendersList.name }}</li>
+    </ul>
+    <h3>It will be sent as</h3>
+    <h4>From Name</h4>
+    <p>{{ campaign.fromName ?? campaign.sendersList.fromName }}</p>
+    <h4>From Email</h4>
+    <p>{{ campaign.fromEmail ?? campaign.sendersList.fromEmail }}</p>
     {# Keep the ID in the action #}
     <form action="{{ path('adena_mail_campaign_send', {'id': campaign.id}) }}" method="post" class="nojsvalidate">
         {%  include 'AdenaMailBundle:Form/Button:button.html.twig' with { label: 'Send campaign', icon: 'glyphicon glyphicon-send', class: 'btn-success' } %}
+        or
+        {%  include 'AdenaMailBundle:Common/Button:edit_link_button.html.twig' with { label: 'Edit campaign', path: path('adena_mail_campaign_edit', {id: campaign.id}) } %}
         {# Generates our form (only CSFR) #}
         {{ form_rest(form) }}
     </form>
