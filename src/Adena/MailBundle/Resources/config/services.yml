@@ -84,3 +84,8 @@ services:
   adena_mail.queue.queue_database_iterator:
     class: Adena\MailBundle\Queue\QueueDatabaseIterator
     arguments: ['@doctrine.orm.default_entity_manager']
+
+  adena_mail.aceeditor_type:
+    class: Adena\MailBundle\Form\Type\AceeditorType
+    tags:
+      - {name: form.type, alias: aceeditor}
