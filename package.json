@@ -1,0 +1,15 @@
+{
+  "name": "AdenaMail",
+  "version": "0.0.1",
+  "dependencies": {
+    "@symfony/webpack-encore": "^0.9.1",
+    "ace-builds": "^1.2.8",
+    "jquery": "^3.2.1",
+    "node-sass": "^4.5.3",
+    "path": "^0.12.7",
+    "sass-loader": "^6.0.6"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.9.1"
+  }
+}

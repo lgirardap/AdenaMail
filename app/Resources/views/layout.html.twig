@@ -5,6 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ asset('build/global.css') }}">
 
     <title>{% block title %}Adena Mail{% endblock %}</title>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -15,6 +16,7 @@
 </head>
 
 <body>
+<script src="{{ asset('build/app.js') }}"></script>
 <div class="container">
     <div id="header" class="jumbotron">
         <h1>Adena Mailing Tool</h1>
