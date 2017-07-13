@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="{{ asset('build/global.css') }}">
 
     <title>{% block title %}Adena Mail{% endblock %}</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src="{{ asset('build/manifest.js') }}"></script>
+    <script src="{{ asset('build/vendor.js') }}"></script>
+
     {% block stylesheets %}
         {# On charge le CSS de bootstrap depuis le site directement #}
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">

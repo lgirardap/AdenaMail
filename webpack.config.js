@@ -9,6 +9,10 @@ Encore
     // what's the public path to this directory (relative to your project's document root dir)
     .setPublicPath('/build')
 
+    .createSharedEntry('vendor', [
+        'jquery'
+    ])
+
     // empty the outputPath dir before each build
     .cleanupOutputBeforeBuild()
 
@@ -26,12 +30,12 @@ Encore
 
     .enableSourceMaps(!Encore.isProduction())
 
-// create hashed filenames (e.g. app.abc123.css)
-// .enableVersioning()
+    // create hashed filenames (e.g. app.abc123.css)
+    .enableVersioning()
 ;
 
 var config = Encore.getWebpackConfig();
-config.resolve.alias.ace = path.resolve(__dirname, 'src/Adena/MailBundle/Resources/public/lib/ace/ace');
+// config.resolve.alias.ace = path.resolve(__dirname, 'src/Adena/MailBundle/Resources/public/lib/ace/ace');
 
 // export the final configuration
 module.exports = config;
