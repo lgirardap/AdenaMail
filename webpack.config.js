@@ -32,6 +32,10 @@ Encore
 
     // create hashed filenames (e.g. app.abc123.css)
     .enableVersioning()
+
+    .enableSassLoader(function(sassOptions) {}, {
+                 resolve_url_loader: false
+     })
 ;
 
 var config = Encore.getWebpackConfig();

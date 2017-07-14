@@ -4,6 +4,8 @@
   "dependencies": {
     "@symfony/webpack-encore": "^0.9.1",
     "ace-builds": "^1.2.8",
+    "bootstrap-sass": "^3.3.7",
+    "brace": "^0.10.0",
     "jquery": "^3.2.1",
     "node-sass": "^4.5.3",
     "path": "^0.12.7",

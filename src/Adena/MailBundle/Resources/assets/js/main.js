@@ -1,6 +1,7 @@
 const $ = require('jquery');
-console.log("LOL");
-window.test = require("brace");
-formField = require("./form_fields");
+require('bootstrap-sass');
 
 global.$ = global.jQuery = $;
+// window.test = require("brace");
+require("./form_fields");
+
