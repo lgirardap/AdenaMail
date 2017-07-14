@@ -5,13 +5,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('build/global.css') }}">
 
     <title>{% block title %}Adena Mail{% endblock %}</title>
 
     <script src="{{ asset('build/manifest.js') }}"></script>
     <script src="{{ asset('build/vendor.js') }}"></script>
 
+    <link rel="stylesheet" href="{{ asset('build/global.css') }}">
     {% block stylesheets %}
     {% endblock %}
 </head>
@@ -58,7 +58,6 @@
 
 {% block javascripts %}
     {# Ajoutez ces lignes JavaScript si vous comptez vous servir des fonctionnalités du bootstrap Twitter #}
-
 
     <script type="text/javascript">
         var submitCallback = function(e){
