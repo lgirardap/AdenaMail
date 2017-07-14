@@ -57,32 +57,6 @@
 </div>
 
 {% block javascripts %}
-    {# Ajoutez ces lignes JavaScript si vous comptez vous servir des fonctionnalités du bootstrap Twitter #}
-
-    <script type="text/javascript">
-        var submitCallback = function(e){
-            if(e) e.preventDefault();
-
-            var $form = $(e.currentTarget);
-            var data = $form.serialize();
-
-            $.ajax($form.attr('action'), {
-                method: 'POST',
-                data: data,
-                success: function(data){
-                    window.location = data.url;
-                },
-                error: function(data){
-                    // Save the name since $form will be replaced.
-                    var formName = $form.attr('name');
-                    $('form[name='+formName+']').replaceWith(data.responseJSON.view);
-                    $('form[name='+formName+']').on('submit', submitCallback);
-                }
-            });
-        };
-
-        $('form:not(.nojsvalidate)').on('submit', submitCallback);
-    </script>
 {% endblock %}
 
 </body>
