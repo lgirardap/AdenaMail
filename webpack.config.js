@@ -26,9 +26,6 @@ Encore
     // will output as web/build/global.css
     .addStyleEntry('global', './app/Resources/assets/css/global.scss')
 
-    // allow sass/scss files to be processed
-    .enableSassLoader()
-
     // allow legacy applications to use $/jQuery as a global variable
     .autoProvidejQuery()
 
