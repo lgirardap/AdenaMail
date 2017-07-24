@@ -7,14 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{% block title %}Adena Mail{% endblock %}</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src="{{ asset('build/manifest.js') }}"></script>
+    <script src="{{ asset('build/vendor.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ asset('build/global.css') }}">
     {% block stylesheets %}
-        {# On charge le CSS de bootstrap depuis le site directement #}
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     {% endblock %}
 </head>
 
 <body>
+<script src="{{ asset('build/app.js') }}"></script>
 <div class="container">
     <div id="header" class="jumbotron">
         <h1>Adena Mailing Tool</h1>
@@ -54,35 +57,6 @@
 </div>
 
 {% block javascripts %}
-    {# Ajoutez ces lignes JavaScript si vous comptez vous servir des fonctionnalités du bootstrap Twitter #}
-
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="//underscorejs.org/underscore-min.js"></script>
-
-    <script type="text/javascript">
-        var submitCallback = function(e){
-            if(e) e.preventDefault();
-
-            var $form = $(e.currentTarget);
-            var data = $form.serialize();
-
-            $.ajax($form.attr('action'), {
-                method: 'POST',
-                data: data,
-                success: function(data){
-                    window.location = data.url;
-                },
-                error: function(data){
-                    // Save the name since $form will be replaced.
-                    var formName = $form.attr('name');
-                    $('form[name='+formName+']').replaceWith(data.responseJSON.view);
-                    $('form[name='+formName+']').on('submit', submitCallback);
-                }
-            });
-        };
-
-        $('form:not(.nojsvalidate)').on('submit', submitCallback);
-    </script>
 {% endblock %}
 
 </body>

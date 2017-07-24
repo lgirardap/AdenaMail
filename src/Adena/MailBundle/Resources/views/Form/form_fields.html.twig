@@ -114,20 +114,27 @@
 
 {% block aceeditor_widget %}
     {{ block('textarea_widget') }}
-    <div id="{{ form.vars.id }}_aceeditor"></div>
-    <script type="text/javascript" src="{{ asset('bundles/adenamail/js/aceeditor/ace.js') }}"></script>
-    <script type="text/javascript">
-        var editor = ace.edit("{{ form.vars.id }}_aceeditor");
-        var textarea = $('#{{ form.vars.id }}').hide();
-        editor.setTheme("ace/theme/monokai");
-        editor.setOptions({
-            maxLines: 50,
-        });
-        editor.$blockScrolling = Infinity;
-        editor.getSession().setMode("ace/mode/twig");
-        editor.getSession().setValue(textarea.val());
-        editor.getSession().on('change', function(){
-            textarea.val(editor.getSession().getValue());
-        });
-    </script>
+    <div id="{{ form.vars.id }}_aceeditor" class="js-aceeditor" data-target-id="{{ form.vars.id }}"></div>
+{% endblock %}
+
+{% block datetimepicker_widget %}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' js-datetimepicker')
+    }) %}
+    {{ block('form_widget_simple') }}
+{% endblock datetimepicker_widget %}
+
+
+
+
+
+{% use "@TetranzSelect2Entity/Form/fields.html.twig" %}
+
+{% block tetranz_select2entity_widget %}
+    {% set autostart = false %}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' js-select2entity'),
+        'data-theme': 'bootstrap'
+    }) %}
+    {{ parent() }}
 {% endblock %}

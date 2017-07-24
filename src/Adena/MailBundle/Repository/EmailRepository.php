@@ -21,11 +21,17 @@ class EmailRepository extends \Doctrine\ORM\EntityRepository
         return $query;
     }
 
-    public function getEmailsQueryBuilder()
+    public function getEmailsQueryBuilder($whereName = false)
     {
         $queryBuilder = $this
             ->createQueryBuilder('e')
             ->orderBy('e.createdAt', 'desc');
+
+        if($whereName)
+        {
+            $queryBuilder->where('e.name LIKE :name')
+                ->setParameter('name', '%'.$whereName.'%');
+        }
 
         return $queryBuilder;
     }

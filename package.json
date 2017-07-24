@@ -1,0 +1,20 @@
+{
+  "name": "AdenaMail",
+  "version": "0.0.1",
+  "dependencies": {
+    "@symfony/webpack-encore": "^0.9.1",
+    "ace-builds": "^1.2.8",
+    "bootstrap-sass": "^3.3.7",
+    "brace": "^0.10.0",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "jquery": "^3.2.1",
+    "node-sass": "^4.5.3",
+    "path": "^0.12.7",
+    "sass-loader": "^6.0.6",
+    "select2": "^4.0.3",
+    "watchjs": "0.0.0"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.9.1"
+  }
+}

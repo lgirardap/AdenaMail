@@ -37,6 +37,12 @@ class CampaignTester
      */
     public function test(Campaign $campaign, $andSend = false)
     {
+        if(!$campaign->getEmail())
+        {
+            return;
+
+        }
+
         $debugTwig = clone $this->twig;
         $debugTwig->enableDebug();
         // This will make Twig throw an exception if one of the needed variable is undefined.

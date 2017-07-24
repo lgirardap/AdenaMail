@@ -10,6 +10,29 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CampaignController extends CoreController
 {
+    public function getCampaignAJAXAction(Request $request)
+    {
+        if(!$request->isXmlHttpRequest()){
+            return;
+        }
+
+        $emails = $this->getDoctrine()
+            ->getRepository('AdenaMailBundle:Email')
+            ->getEmailsQueryBuilder($request->query->get('q'))
+            ->getQuery()
+            ->getArrayResult();
+
+        $result = [];
+        foreach ($emails as $email){
+            $result[] = [
+                'id'=>$email['id'],
+                'text'=>$email['name']
+            ];
+        }
+        
+        return $this->json($result);
+    }
+
     public function indexAction()
     {
         return $this->render('AdenaMailBundle:Campaign:index.html.twig');

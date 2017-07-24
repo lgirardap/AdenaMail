@@ -6,6 +6,7 @@ use Adena\MailBundle\Validator\Constraints as AdenaAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Psr\Log\InvalidArgumentException;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -16,6 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * // Makes sure that the associated MailingLists all have the required parameter to send the attached Email
  * @AdenaAssert\CampaignCanSendEmail()
+ *
+ * @UniqueEntity("name")
  */
 class Campaign
 {
@@ -118,6 +121,7 @@ class Campaign
      * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\Email")
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid()
+     * @Assert\NotBlank
      */
     private $email;
 
@@ -132,6 +136,7 @@ class Campaign
      * @var SendersList
      * @ORM\ManyToOne(targetEntity="Adena\MailBundle\Entity\SendersList")
      * @Assert\Valid()
+     * @Assert\NotBlank
      */
     private $sendersList;
 

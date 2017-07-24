@@ -218,3 +218,7 @@ adena_mail_xhr_validation:
   path: /xhr/validation
   defaults: { _controller: AdenaMailBundle:Xhr:validation }
   methods: [POST]
+
+adena_mail_ajax_campaign_get_email:
+  path: /campaign/ajax/get-email
+  defaults: { _controller: AdenaMailBundle:Campaign:getCampaignAJAX }
