@@ -16,7 +16,8 @@ Encore
         'brace/mode/twig',
         'brace/theme/monokai',
         'eonasdan-bootstrap-datetimepicker',
-        'watchjs'
+        'watchjs',
+        'select2'
     ])
 
     // empty the outputPath dir before each build

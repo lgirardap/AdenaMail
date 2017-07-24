@@ -123,3 +123,18 @@
     }) %}
     {{ block('form_widget_simple') }}
 {% endblock datetimepicker_widget %}
+
+
+
+
+
+{% use "@TetranzSelect2Entity/Form/fields.html.twig" %}
+
+{% block tetranz_select2entity_widget %}
+    {% set autostart = false %}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' js-select2entity'),
+        'data-theme': 'bootstrap'
+    }) %}
+    {{ parent() }}
+{% endblock %}

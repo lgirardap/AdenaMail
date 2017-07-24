@@ -13,6 +13,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class CampaignType extends AbstractType
 {
@@ -31,12 +32,23 @@ class CampaignType extends AbstractType
                     return $repository->getRegularMailingListQueryBuilder();
                 },
             ])
-            ->add('email', EntityType::class, [
+//            ->add('email', EntityType::class, [
+//                'class' => Email::class,
+//                'choice_label' => 'name',
+//                'query_builder' =>  function(EmailRepository $repository){
+//                    return $repository->getEmailsQueryBuilder();
+//                },
+//            ])
+            ->add('email', Select2EntityType::class, [
+                'multiple' => false,
+                'remote_route' => 'adena_mail_ajax_campaign_get_email',
                 'class' => Email::class,
-                'choice_label' => 'name',
-                'query_builder' =>  function(EmailRepository $repository){
-                    return $repository->getEmailsQueryBuilder();
-                },
+                'text_property' => 'name',
+                'allow_clear' => true,
+                'cache' => true,
+                'cache_timeout' => 60000, // if 'cache' is true
+                'language' => 'en',
+                'placeholder' => 'Select an email'
             ])
             ->add('fromName', TextType::class)
             ->add('fromEmail', TextType::class)
