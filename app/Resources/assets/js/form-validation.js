@@ -1,5 +1,3 @@
-let attachAllToFields = require('./form-fields');
-
 let submitCallback = function(e){
     if(e) e.preventDefault();
 
@@ -18,8 +16,10 @@ let submitCallback = function(e){
             $form.replaceWith(data.responseJSON.view);
             // Target the "new" form by name and bind the submitCallback to it
             $('form[name='+formName+']').on('submit', submitCallback);
-            // Attach JS to fields that require some javascript.
-            attachAllToFields();
+            // Let people know what we failed
+            EventBus.trigger('form:validation:failed', {
+                formName: formName
+            });
         }
     });
 };

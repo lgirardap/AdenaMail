@@ -116,3 +116,10 @@
     {{ block('textarea_widget') }}
     <div id="{{ form.vars.id }}_aceeditor" class="js-aceeditor" data-target-id="{{ form.vars.id }}"></div>
 {% endblock %}
+
+{% block datetimepicker_widget %}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' js-datetimepicker')
+    }) %}
+    {{ block('form_widget_simple') }}
+{% endblock datetimepicker_widget %}

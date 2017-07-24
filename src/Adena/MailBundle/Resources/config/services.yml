@@ -89,3 +89,8 @@ services:
     class: Adena\MailBundle\Form\Type\AceeditorType
     tags:
       - {name: form.type, alias: aceeditor}
+
+  adena_mail.datetimepicker_type:
+    class: Adena\MailBundle\Form\Type\DatetimepickerType
+    tags:
+      - {name: form.type, alias: datetimepicker}
